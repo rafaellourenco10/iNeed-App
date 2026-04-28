@@ -5,7 +5,7 @@ Este repositório contém os arquivos iniciais da Entrega da Sprint 02 para a di
 ## 👥 Membros do Grupo
 * **[Rafael R. Lourenço]** - Responsável pela fase inicial do Sprint.
 * **[João Wilson Cunha Silva Pereira]** - Responsável pela Documentação
-* **[Nome do Colega 2]** - [Breve descrição da função, ex: Desenvolvedor]
+* **[Victor Hugo Vicente]** - [Responsável pelo BD.
 
 ## 📝 Objetivo da Sprint
 Configurar o repositório compartilhado, garantir que todos os membros façam commits com mensagens específicas e documentar o processo individualmente em PDF.
