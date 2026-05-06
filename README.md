@@ -49,6 +49,10 @@ Acesse abaixo a documentação detalhada do nosso fluxo e planejamento:
 **Evidências**
 * [Histórico e Prints de Versionamento](docs/evidences/version-control/)
 
+## Contribuições
+
+*Revisão e testes realizados por Nikolas.
+
 ## 🚀 Como baixar este projeto
 Para os membros da equipe clonarem o repositório, utilizem o comando abaixo no terminal:
 ```bash
