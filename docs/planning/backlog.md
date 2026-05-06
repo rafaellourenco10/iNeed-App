@@ -38,3 +38,4 @@ As funcionalidades abaixo representam a visão de longo prazo do produto, mas **
 * Integração com gateways de pagamento (Pix, Cartão de Crédito) direto pelo app.
 * Verificação automática de antecedentes criminais via API externa.
 * Sistema de chat em tempo real com envio de mídia e áudio.
+* Implementação de validação de dados mais robusta no sistema.
