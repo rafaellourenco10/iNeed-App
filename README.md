@@ -1,4 +1,4 @@
-# Projeto Sprint 02 - iNeed
+# Projeto iNeed
 
 Este repositório contém a documentação, o planejamento e os arquivos iniciais da Entrega da Sprint 02 para a disciplina.
 
