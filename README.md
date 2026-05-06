@@ -53,3 +53,5 @@ Acesse abaixo a documentação detalhada do nosso fluxo e planejamento:
 Para os membros da equipe clonarem o repositório, utilizem o comando abaixo no terminal:
 ```bash
 git clone [https://github.com/rafaellourenco10/projeto-sprint-02.git](https://github.com/rafaellourenco10/projeto-sprint-02.git)
+
+*Atualizado por um colaborador.*
