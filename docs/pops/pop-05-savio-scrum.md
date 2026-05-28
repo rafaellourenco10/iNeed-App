@@ -12,4 +12,4 @@
   5.Atualizar status das tarefas conforme andamento.
   6.Realizar Sprint Review para apresentação das entregas realizadas.
 * **criterios de sucesso:** Sprint concluída com tarefas entregues dentro do prazo e equipe alinhada com o fluxo de trabalho Scrum.
-* **referencias utilizadas:**Scrum Guide. Atlassian Agile Coach. Documentação Jira Software.    
+* **referencias utilizadas:** Scrum Guide. Atlassian Agile Coach. Documentação Jira Software.    
