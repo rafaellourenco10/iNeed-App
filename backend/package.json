@@ -1,0 +1,28 @@
+{
+  "name": "ineed-backend",
+  "version": "1.0.0",
+  "description": "API REST do iNeed - Marketplace de serviços sob demanda",
+  "main": "src/servidor.js",
+  "scripts": {
+    "dev": "nodemon src/servidor.js",
+    "start": "node src/servidor.js",
+    "test": "echo \"Testes serão implementados em breve\" && exit 0"
+  },
+  "keywords": [
+    "ineed",
+    "marketplace",
+    "servicos"
+  ],
+  "author": "Equipe iNeed",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "firebase-admin": "^13.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
