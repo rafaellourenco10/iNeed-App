@@ -1,0 +1,106 @@
+// ============================================
+// main.dart — Ponto de entrada do app iNeed
+// ============================================
+// Inicializa o tema, Provider e rotas do aplicativo.
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'tema/tema_app.dart';
+import 'servicos/auth_servico.dart';
+import 'modelos/usuario.dart';
+import 'modelos/proposta.dart';
+
+import 'telas/onboarding/tela_onboarding.dart';
+import 'telas/autenticacao/tela_login.dart';
+import 'telas/autenticacao/tela_cadastro_cliente.dart';
+import 'telas/autenticacao/tela_cadastro_prestador.dart';
+import 'telas/shell_navegacao.dart';
+import 'telas/cliente/tela_perfil_prestador.dart';
+import 'telas/cliente/tela_detalhes_servico.dart';
+import 'telas/cliente/tela_avaliar_servico.dart';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Captura erros de renderização e exibe na tela para debugar a tela em branco
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Material(
+      child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('⚠️ Erro de Renderização', style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              Text(details.exceptionAsString(), style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              Text(details.stack.toString()),
+            ],
+          ),
+        ),
+      ),
+    );
+  };
+
+  runApp(const INeedApp());
+}
+
+class INeedApp extends StatelessWidget {
+  const INeedApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => AuthServico()..restaurarSessao(),
+      child: Consumer<AuthServico>(
+        builder: (context, auth, _) {
+          return MaterialApp(
+            title: 'iNeed - Serviços sob Demanda',
+            debugShowCheckedModeBanner: false,
+            theme: TemaApp.claro,
+
+            // ───── Rota inicial ─────
+            initialRoute: auth.estaLogado
+                ? (auth.usuarioAtual!.isPrestador ? '/home-prestador' : '/home')
+                : '/onboarding',
+
+            // ───── Rotas nomeadas ─────
+            routes: {
+              '/onboarding': (_) => const TelaOnboarding(),
+              '/login': (_) => const TelaLogin(),
+              '/cadastro-cliente': (_) => const TelaCadastroCliente(),
+              '/cadastro-prestador': (_) => const TelaCadastroPrestador(),
+              '/home': (_) => const ShellNavegacao(isPrestador: false),
+              '/home-prestador': (_) => const ShellNavegacao(isPrestador: true),
+            },
+
+            // ───── Rotas com argumentos ─────
+            onGenerateRoute: (settings) {
+              switch (settings.name) {
+                case '/perfil-prestador':
+                  final prestador = settings.arguments as Usuario;
+                  return MaterialPageRoute(
+                    builder: (_) => TelaPerfilPrestador(prestador: prestador),
+                  );
+                case '/detalhes-servico':
+                  final proposta = settings.arguments as Proposta;
+                  return MaterialPageRoute(
+                    builder: (_) => TelaDetalhesServico(proposta: proposta),
+                  );
+                case '/avaliar-servico':
+                  final proposta = settings.arguments as Proposta;
+                  return MaterialPageRoute(
+                    builder: (_) => TelaAvaliarServico(proposta: proposta),
+                  );
+                default:
+                  return null;
+              }
+            },
+          );
+        },
+      ),
+    );
+  }
+}
