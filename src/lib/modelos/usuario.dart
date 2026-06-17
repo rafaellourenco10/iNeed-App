@@ -7,8 +7,12 @@ class Usuario {
   final String nome;
   final String email;
   final String? telefone;
-  final String tipo; // 'cliente' ou 'prestador'
+  final String tipo; // 'cliente', 'prestador' ou '' (ainda não escolheu)
   final String? localizacao;
+  final String? cpf;
+  final String? cep;
+  final String? cidade;
+  final String? endereco;
 
   // Campos específicos do Prestador
   final String? especialidade;
@@ -28,6 +32,10 @@ class Usuario {
     this.telefone,
     required this.tipo,
     this.localizacao,
+    this.cpf,
+    this.cep,
+    this.cidade,
+    this.endereco,
     this.especialidade,
     this.valorHora,
     this.biografia,
@@ -40,6 +48,7 @@ class Usuario {
 
   bool get isPrestador => tipo == 'prestador';
   bool get isCliente => tipo == 'cliente';
+  bool get semPapel => tipo.isEmpty;
 
   factory Usuario.fromJson(Map<String, dynamic> json) {
     return Usuario(
@@ -49,6 +58,10 @@ class Usuario {
       telefone: json['telefone'],
       tipo: json['tipo'] ?? 'cliente',
       localizacao: json['localizacao'],
+      cpf: json['cpf'],
+      cep: json['cep'],
+      cidade: json['cidade'],
+      endereco: json['endereco'],
       especialidade: json['especialidade'],
       valorHora: json['valorHora'] != null
           ? (json['valorHora'] as num).toDouble()

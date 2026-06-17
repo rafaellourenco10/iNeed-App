@@ -117,30 +117,27 @@ class _TelaPropostasState extends State<TelaPropostas>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.menu, color: CoresApp.onSurface),
-                      const SizedBox(width: 12),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: Image.asset(
-                          'assets/images/logo_ineed.jpeg',
-                          width: 32,
-                          height: 32,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ],
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: Image.asset(
+                      'assets/images/logo_ineed.jpeg',
+                      width: 32,
+                      height: 32,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundColor: CoresApp.surfaceContainerHigh,
-                    child: Consumer<AuthServico>(
-                      builder: (_, auth, __) => Text(
-                        (auth.usuarioAtual?.nome ?? 'P')[0].toUpperCase(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: CoresApp.primary,
+                  GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, '/perfil'),
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: CoresApp.surfaceContainerHigh,
+                      child: Consumer<AuthServico>(
+                        builder: (_, auth, __) => Text(
+                          (auth.usuarioAtual?.nome ?? 'P')[0].toUpperCase(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: CoresApp.primary,
+                          ),
                         ),
                       ),
                     ),

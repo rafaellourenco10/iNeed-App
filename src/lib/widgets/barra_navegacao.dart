@@ -44,9 +44,8 @@ class BarraNavegacao extends StatelessWidget {
                   ]
                 : [
                     _buildItem(context, 0, Icons.home_outlined, Icons.home, 'Início'),
-                    _buildItem(context, 1, Icons.search_outlined, Icons.search, 'Busca'),
-                    _buildItem(context, 2, Icons.receipt_long_outlined, Icons.receipt_long, 'Pedidos'),
-                    _buildItem(context, 3, Icons.person_outline, Icons.person, 'Perfil'),
+                    _buildItem(context, 1, Icons.receipt_long_outlined, Icons.receipt_long, 'Pedidos'),
+                    _buildItem(context, 2, Icons.person_outline, Icons.person, 'Perfil'),
                   ],
           ),
         ),
@@ -65,14 +64,23 @@ class BarraNavegacao extends StatelessWidget {
     return InkWell(
       onTap: () => aoMudar(indice),
       borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: selecionado
+            ? const EdgeInsets.symmetric(horizontal: 16, vertical: 6)
+            : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: selecionado
+            ? BoxDecoration(
+                color: const Color(0xFF00288E).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              )
+            : null,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               selecionado ? iconeAtivo : iconeInativo,
-              color: selecionado ? CoresApp.primary : CoresApp.outline,
+              color: selecionado ? CoresApp.primary : const Color(0xFF9CA3AF),
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -81,7 +89,7 @@ class BarraNavegacao extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: selecionado ? FontWeight.w600 : FontWeight.w400,
-                color: selecionado ? CoresApp.primary : CoresApp.outline,
+                color: selecionado ? CoresApp.primary : const Color(0xFF9CA3AF),
               ),
             ),
           ],
@@ -114,7 +122,7 @@ class BarraNavegacao extends StatelessWidget {
           children: [
             Icon(
               selecionado ? iconeAtivo : iconeInativo,
-              color: selecionado ? Colors.white : CoresApp.outline,
+              color: selecionado ? Colors.white : const Color(0xFF9CA3AF),
               size: 24,
             ),
             const SizedBox(height: 4),
@@ -123,7 +131,7 @@ class BarraNavegacao extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: selecionado ? FontWeight.w600 : FontWeight.w400,
-                color: selecionado ? Colors.white : CoresApp.outline,
+                color: selecionado ? Colors.white : const Color(0xFF9CA3AF),
               ),
             ),
           ],

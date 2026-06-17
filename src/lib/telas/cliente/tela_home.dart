@@ -19,6 +19,8 @@ class TelaHome extends StatefulWidget {
 }
 
 class _TelaHomeState extends State<TelaHome> {
+  final TextEditingController _buscaController = TextEditingController();
+  List<Usuario> _todos = [];
   List<Usuario> _prestadores = [];
   bool _carregando = true;
   String? _categoriaSelecionada;
@@ -27,19 +29,25 @@ class _TelaHomeState extends State<TelaHome> {
   void initState() {
     super.initState();
     _carregarPrestadores();
+    _buscaController.addListener(_filtrar);
   }
 
-  Future<void> _carregarPrestadores({String? especialidade}) async {
+  @override
+  void dispose() {
+    _buscaController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _carregarPrestadores() async {
     setState(() => _carregando = true);
     try {
-      final resposta = await ApiServico.listarPrestadores(
-        especialidade: especialidade,
-      );
+      final resposta = await ApiServico.listarPrestadores();
       if (resposta.containsKey('prestadores')) {
         final lista = (resposta['prestadores'] as List)
             .map((p) => Usuario.fromJson(p as Map<String, dynamic>))
             .toList();
         setState(() {
+          _todos = lista;
           _prestadores = lista;
           _carregando = false;
         });
@@ -47,6 +55,27 @@ class _TelaHomeState extends State<TelaHome> {
     } catch (_) {
       setState(() => _carregando = false);
     }
+  }
+
+  void _filtrar() {
+    final query = _buscaController.text.toLowerCase();
+    setState(() {
+      _prestadores = _todos.where((p) {
+        final nomeOk = p.nome.toLowerCase().contains(query);
+        final espOk = (p.especialidade ?? '').toLowerCase().contains(query);
+        final categoriaOk = _categoriaSelecionada == null ||
+            (p.especialidade ?? '').toLowerCase() ==
+                _categoriaSelecionada!.toLowerCase();
+        return (nomeOk || espOk) && categoriaOk;
+      }).toList();
+    });
+  }
+
+  void _selecionarCategoria(String nome) {
+    setState(() {
+      _categoriaSelecionada = _categoriaSelecionada == nome ? null : nome;
+    });
+    _filtrar();
   }
 
   @override
@@ -59,103 +88,102 @@ class _TelaHomeState extends State<TelaHome> {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            // ───── Header ─────
+            // ───── Header Gradiente (Logo + Avatar + Saudação + Busca) ─────
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.menu, color: CoresApp.onSurface),
-                    ),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        'assets/images/logo_ineed.jpeg',
-                        width: 36,
-                        height: 36,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundColor: CoresApp.surfaceContainerHigh,
-                      child: Text(
-                        nomeUsuario[0].toUpperCase(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: CoresApp.primary,
-                        ),
-                      ),
-                    ),
-                  ],
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF00288E), Color(0xFF1565C0)],
+                  ),
                 ),
-              ),
-            ),
-
-            // ───── Saudação ─────
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Olá, $nomeUsuario 👋',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
+                    // Logo + Avatar
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            'assets/images/logo_ineed.jpeg',
+                            width: 36,
+                            height: 36,
+                            fit: BoxFit.contain,
                           ),
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, '/perfil'),
+                          child: CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.white.withValues(alpha: 0.2),
+                            child: Text(
+                              nomeUsuario[0].toUpperCase(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    // Saudação
+                    Text(
+                      'Olá, $nomeUsuario',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Encontre os melhores profissionais para o que você precisa.',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: CoresApp.onSurfaceVariant,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.8),
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Barra de busca dentro do gradiente
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.12),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
                           ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: _buscaController,
+                        decoration: InputDecoration(
+                          hintText: 'Buscar serviços (ex: encanador)',
+                          prefixIcon: const Icon(Icons.search, color: CoresApp.outline),
+                          suffixIcon: _buscaController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear, color: CoresApp.outline),
+                                  onPressed: () => _buscaController.clear(),
+                                )
+                              : null,
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
-                ),
-              ),
-            ),
-
-            // ───── Barra de Busca ─────
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: CoresApp.surfaceContainerLowest,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: CoresApp.outlineVariant, width: 0.5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Buscar serviços (ex: encanador)',
-                      prefixIcon: const Icon(Icons.search, color: CoresApp.outline),
-                      suffixIcon: Container(
-                        margin: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: CoresApp.primary,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(Icons.tune, color: Colors.white, size: 20),
-                      ),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
-                    ),
-                  ),
                 ),
               ),
             ),
@@ -200,17 +228,7 @@ class _TelaHomeState extends State<TelaHome> {
                       nome: nome,
                       icone: cat['icone'] as IconData,
                       selecionado: _categoriaSelecionada == nome,
-                      aoPresionar: () {
-                        setState(() {
-                          if (_categoriaSelecionada == nome) {
-                            _categoriaSelecionada = null;
-                            _carregarPrestadores();
-                          } else {
-                            _categoriaSelecionada = nome;
-                            _carregarPrestadores(especialidade: nome);
-                          }
-                        });
-                      },
+                      aoPresionar: () => _selecionarCategoria(nome),
                     );
                   },
                 ),

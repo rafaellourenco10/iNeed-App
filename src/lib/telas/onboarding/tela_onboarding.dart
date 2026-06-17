@@ -5,7 +5,9 @@
 // Opções: Cliente ou Prestador
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../tema/cores.dart';
+import '../../servicos/auth_servico.dart';
 
 class TelaOnboarding extends StatelessWidget {
   const TelaOnboarding({super.key});
@@ -18,7 +20,14 @@ class TelaOnboarding extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 8),
+              IconButton(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back),
+                style: IconButton.styleFrom(foregroundColor: CoresApp.onSurface),
+              ),
               const Spacer(flex: 2),
 
               // ───── Logo ─────
@@ -49,10 +58,14 @@ class TelaOnboarding extends StatelessWidget {
               // ───── Card: Quero contratar ─────
               _CardOpcao(
                 icone: Icons.search,
-                titulo: 'Quero contratar um serviço',
+                titulo: 'Sou cliente',
                 subtitulo: 'Encontre os melhores profissionais para o que você precisa.',
-                aoPresionar: () {
-                  Navigator.pushNamed(context, '/cadastro-cliente');
+                aoPresionar: () async {
+                  final auth = Provider.of<AuthServico>(context, listen: false);
+                  await auth.definirComoCliente();
+                  if (context.mounted) {
+                    Navigator.pushNamedAndRemoveUntil(context, '/home', (r) => false);
+                  }
                 },
               ),
 
@@ -61,39 +74,14 @@ class TelaOnboarding extends StatelessWidget {
               // ───── Card: Quero prestar ─────
               _CardOpcao(
                 icone: Icons.work_outline,
-                titulo: 'Quero prestar serviços',
-                subtitulo: 'Cadastre suas habilidades e comece a receber propostas.',
+                titulo: 'Sou prestador de serviço',
+                subtitulo: 'Informe suas habilidades e comece a receber pedidos.',
                 aoPresionar: () {
-                  Navigator.pushNamed(context, '/cadastro-prestador');
+                  Navigator.pushNamed(context, '/completar-prestador');
                 },
               ),
 
               const Spacer(flex: 2),
-
-              // ───── Já tem conta ─────
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Já tem uma conta? ',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: CoresApp.onSurfaceVariant,
-                        ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                    child: Text(
-                      'Fazer Login',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: CoresApp.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
 
               const SizedBox(height: 32),
             ],

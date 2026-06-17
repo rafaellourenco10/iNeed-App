@@ -3,9 +3,11 @@
 // ============================================
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../tema/cores.dart';
 import '../../modelos/usuario.dart';
-import '../../widgets/botao_primario.dart';
+import '../../servicos/api_servico.dart';
+import '../../servicos/auth_servico.dart';
 
 class TelaPerfilPrestador extends StatelessWidget {
   final Usuario prestador;
@@ -236,9 +238,9 @@ class TelaPerfilPrestador extends StatelessWidget {
         ),
       ),
 
-      // ───── Botão fixo "Solicitar Orçamento" ─────
+      // ───── Botões fixos ─────
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         decoration: BoxDecoration(
           color: CoresApp.surfaceContainerLowest,
           boxShadow: [
@@ -250,16 +252,67 @@ class TelaPerfilPrestador extends StatelessWidget {
           ],
         ),
         child: SafeArea(
-          child: BotaoPrimario(
-            texto: 'Solicitar Orçamento',
-            icone: Icons.receipt_long,
-            tipo: TipoBotao.primario,
-            aoPresionar: () {
-              // TODO: Navegar para formulário de proposta
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Funcionalidade de proposta em desenvolvimento!')),
-              );
-            },
+          child: Row(
+            children: [
+              // ── Solicitar Orçamento ──
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Solicitação de orçamento enviada!')),
+                    );
+                  },
+                  icon: const Icon(Icons.receipt_long_outlined),
+                  label: const Text('Orçamento'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: CoresApp.primary,
+                    side: const BorderSide(color: CoresApp.primary),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // ── Contratar Serviço ──
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    final auth = Provider.of<AuthServico>(context, listen: false);
+                    ApiServico.contratarServico(
+                      idCliente: auth.usuarioAtual?.uid ?? '',
+                      idPrestador: prestador.uid,
+                      nomePrestador: prestador.nome,
+                      especialidade: prestador.especialidade ?? 'Serviço',
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${prestador.nome} contratado com sucesso!'),
+                        backgroundColor: CoresApp.statusConcluida,
+                      ),
+                    );
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/home',
+                      (r) => false,
+                      arguments: 1,
+                    );
+                  },
+                  icon: const Icon(Icons.handshake_outlined),
+                  label: const Text('Contratar'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: CoresApp.primary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

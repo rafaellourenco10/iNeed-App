@@ -7,20 +7,30 @@ import 'package:provider/provider.dart';
 import '../servicos/auth_servico.dart';
 import '../widgets/barra_navegacao.dart';
 import 'cliente/tela_home.dart';
+import 'cliente/tela_pedidos.dart';
+import 'prestador/tela_home_prestador.dart';
+import 'prestador/tela_busca_prestador.dart';
 import 'prestador/tela_propostas.dart';
 import 'perfil/tela_perfil.dart';
 
 class ShellNavegacao extends StatefulWidget {
   final bool isPrestador;
+  final int indiceInicial;
 
-  const ShellNavegacao({super.key, this.isPrestador = false});
+  const ShellNavegacao({super.key, this.isPrestador = false, this.indiceInicial = 0});
 
   @override
   State<ShellNavegacao> createState() => _ShellNavegacaoState();
 }
 
 class _ShellNavegacaoState extends State<ShellNavegacao> {
-  int _indiceAtual = 0;
+  late int _indiceAtual;
+
+  @override
+  void initState() {
+    super.initState();
+    _indiceAtual = widget.indiceInicial;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +39,14 @@ class _ShellNavegacaoState extends State<ShellNavegacao> {
 
     final telas = isPrestador
         ? [
-            const TelaHome(),           // Início
-            const _TelaPlaceholder(titulo: 'Busca', icone: Icons.search), // Busca
+            const TelaHomePrestador(),      // Início
+            const TelaBuscaPrestador(),    // Busca
             const TelaPropostas(),       // Serviços
             const TelaPerfil(),          // Perfil
           ]
         : [
             const TelaHome(),           // Início
-            const _TelaPlaceholder(titulo: 'Busca', icone: Icons.search), // Busca
-            const _TelaPlaceholder(titulo: 'Pedidos', icone: Icons.receipt_long), // Pedidos
+            const TelaPedidos(),        // Pedidos
             const TelaPerfil(),          // Perfil
           ];
 
@@ -57,38 +66,3 @@ class _ShellNavegacaoState extends State<ShellNavegacao> {
   }
 }
 
-/// Tela placeholder para abas ainda não implementadas
-class _TelaPlaceholder extends StatelessWidget {
-  final String titulo;
-  final IconData icone;
-
-  const _TelaPlaceholder({required this.titulo, required this.icone});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icone, size: 64, color: Colors.grey.shade300),
-            const SizedBox(height: 16),
-            Text(
-              titulo,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.grey.shade400,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Em desenvolvimento',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey.shade400,
-                  ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

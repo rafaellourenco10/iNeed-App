@@ -18,200 +18,234 @@ class TelaPerfil extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: CoresApp.surface,
-      appBar: AppBar(
-        title: const Text('Perfil'),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.settings_outlined),
-          ),
-        ],
-      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // ───── Avatar ─────
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: CoresApp.surfaceContainerHigh,
-              child: Text(
-                (usuario?.nome ?? 'U')[0].toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w700,
-                  color: CoresApp.primary,
+            // ───── Hero Header com gradiente ─────
+            Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF00288E), Color(0xFF1565C0)],
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              usuario?.nome ?? 'Usuário',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              usuario?.email ?? '',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: CoresApp.onSurfaceVariant,
-                  ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // ───── Stats ─────
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    decoration: BoxDecoration(
-                      color: CoresApp.surfaceContainerLowest,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: CoresApp.outlineVariant, width: 0.5),
-                    ),
-                    child: Column(
-                      children: [
-                        const Icon(Icons.work_outline, color: CoresApp.primary),
-                        const SizedBox(height: 8),
-                        Text(
-                          '${usuario?.totalServicos ?? 0}',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'SERVIÇOS',
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: CoresApp.onSurfaceVariant,
-                                letterSpacing: 1,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    decoration: BoxDecoration(
-                      color: CoresApp.surfaceContainerLowest,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: CoresApp.outlineVariant, width: 0.5),
-                    ),
-                    child: Column(
-                      children: [
-                        const Icon(Icons.star_outline,
-                            color: CoresApp.secondaryContainer),
-                        const SizedBox(height: 8),
-                        Text(
-                          (usuario?.avaliacao ?? 0).toStringAsFixed(1),
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'AVALIAÇÃO',
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: CoresApp.onSurfaceVariant,
-                                letterSpacing: 1,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // ───── Menu de Opções ─────
-            _buildMenuItem(context, Icons.person_outline, 'Dados Pessoais'),
-            _buildMenuItem(context, Icons.payment_outlined, 'Métodos de Pagamento'),
-            _buildMenuItem(context, Icons.location_on_outlined, 'Endereços Salvos'),
-            _buildMenuItem(context, Icons.notifications_outlined, 'Notificações'),
-            _buildMenuItem(context, Icons.shield_outlined, 'Segurança'),
-
-            const SizedBox(height: 24),
-
-            // ───── Histórico de Serviços ─────
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Histórico de Serviços',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                  child: Column(
+                    children: [
+                      // Linha superior com botão de configurações
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.settings_outlined,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    'Ver todos',
-                    style: TextStyle(color: CoresApp.primary),
+                      const SizedBox(height: 4),
+                      // Avatar
+                      CircleAvatar(
+                        radius: 44,
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          (usuario?.nome ?? 'U')[0].toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF00288E),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        usuario?.nome ?? 'Usuário',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        usuario?.email ?? '',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // Serviço exemplo 1
-            _buildServicoHistorico(
-              context,
-              icone: Icons.plumbing,
-              titulo: 'Conserto de Vazamento',
-              subtitulo: 'Hoje, 14:30 - R. das Flores, 123',
-              status: 'EM ANDAMENTO',
-              corStatus: CoresApp.statusEmAndamento,
-            ),
-            const SizedBox(height: 8),
-
-            // Serviço exemplo 2
-            _buildServicoHistorico(
-              context,
-              icone: Icons.cleaning_services,
-              titulo: 'Limpeza Residencial',
-              subtitulo: 'Ontem, 09:00 - Avaliado 5.0',
-              status: 'CONCLUÍDO',
-              corStatus: CoresApp.statusConcluida,
-            ),
-
-            const SizedBox(height: 32),
-
-            // ───── Sair ─────
-            BotaoPrimario(
-              texto: 'Sair da Conta',
-              tipo: TipoBotao.perigo,
-              icone: Icons.logout,
-              aoPresionar: () async {
-                await auth.logout();
-                if (context.mounted) {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, '/onboarding', (r) => false);
-                }
-              },
-            ),
-
-            const SizedBox(height: 24),
-
-            // ───── Logo footer ─────
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                'assets/images/logo_ineed.jpeg',
-                width: 48,
-                height: 48,
-                fit: BoxFit.contain,
               ),
             ),
 
-            const SizedBox(height: 80),
+            // ───── Conteúdo abaixo do hero ─────
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  // ───── Stats ─────
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          decoration: BoxDecoration(
+                            color: CoresApp.surfaceContainerLowest,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: CoresApp.outlineVariant, width: 0.5),
+                          ),
+                          child: Column(
+                            children: [
+                              const Icon(Icons.work_outline, color: CoresApp.primary),
+                              const SizedBox(height: 8),
+                              Text(
+                                '${usuario?.totalServicos ?? 0}',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'SERVIÇOS',
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                      color: CoresApp.onSurfaceVariant,
+                                      letterSpacing: 1,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          decoration: BoxDecoration(
+                            color: CoresApp.surfaceContainerLowest,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: CoresApp.outlineVariant, width: 0.5),
+                          ),
+                          child: Column(
+                            children: [
+                              const Icon(Icons.star_outline,
+                                  color: CoresApp.secondaryContainer),
+                              const SizedBox(height: 8),
+                              Text(
+                                (usuario?.avaliacao ?? 0).toStringAsFixed(1),
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'AVALIAÇÃO',
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                      color: CoresApp.onSurfaceVariant,
+                                      letterSpacing: 1,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // ───── Menu de Opções ─────
+                  _buildMenuItem(context, Icons.person_outline, 'Dados Pessoais'),
+                  _buildMenuItem(context, Icons.payment_outlined, 'Métodos de Pagamento'),
+                  _buildMenuItem(context, Icons.location_on_outlined, 'Endereços Salvos'),
+                  _buildMenuItem(context, Icons.notifications_outlined, 'Notificações'),
+                  _buildMenuItem(context, Icons.shield_outlined, 'Segurança'),
+
+                  const SizedBox(height: 24),
+
+                  // ───── Histórico de Serviços ─────
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Histórico de Serviços',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          'Ver todos',
+                          style: TextStyle(color: CoresApp.primary),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Serviço exemplo 1
+                  _buildServicoHistorico(
+                    context,
+                    icone: Icons.plumbing,
+                    titulo: 'Conserto de Vazamento',
+                    subtitulo: 'Hoje, 14:30 - R. das Flores, 123',
+                    status: 'EM ANDAMENTO',
+                    corStatus: CoresApp.statusEmAndamento,
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Serviço exemplo 2
+                  _buildServicoHistorico(
+                    context,
+                    icone: Icons.cleaning_services,
+                    titulo: 'Limpeza Residencial',
+                    subtitulo: 'Ontem, 09:00 - Avaliado 5.0',
+                    status: 'CONCLUÍDO',
+                    corStatus: CoresApp.statusConcluida,
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // ───── Sair ─────
+                  BotaoPrimario(
+                    texto: 'Sair da Conta',
+                    tipo: TipoBotao.perigo,
+                    icone: Icons.logout,
+                    aoPresionar: () async {
+                      await auth.logout();
+                      if (context.mounted) {
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/onboarding', (r) => false);
+                      }
+                    },
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // ───── Logo footer ─────
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      'assets/images/logo_ineed.jpeg',
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+
+                  const SizedBox(height: 80),
+                ],
+              ),
+            ),
           ],
         ),
       ),

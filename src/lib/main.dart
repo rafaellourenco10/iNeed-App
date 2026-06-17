@@ -12,10 +12,12 @@ import 'modelos/usuario.dart';
 import 'modelos/proposta.dart';
 
 import 'telas/onboarding/tela_onboarding.dart';
+import 'telas/onboarding/tela_explicacao.dart';
 import 'telas/autenticacao/tela_login.dart';
-import 'telas/autenticacao/tela_cadastro_cliente.dart';
-import 'telas/autenticacao/tela_cadastro_prestador.dart';
+import 'telas/autenticacao/tela_cadastro.dart';
+import 'telas/autenticacao/tela_completar_prestador.dart';
 import 'telas/shell_navegacao.dart';
+import 'telas/perfil/tela_perfil.dart';
 import 'telas/cliente/tela_perfil_prestador.dart';
 import 'telas/cliente/tela_detalhes_servico.dart';
 import 'telas/cliente/tela_avaliar_servico.dart';
@@ -64,21 +66,29 @@ class INeedApp extends StatelessWidget {
             // ───── Rota inicial ─────
             initialRoute: auth.estaLogado
                 ? (auth.usuarioAtual!.isPrestador ? '/home-prestador' : '/home')
-                : '/onboarding',
+                : auth.aguardandoPapel
+                    ? '/onboarding'
+                    : '/login',
 
             // ───── Rotas nomeadas ─────
             routes: {
-              '/onboarding': (_) => const TelaOnboarding(),
               '/login': (_) => const TelaLogin(),
-              '/cadastro-cliente': (_) => const TelaCadastroCliente(),
-              '/cadastro-prestador': (_) => const TelaCadastroPrestador(),
-              '/home': (_) => const ShellNavegacao(isPrestador: false),
+              '/explicacao': (_) => const TelaExplicacao(),
+              '/onboarding': (_) => const TelaOnboarding(),
+              '/cadastro': (_) => const TelaCadastro(),
+              '/completar-prestador': (_) => const TelaCompletarPrestador(),
               '/home-prestador': (_) => const ShellNavegacao(isPrestador: true),
+              '/perfil': (_) => const TelaPerfil(),
             },
 
             // ───── Rotas com argumentos ─────
             onGenerateRoute: (settings) {
               switch (settings.name) {
+                case '/home':
+                  final indice = (settings.arguments as int?) ?? 0;
+                  return MaterialPageRoute(
+                    builder: (_) => ShellNavegacao(isPrestador: false, indiceInicial: indice),
+                  );
                 case '/perfil-prestador':
                   final prestador = settings.arguments as Usuario;
                   return MaterialPageRoute(

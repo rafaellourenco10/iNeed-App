@@ -25,9 +25,14 @@ class CardPrestador extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+            color: const Color(0xFF00288E).withValues(alpha: 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -39,16 +44,28 @@ class CardPrestador extends StatelessWidget {
             // ───── Header: Avatar + Info + Favorito ─────
             Row(
               children: [
-                // Avatar
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: CoresApp.surfaceContainerHigh,
-                  child: Text(
-                    prestador.nome.isNotEmpty ? prestador.nome[0].toUpperCase() : 'P',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: CoresApp.primary,
+                // Avatar com gradiente
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF00288E), Color(0xFF1565C0)],
+                    ),
+                  ),
+                  child: CircleAvatar(
+                    radius: 26,
+                    backgroundColor: Colors.transparent,
+                    child: Text(
+                      prestador.nome.isNotEmpty ? prestador.nome[0].toUpperCase() : 'P',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -58,25 +75,43 @@ class CardPrestador extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        prestador.nome,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              prestador.nome,
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        prestador.especialidade ?? 'Profissional',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: CoresApp.primary,
-                              fontWeight: FontWeight.w500,
+                          ),
+                          if (prestador.especialidade != null) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF00288E).withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                prestador.especialidade!,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF00288E),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
+                          ],
+                        ],
                       ),
                       const SizedBox(height: 4),
                       // Avaliação
                       Row(
                         children: [
-                          const Icon(Icons.star_outline, size: 16, color: CoresApp.secondaryContainer),
+                          const Icon(Icons.star, size: 16, color: Color(0xFFFACC15)),
                           const SizedBox(width: 4),
                           Text(
                             (prestador.avaliacao ?? 0).toStringAsFixed(1),
@@ -103,17 +138,6 @@ class CardPrestador extends StatelessWidget {
             ),
 
             const SizedBox(height: 12),
-
-            // ───── Tags ─────
-            if (prestador.especialidade != null)
-              Wrap(
-                spacing: 8,
-                children: [
-                  _buildTag(context, prestador.especialidade!),
-                ],
-              ),
-
-            const SizedBox(height: 12),
             const Divider(),
             const SizedBox(height: 8),
 
@@ -136,41 +160,36 @@ class CardPrestador extends StatelessWidget {
                     ),
                   ],
                 ),
-                ElevatedButton(
-                  onPressed: aoVerPerfil,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: CoresApp.secondaryContainer,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(120, 44), // Sobrescreve o infinity do tema
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF00288E), Color(0xFF1565C0)],
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    elevation: 0,
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text(
-                    'Ver Perfil',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                  child: ElevatedButton(
+                    onPressed: aoVerPerfil,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(120, 44),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      'Ver Perfil',
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
               ],
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTag(BuildContext context, String texto) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: CoresApp.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        texto,
-        style: Theme.of(context).textTheme.labelMedium,
       ),
     );
   }
