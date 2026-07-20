@@ -117,32 +117,54 @@ class _TelaExplicacaoState extends State<TelaExplicacao> {
           SafeArea(
             child: Column(
               children: [
-                // Pular
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 8, 16, 0),
-                    child: TextButton(
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/onboarding'),
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.black.withValues(alpha: 0.28),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
+                // Voltar + Pular
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Voltar
+                      Material(
+                        color: Colors.black.withValues(alpha: 0.28),
+                        shape: const CircleBorder(),
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () =>
+                              Navigator.pushReplacementNamed(context, '/login'),
+                          child: const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 22,
+                            ),
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        'Pular',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
+
+                      // Pular
+                      TextButton(
+                        onPressed: () =>
+                            Navigator.pushNamed(context, '/onboarding'),
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.black.withValues(alpha: 0.28),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                        ),
+                        child: const Text(
+                          'Pular',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
 
@@ -290,9 +312,14 @@ class _SlidePage extends StatelessWidget {
                     color: Colors.white,
                     shadows: [
                       Shadow(
-                        color: Colors.black.withValues(alpha: 0.4),
-                        blurRadius: 16,
-                        offset: const Offset(0, 4),
+                        color: Colors.black.withValues(alpha: 0.55),
+                        blurRadius: 24,
+                        offset: const Offset(0, 5),
+                      ),
+                      Shadow(
+                        color: Colors.black.withValues(alpha: 0.65),
+                        blurRadius: 6,
+                        offset: const Offset(0, 1),
                       ),
                     ],
                   ),
@@ -304,13 +331,18 @@ class _SlidePage extends StatelessWidget {
                   slide.descricao,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.92),
+                    color: Colors.white.withValues(alpha: 0.95),
                     height: 1.6,
                     shadows: [
                       Shadow(
-                        color: Colors.black.withValues(alpha: 0.35),
-                        blurRadius: 10,
-                        offset: const Offset(0, 2),
+                        color: Colors.black.withValues(alpha: 0.5),
+                        blurRadius: 16,
+                        offset: const Offset(0, 3),
+                      ),
+                      Shadow(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
                       ),
                     ],
                   ),
