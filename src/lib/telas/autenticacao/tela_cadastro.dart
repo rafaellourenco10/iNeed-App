@@ -18,7 +18,9 @@ class _TelaCadastroState extends State<TelaCadastro> {
   final _cpfCtrl = TextEditingController();
   final _telefoneCtrl = TextEditingController();
   final _cepCtrl = TextEditingController();
-  final _enderecoCtrl = TextEditingController();
+  final _ruaCtrl = TextEditingController();
+  final _numeroCtrl = TextEditingController();
+  final _complementoCtrl = TextEditingController();
   final _cidadeCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _senhaCtrl = TextEditingController();
@@ -27,21 +29,48 @@ class _TelaCadastroState extends State<TelaCadastro> {
   bool _mostrarSenha = false;
   bool _mostrarConfirmar = false;
 
-  final _cpfMask = MaskTextInputFormatter(mask: '###.###.###-##', filter: {'#': RegExp(r'\d')});
-  final _telMask = MaskTextInputFormatter(mask: '(##) #####-####', filter: {'#': RegExp(r'\d')});
-  final _cepMask = MaskTextInputFormatter(mask: '#####-###', filter: {'#': RegExp(r'\d')});
+  final _cpfMask = MaskTextInputFormatter(
+    mask: '###.###.###-##',
+    filter: {'#': RegExp(r'\d')},
+  );
+  final _telMask = MaskTextInputFormatter(
+    mask: '(##) #####-####',
+    filter: {'#': RegExp(r'\d')},
+  );
+  final _cepMask = MaskTextInputFormatter(
+    mask: '#####-###',
+    filter: {'#': RegExp(r'\d')},
+  );
 
   @override
   void dispose() {
     for (final c in [
-      _nomeCtrl, _cpfCtrl, _telefoneCtrl, _cepCtrl,
-      _enderecoCtrl, _cidadeCtrl, _emailCtrl, _senhaCtrl, _confirmarSenhaCtrl,
-    ]) { c.dispose(); }
+      _nomeCtrl,
+      _cpfCtrl,
+      _telefoneCtrl,
+      _cepCtrl,
+      _ruaCtrl,
+      _numeroCtrl,
+      _complementoCtrl,
+      _cidadeCtrl,
+      _emailCtrl,
+      _senhaCtrl,
+      _confirmarSenhaCtrl,
+    ]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
   Future<void> _cadastrar() async {
     if (!_formKey.currentState!.validate()) return;
+
+    final rua = _ruaCtrl.text.trim();
+    final numero = _numeroCtrl.text.trim();
+    final complemento = _complementoCtrl.text.trim();
+    final endereco = complemento.isEmpty
+        ? '$rua, $numero'
+        : '$rua, $numero - $complemento';
 
     final auth = Provider.of<AuthServico>(context, listen: false);
     final sucesso = await auth.registrar(
@@ -51,7 +80,7 @@ class _TelaCadastroState extends State<TelaCadastro> {
       cpf: _cpfCtrl.text,
       telefone: _telefoneCtrl.text,
       cep: _cepCtrl.text,
-      endereco: _enderecoCtrl.text.trim(),
+      endereco: endereco,
       cidade: _cidadeCtrl.text.trim(),
     );
 
@@ -97,9 +126,9 @@ class _TelaCadastroState extends State<TelaCadastro> {
               Text(
                 'Dados pessoais',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: CoresApp.primary,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: CoresApp.primary,
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -108,7 +137,9 @@ class _TelaCadastroState extends State<TelaCadastro> {
                 ctrl: _nomeCtrl,
                 icone: Icons.person_outline,
                 tipo: TextInputType.name,
-                validador: (v) => (v == null || v.trim().length < 3) ? 'Informe o nome completo' : null,
+                validador: (v) => (v == null || v.trim().length < 3)
+                    ? 'Informe o nome completo'
+                    : null,
               ),
               const SizedBox(height: 14),
 
@@ -118,7 +149,8 @@ class _TelaCadastroState extends State<TelaCadastro> {
                 icone: Icons.badge_outlined,
                 tipo: TextInputType.number,
                 mascara: _cpfMask,
-                validador: (v) => (v == null || v.length < 14) ? 'CPF inválido' : null,
+                validador: (v) =>
+                    (v == null || v.length < 14) ? 'CPF inválido' : null,
               ),
               const SizedBox(height: 14),
 
@@ -128,16 +160,17 @@ class _TelaCadastroState extends State<TelaCadastro> {
                 icone: Icons.phone_outlined,
                 tipo: TextInputType.phone,
                 mascara: _telMask,
-                validador: (v) => (v == null || v.length < 15) ? 'Telefone inválido' : null,
+                validador: (v) =>
+                    (v == null || v.length < 15) ? 'Telefone inválido' : null,
               ),
               const SizedBox(height: 24),
 
               Text(
                 'Endereço',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: CoresApp.primary,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: CoresApp.primary,
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -147,15 +180,45 @@ class _TelaCadastroState extends State<TelaCadastro> {
                 icone: Icons.location_on_outlined,
                 tipo: TextInputType.number,
                 mascara: _cepMask,
-                validador: (v) => (v == null || v.length < 9) ? 'CEP inválido' : null,
+                validador: (v) =>
+                    (v == null || v.length < 9) ? 'CEP inválido' : null,
               ),
               const SizedBox(height: 14),
 
               _Campo(
-                label: 'Endereço (rua, número)',
-                ctrl: _enderecoCtrl,
+                label: 'Rua',
+                ctrl: _ruaCtrl,
                 icone: Icons.home_outlined,
-                validador: (v) => (v == null || v.trim().isEmpty) ? 'Informe o endereço' : null,
+                validador: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Informe a rua' : null,
+              ),
+              const SizedBox(height: 14),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: _Campo(
+                      label: 'Número',
+                      ctrl: _numeroCtrl,
+                      icone: Icons.onetwothree,
+                      tipo: TextInputType.number,
+                      validador: (v) => (v == null || v.trim().isEmpty)
+                          ? 'Obrigatório'
+                          : null,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    flex: 3,
+                    child: _Campo(
+                      label: 'Complemento',
+                      ctrl: _complementoCtrl,
+                      icone: Icons.apartment_outlined,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 14),
 
@@ -163,16 +226,17 @@ class _TelaCadastroState extends State<TelaCadastro> {
                 label: 'Cidade',
                 ctrl: _cidadeCtrl,
                 icone: Icons.location_city_outlined,
-                validador: (v) => (v == null || v.trim().isEmpty) ? 'Informe a cidade' : null,
+                validador: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Informe a cidade' : null,
               ),
               const SizedBox(height: 24),
 
               Text(
                 'Acesso',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: CoresApp.primary,
-                    ),
+                  fontWeight: FontWeight.w700,
+                  color: CoresApp.primary,
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -193,8 +257,10 @@ class _TelaCadastroState extends State<TelaCadastro> {
                 label: 'Senha',
                 ctrl: _senhaCtrl,
                 mostrar: _mostrarSenha,
-                toggleMostrar: () => setState(() => _mostrarSenha = !_mostrarSenha),
-                validador: (v) => (v == null || v.length < 6) ? 'Mínimo 6 caracteres' : null,
+                toggleMostrar: () =>
+                    setState(() => _mostrarSenha = !_mostrarSenha),
+                validador: (v) =>
+                    (v == null || v.length < 6) ? 'Mínimo 6 caracteres' : null,
               ),
               const SizedBox(height: 14),
 
@@ -202,8 +268,10 @@ class _TelaCadastroState extends State<TelaCadastro> {
                 label: 'Confirmar senha',
                 ctrl: _confirmarSenhaCtrl,
                 mostrar: _mostrarConfirmar,
-                toggleMostrar: () => setState(() => _mostrarConfirmar = !_mostrarConfirmar),
-                validador: (v) => v != _senhaCtrl.text ? 'Senhas não coincidem' : null,
+                toggleMostrar: () =>
+                    setState(() => _mostrarConfirmar = !_mostrarConfirmar),
+                validador: (v) =>
+                    v != _senhaCtrl.text ? 'Senhas não coincidem' : null,
               ),
               const SizedBox(height: 32),
 
@@ -246,19 +314,18 @@ class _TelaCadastroState extends State<TelaCadastro> {
                 children: [
                   Text(
                     'Já tem conta? ',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: CoresApp.onSurfaceVariant),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: CoresApp.onSurfaceVariant,
+                    ),
                   ),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Text(
                       'Fazer login',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: CoresApp.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: CoresApp.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
@@ -306,11 +373,17 @@ class _Campo extends StatelessWidget {
         fillColor: CoresApp.surfaceContainerLowest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: CoresApp.outlineVariant, width: 0.5),
+          borderSide: const BorderSide(
+            color: CoresApp.outlineVariant,
+            width: 0.5,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: CoresApp.outlineVariant, width: 0.5),
+          borderSide: const BorderSide(
+            color: CoresApp.outlineVariant,
+            width: 0.5,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -320,7 +393,10 @@ class _Campo extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: CoresApp.error, width: 1),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
     );
   }
@@ -362,11 +438,17 @@ class _CampoSenha extends StatelessWidget {
         fillColor: CoresApp.surfaceContainerLowest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: CoresApp.outlineVariant, width: 0.5),
+          borderSide: const BorderSide(
+            color: CoresApp.outlineVariant,
+            width: 0.5,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: CoresApp.outlineVariant, width: 0.5),
+          borderSide: const BorderSide(
+            color: CoresApp.outlineVariant,
+            width: 0.5,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -376,7 +458,10 @@ class _CampoSenha extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: CoresApp.error, width: 1),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
     );
   }
