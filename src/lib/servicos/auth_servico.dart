@@ -13,9 +13,6 @@ class AuthServico extends ChangeNotifier {
   bool _carregando = false;
   String? _erro;
 
-  // Armazena usuários registrados em memória (mock — só usado por registrar())
-  static final Map<String, Map<String, dynamic>> _cadastros = {};
-
   Usuario? get usuarioAtual => _usuarioAtual;
   String? get token => _token;
   bool get carregando => _carregando;
@@ -41,17 +38,16 @@ class AuthServico extends ChangeNotifier {
         nome != null &&
         tipo.isNotEmpty) {
       _token = prefs.getString('usuario_token');
-      final dados = _cadastros[email.toLowerCase()];
       _usuarioAtual = Usuario(
         uid: uid,
         nome: nome,
         email: email,
         tipo: tipo,
-        telefone: dados?['telefone'],
-        cpf: dados?['cpf'],
-        cep: dados?['cep'],
-        cidade: dados?['cidade'],
-        endereco: dados?['endereco'],
+        telefone: prefs.getString('usuario_telefone'),
+        cpf: prefs.getString('usuario_cpf'),
+        cep: prefs.getString('usuario_cep'),
+        cidade: prefs.getString('usuario_cidade'),
+        endereco: prefs.getString('usuario_endereco'),
         especialidade: prefs.getString('usuario_especialidade'),
         valorHora: prefs.getDouble('usuario_valor_hora'),
         biografia: prefs.getString('usuario_biografia'),
@@ -60,7 +56,7 @@ class AuthServico extends ChangeNotifier {
     }
   }
 
-  /// Cadastro unificado — salva dados básicos sem logar
+  /// Cadastro real — cria a conta no backend/Firebase (sempre como cliente)
   Future<bool> registrar({
     required String nome,
     required String email,
@@ -75,28 +71,30 @@ class AuthServico extends ChangeNotifier {
     _erro = null;
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 800));
+    try {
+      final resposta = await ApiServico.cadastrarCliente(
+        nome: nome.trim(),
+        email: email.trim(),
+        senha: senha,
+        telefone: telefone,
+        cpf: cpf,
+        cep: cep,
+        endereco: endereco,
+        cidade: cidade,
+      );
 
-    final emailKey = email.trim().toLowerCase();
-
-    if (_cadastros.containsKey(emailKey)) {
-      _erro = 'E-mail já cadastrado.';
+      if (resposta.containsKey('erro')) {
+        _erro = resposta['mensagem'] as String? ?? 'Erro ao criar conta.';
+        _carregando = false;
+        notifyListeners();
+        return false;
+      }
+    } catch (_) {
+      _erro = 'Não foi possível conectar ao servidor.';
       _carregando = false;
       notifyListeners();
       return false;
     }
-
-    _cadastros[emailKey] = {
-      'uid': 'uid_${DateTime.now().millisecondsSinceEpoch}',
-      'nome': nome.trim(),
-      'email': email.trim(),
-      'senha': senha,
-      'cpf': cpf,
-      'telefone': telefone,
-      'cep': cep,
-      'endereco': endereco,
-      'cidade': cidade,
-    };
 
     _carregando = false;
     notifyListeners();
@@ -157,29 +155,51 @@ class AuthServico extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Confirma papel de prestador com info de serviço e persiste a sessão
-  Future<void> definirComoPrestador({
+  /// Adiciona informações de prestador à conta já existente (via backend)
+  Future<bool> definirComoPrestador({
     required String especialidade,
     required double valorHora,
     String? biografia,
   }) async {
-    if (_usuarioAtual == null) return;
-    _usuarioAtual = Usuario(
-      uid: _usuarioAtual!.uid,
-      nome: _usuarioAtual!.nome,
-      email: _usuarioAtual!.email,
-      tipo: 'prestador',
-      telefone: _usuarioAtual!.telefone,
-      cpf: _usuarioAtual!.cpf,
-      cep: _usuarioAtual!.cep,
-      cidade: _usuarioAtual!.cidade,
-      endereco: _usuarioAtual!.endereco,
-      especialidade: especialidade,
-      valorHora: valorHora,
-      biografia: biografia,
-    );
-    await _salvarSessao();
+    if (_usuarioAtual == null || _token == null) {
+      _erro = 'Sessão expirada. Faça login novamente.';
+      notifyListeners();
+      return false;
+    }
+
+    _carregando = true;
+    _erro = null;
     notifyListeners();
+
+    try {
+      final resposta = await ApiServico.tornarPrestador(
+        token: _token!,
+        especialidade: especialidade,
+        valorHora: valorHora,
+        biografia: biografia,
+      );
+
+      if (resposta.containsKey('erro')) {
+        _erro = resposta['mensagem'] as String? ?? 'Erro ao atualizar perfil.';
+        _carregando = false;
+        notifyListeners();
+        return false;
+      }
+
+      _usuarioAtual = Usuario.fromJson(
+        resposta['usuario'] as Map<String, dynamic>,
+      );
+      await _salvarSessao();
+    } catch (_) {
+      _erro = 'Não foi possível conectar ao servidor.';
+      _carregando = false;
+      notifyListeners();
+      return false;
+    }
+
+    _carregando = false;
+    notifyListeners();
+    return true;
   }
 
   /// Logout
@@ -200,6 +220,21 @@ class AuthServico extends ChangeNotifier {
     await prefs.setString('usuario_nome', _usuarioAtual!.nome);
     if (_token != null) {
       await prefs.setString('usuario_token', _token!);
+    }
+    if (_usuarioAtual!.telefone != null) {
+      await prefs.setString('usuario_telefone', _usuarioAtual!.telefone!);
+    }
+    if (_usuarioAtual!.cpf != null) {
+      await prefs.setString('usuario_cpf', _usuarioAtual!.cpf!);
+    }
+    if (_usuarioAtual!.cep != null) {
+      await prefs.setString('usuario_cep', _usuarioAtual!.cep!);
+    }
+    if (_usuarioAtual!.cidade != null) {
+      await prefs.setString('usuario_cidade', _usuarioAtual!.cidade!);
+    }
+    if (_usuarioAtual!.endereco != null) {
+      await prefs.setString('usuario_endereco', _usuarioAtual!.endereco!);
     }
     if (_usuarioAtual!.especialidade != null) {
       await prefs.setString(

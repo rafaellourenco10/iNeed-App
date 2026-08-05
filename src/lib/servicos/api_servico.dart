@@ -28,7 +28,10 @@ class ApiServico {
     required String email,
     required String senha,
     String? telefone,
-    String? localizacao,
+    String? cpf,
+    String? cep,
+    String? endereco,
+    String? cidade,
   }) async {
     final resposta = await http.post(
       Uri.parse('$_urlBase/auth/cadastro-cliente'),
@@ -38,7 +41,29 @@ class ApiServico {
         'email': email,
         'senha': senha,
         'telefone': telefone,
-        'localizacao': localizacao,
+        'cpf': cpf,
+        'cep': cep,
+        'endereco': endereco,
+        'cidade': cidade,
+      }),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
+  /// Adiciona informações de prestador a uma conta já cadastrada (requer token)
+  static Future<Map<String, dynamic>> tornarPrestador({
+    required String token,
+    required String especialidade,
+    required double valorHora,
+    String? biografia,
+  }) async {
+    final resposta = await http.patch(
+      Uri.parse('$_urlBase/auth/tornar-prestador'),
+      headers: _headers(token: token),
+      body: jsonEncode({
+        'especialidade': especialidade,
+        'valorHora': valorHora,
+        'biografia': biografia,
       }),
     );
     return jsonDecode(resposta.body) as Map<String, dynamic>;

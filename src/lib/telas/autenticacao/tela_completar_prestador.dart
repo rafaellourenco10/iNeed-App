@@ -45,14 +45,28 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
     if (!_formKey.currentState!.validate()) return;
 
     final auth = Provider.of<AuthServico>(context, listen: false);
-    await auth.definirComoPrestador(
+    final sucesso = await auth.definirComoPrestador(
       especialidade: _especialidade!,
       valorHora: double.tryParse(_valorCtrl.text.replaceAll(',', '.')) ?? 0.0,
       biografia: _bioCtrl.text.trim().isEmpty ? null : _bioCtrl.text.trim(),
     );
 
     if (!mounted) return;
-    Navigator.pushNamedAndRemoveUntil(context, '/home-prestador', (r) => false);
+
+    if (sucesso) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/home-prestador',
+        (r) => false,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(auth.erro ?? 'Erro ao criar perfil de prestador.'),
+          backgroundColor: CoresApp.error,
+        ),
+      );
+    }
   }
 
   @override
@@ -85,16 +99,16 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                 Text(
                   'Quase lá, $nome!',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Conte aos clientes o que você faz para começar a receber pedidos.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: CoresApp.onSurfaceVariant,
-                        height: 1.5,
-                      ),
+                    color: CoresApp.onSurfaceVariant,
+                    height: 1.5,
+                  ),
                 ),
 
                 const SizedBox(height: 32),
@@ -103,15 +117,15 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                 Text(
                   'Qual é a sua especialidade?',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Selecione uma opção',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: CoresApp.onSurfaceVariant,
-                      ),
+                    color: CoresApp.onSurfaceVariant,
+                  ),
                 ),
                 const SizedBox(height: 16),
 
@@ -136,7 +150,9 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                               : CoresApp.surfaceContainerLowest,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: sel ? CoresApp.primary : CoresApp.outlineVariant,
+                            color: sel
+                                ? CoresApp.primary
+                                : CoresApp.outlineVariant,
                             width: sel ? 2 : 0.5,
                           ),
                         ),
@@ -145,7 +161,9 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                           children: [
                             Icon(
                               icone,
-                              color: sel ? CoresApp.primary : CoresApp.onSurfaceVariant,
+                              color: sel
+                                  ? CoresApp.primary
+                                  : CoresApp.onSurfaceVariant,
                               size: 26,
                             ),
                             const SizedBox(height: 6),
@@ -154,8 +172,12 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 11,
-                                fontWeight: sel ? FontWeight.w700 : FontWeight.w400,
-                                color: sel ? CoresApp.primary : CoresApp.onSurface,
+                                fontWeight: sel
+                                    ? FontWeight.w700
+                                    : FontWeight.w400,
+                                color: sel
+                                    ? CoresApp.primary
+                                    : CoresApp.onSurface,
                               ),
                             ),
                           ],
@@ -171,15 +193,18 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                 Text(
                   'Valor cobrado por hora (R\$)',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _valorCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Informe o valor por hora';
+                    if (v == null || v.isEmpty)
+                      return 'Informe o valor por hora';
                     final n = double.tryParse(v.replaceAll(',', '.'));
                     if (n == null || n <= 0) return 'Valor inválido';
                     return null;
@@ -195,21 +220,36 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                     fillColor: CoresApp.surfaceContainerLowest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: CoresApp.outlineVariant, width: 0.5),
+                      borderSide: const BorderSide(
+                        color: CoresApp.outlineVariant,
+                        width: 0.5,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: CoresApp.outlineVariant, width: 0.5),
+                      borderSide: const BorderSide(
+                        color: CoresApp.outlineVariant,
+                        width: 0.5,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: CoresApp.primary, width: 1.5),
+                      borderSide: const BorderSide(
+                        color: CoresApp.primary,
+                        width: 1.5,
+                      ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: CoresApp.error, width: 1),
+                      borderSide: const BorderSide(
+                        color: CoresApp.error,
+                        width: 1,
+                      ),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
                 ),
 
@@ -219,15 +259,15 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                 Text(
                   'Apresentação (opcional)',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Fale sobre sua experiência e diferenciais.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: CoresApp.onSurfaceVariant,
-                      ),
+                    color: CoresApp.onSurfaceVariant,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
@@ -235,20 +275,30 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                   maxLines: 4,
                   maxLength: 300,
                   decoration: InputDecoration(
-                    hintText: 'Ex: Trabalho há 8 anos com instalações elétricas residenciais...',
+                    hintText:
+                        'Ex: Trabalho há 8 anos com instalações elétricas residenciais...',
                     filled: true,
                     fillColor: CoresApp.surfaceContainerLowest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: CoresApp.outlineVariant, width: 0.5),
+                      borderSide: const BorderSide(
+                        color: CoresApp.outlineVariant,
+                        width: 0.5,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: CoresApp.outlineVariant, width: 0.5),
+                      borderSide: const BorderSide(
+                        color: CoresApp.outlineVariant,
+                        width: 0.5,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: CoresApp.primary, width: 1.5),
+                      borderSide: const BorderSide(
+                        color: CoresApp.primary,
+                        width: 1.5,
+                      ),
                     ),
                     contentPadding: const EdgeInsets.all(16),
                   ),
