@@ -5,16 +5,19 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../modelos/usuario.dart';
+import 'api_servico.dart';
 
 class AuthServico extends ChangeNotifier {
   Usuario? _usuarioAtual;
+  String? _token;
   bool _carregando = false;
   String? _erro;
 
-  // Armazena usuários registrados em memória (mock)
+  // Armazena usuários registrados em memória (mock — só usado por registrar())
   static final Map<String, Map<String, dynamic>> _cadastros = {};
 
   Usuario? get usuarioAtual => _usuarioAtual;
+  String? get token => _token;
   bool get carregando => _carregando;
   String? get erro => _erro;
 
@@ -32,7 +35,12 @@ class AuthServico extends ChangeNotifier {
     final uid = prefs.getString('usuario_uid');
     final nome = prefs.getString('usuario_nome');
 
-    if (email != null && tipo != null && uid != null && nome != null && tipo.isNotEmpty) {
+    if (email != null &&
+        tipo != null &&
+        uid != null &&
+        nome != null &&
+        tipo.isNotEmpty) {
+      _token = prefs.getString('usuario_token');
       final dados = _cadastros[email.toLowerCase()];
       _usuarioAtual = Usuario(
         uid: uid,
@@ -95,39 +103,35 @@ class AuthServico extends ChangeNotifier {
     return true;
   }
 
-  /// Login — autentica mas não define papel (vai para onboarding)
+  /// Login — valida credenciais de verdade contra o backend/Firebase Auth
   Future<bool> login({String email = '', String senha = ''}) async {
     _carregando = true;
     _erro = null;
     notifyListeners();
 
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    final emailUsado = email.trim().isEmpty ? 'usuario@ineed.com' : email.trim();
-    final emailKey = emailUsado.toLowerCase();
-    final dados = _cadastros[emailKey];
-
-    if (dados != null) {
-      // Usuário cadastrado — usa os dados reais
-      _usuarioAtual = Usuario(
-        uid: dados['uid'] as String,
-        nome: dados['nome'] as String,
-        email: emailUsado,
-        tipo: '', // papel será escolhido no onboarding
-        telefone: dados['telefone'] as String?,
-        cpf: dados['cpf'] as String?,
-        cep: dados['cep'] as String?,
-        cidade: dados['cidade'] as String?,
-        endereco: dados['endereco'] as String?,
+    try {
+      final resposta = await ApiServico.login(
+        email: email.trim(),
+        senha: senha,
       );
-    } else {
-      // Mock de fallback para testes sem cadastro prévio
-      _usuarioAtual = Usuario(
-        uid: 'mock_uid_${DateTime.now().millisecondsSinceEpoch}',
-        nome: emailUsado.contains('prestador') ? 'Prestador Teste' : 'Cliente Teste',
-        email: emailUsado,
-        tipo: '', // papel será escolhido no onboarding
+
+      if (resposta.containsKey('erro')) {
+        _erro = resposta['mensagem'] as String? ?? 'Erro ao fazer login.';
+        _carregando = false;
+        notifyListeners();
+        return false;
+      }
+
+      _usuarioAtual = Usuario.fromJson(
+        resposta['usuario'] as Map<String, dynamic>,
       );
+      _token = resposta['token'] as String?;
+      await _salvarSessao();
+    } catch (_) {
+      _erro = 'Não foi possível conectar ao servidor.';
+      _carregando = false;
+      notifyListeners();
+      return false;
     }
 
     _carregando = false;
@@ -181,6 +185,7 @@ class AuthServico extends ChangeNotifier {
   /// Logout
   Future<void> logout() async {
     _usuarioAtual = null;
+    _token = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     notifyListeners();
@@ -193,8 +198,14 @@ class AuthServico extends ChangeNotifier {
     await prefs.setString('usuario_tipo', _usuarioAtual!.tipo);
     await prefs.setString('usuario_uid', _usuarioAtual!.uid);
     await prefs.setString('usuario_nome', _usuarioAtual!.nome);
+    if (_token != null) {
+      await prefs.setString('usuario_token', _token!);
+    }
     if (_usuarioAtual!.especialidade != null) {
-      await prefs.setString('usuario_especialidade', _usuarioAtual!.especialidade!);
+      await prefs.setString(
+        'usuario_especialidade',
+        _usuarioAtual!.especialidade!,
+      );
     }
     if (_usuarioAtual!.valorHora != null) {
       await prefs.setDouble('usuario_valor_hora', _usuarioAtual!.valorHora!);

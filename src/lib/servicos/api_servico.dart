@@ -8,15 +8,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiServico {
-  // URL base da API — apontar para o backend local ou remoto
-  // Android Emulator usa 10.0.2.2 para acessar localhost da máquina host
-  static const String _urlBase = 'http://10.0.2.2:3000/api';
+  // URL base da API — backend publicado no Render
+  static const String _urlBase = 'https://ineed-app-9lzp.onrender.com/api';
 
   // Headers padrão
   static Map<String, String> _headers({String? token}) {
-    final headers = {
-      'Content-Type': 'application/json',
-    };
+    final headers = {'Content-Type': 'application/json'};
     if (token != null) {
       headers['Authorization'] = 'Bearer $token';
     }
@@ -73,14 +70,15 @@ class ApiServico {
     return jsonDecode(resposta.body) as Map<String, dynamic>;
   }
 
-  /// Login — buscar dados do usuário pelo email
+  /// Login — valida email + senha no backend e retorna token + dados do usuário
   static Future<Map<String, dynamic>> login({
     required String email,
+    required String senha,
   }) async {
     final resposta = await http.post(
       Uri.parse('$_urlBase/auth/login'),
       headers: _headers(),
-      body: jsonEncode({'email': email}),
+      body: jsonEncode({'email': email, 'senha': senha}),
     );
     return jsonDecode(resposta.body) as Map<String, dynamic>;
   }
@@ -101,7 +99,8 @@ class ApiServico {
         'nome': 'João Silva',
         'email': 'joao@email.com',
         'especialidade': 'Eletricista',
-        'biografia': 'Mais de 10 anos de experiência com instalações elétricas.',
+        'biografia':
+            'Mais de 10 anos de experiência com instalações elétricas.',
         'avaliacao': 4.8,
         'totalServicos': 120,
         'valorHora': 80.0,
@@ -141,9 +140,13 @@ class ApiServico {
     // Filtro mockado
     var filtrados = todosPrestadores;
     if (especialidade != null && especialidade.isNotEmpty) {
-      filtrados = filtrados.where((p) => 
-        (p['especialidade'] as String).toLowerCase() == especialidade.toLowerCase()
-      ).toList();
+      filtrados = filtrados
+          .where(
+            (p) =>
+                (p['especialidade'] as String).toLowerCase() ==
+                especialidade.toLowerCase(),
+          )
+          .toList();
     }
 
     return {
@@ -204,15 +207,20 @@ class ApiServico {
         'idPrestador': idPrestador,
         'idCliente': 'cliente1',
         'titulo': 'Conserto de Tomada 220v',
-        'descricao': 'Preciso de alguém para consertar uma tomada derretida na cozinha.',
+        'descricao':
+            'Preciso de alguém para consertar uma tomada derretida na cozinha.',
         'valor': 150.0,
         'status': 'pendente',
         'data': '15/06/2026',
         'horario': '14:00',
         'endereco': 'Rua das Flores, 123 - Centro',
         'nomePrestador': 'Você',
-        'criadoEm': DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
-        'atualizadoEm': DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
+        'criadoEm': DateTime.now()
+            .subtract(const Duration(hours: 2))
+            .toIso8601String(),
+        'atualizadoEm': DateTime.now()
+            .subtract(const Duration(hours: 2))
+            .toIso8601String(),
       },
       {
         'id': 'prop2',
@@ -226,8 +234,12 @@ class ApiServico {
         'horario': '09:00',
         'endereco': 'Av. Paulista, 1500 - Apto 42',
         'nomePrestador': 'Você',
-        'criadoEm': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
-        'atualizadoEm': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+        'criadoEm': DateTime.now()
+            .subtract(const Duration(days: 1))
+            .toIso8601String(),
+        'atualizadoEm': DateTime.now()
+            .subtract(const Duration(days: 1))
+            .toIso8601String(),
       },
       {
         'id': 'prop3',
@@ -241,8 +253,12 @@ class ApiServico {
         'horario': '08:00',
         'endereco': 'Rua Augusta, 500',
         'nomePrestador': 'Você',
-        'criadoEm': DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
-        'atualizadoEm': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
+        'criadoEm': DateTime.now()
+            .subtract(const Duration(days: 5))
+            .toIso8601String(),
+        'atualizadoEm': DateTime.now()
+            .subtract(const Duration(days: 2))
+            .toIso8601String(),
       },
     ];
 
@@ -392,7 +408,8 @@ class ApiServico {
         'idCliente': 'cli1',
         'nomeCliente': 'Fernando Oliveira',
         'titulo': 'Instalação de pontos de luz',
-        'descricao': 'Preciso instalar 3 pontos de luz no quarto e na sala. Fio já passado, só precisa do ponto.',
+        'descricao':
+            'Preciso instalar 3 pontos de luz no quarto e na sala. Fio já passado, só precisa do ponto.',
         'especialidade': 'Eletricista',
         'valor': 150.0,
         'valorNegociavel': false,
@@ -407,7 +424,8 @@ class ApiServico {
         'idCliente': 'cli2',
         'nomeCliente': 'Carla Mendes',
         'titulo': 'Chuveiro elétrico sem aquecimento',
-        'descricao': 'Chuveiro parou de aquecer ontem. Pode ser resistência ou fiação.',
+        'descricao':
+            'Chuveiro parou de aquecer ontem. Pode ser resistência ou fiação.',
         'especialidade': 'Eletricista',
         'valor': 80.0,
         'valorNegociavel': true,
@@ -422,7 +440,8 @@ class ApiServico {
         'idCliente': 'cli3',
         'nomeCliente': 'Roberto Santos',
         'titulo': 'Disjuntor caindo frequentemente',
-        'descricao': 'O disjuntor do quadro cai toda vez que ligo o ar condicionado. Preciso de solução urgente.',
+        'descricao':
+            'O disjuntor do quadro cai toda vez que ligo o ar condicionado. Preciso de solução urgente.',
         'especialidade': 'Eletricista',
         'valor': 200.0,
         'valorNegociavel': false,
@@ -437,7 +456,8 @@ class ApiServico {
         'idCliente': 'cli4',
         'nomeCliente': 'Ana Beatriz Costa',
         'titulo': 'Iluminação externa do jardim',
-        'descricao': 'Quero instalar luminárias de jardim na entrada e no fundo do terreno.',
+        'descricao':
+            'Quero instalar luminárias de jardim na entrada e no fundo do terreno.',
         'especialidade': 'Eletricista',
         'valor': 0.0,
         'valorNegociavel': true,
@@ -452,7 +472,8 @@ class ApiServico {
         'idCliente': 'cli5',
         'nomeCliente': 'Marcos Ferreira',
         'titulo': 'Instalação de 4 ventiladores de teto',
-        'descricao': 'Apartamento novo, preciso instalar 4 ventiladores com controle remoto.',
+        'descricao':
+            'Apartamento novo, preciso instalar 4 ventiladores com controle remoto.',
         'especialidade': 'Eletricista',
         'valor': 120.0,
         'valorNegociavel': false,
@@ -467,7 +488,8 @@ class ApiServico {
         'idCliente': 'cli6',
         'nomeCliente': 'Juliana Ramos',
         'titulo': 'Vazamento embaixo da pia',
-        'descricao': 'Pia da cozinha com vazamento no sifão. Precisa trocar conexão.',
+        'descricao':
+            'Pia da cozinha com vazamento no sifão. Precisa trocar conexão.',
         'especialidade': 'Encanador',
         'valor': 90.0,
         'valorNegociavel': true,
@@ -482,7 +504,8 @@ class ApiServico {
         'idCliente': 'cli7',
         'nomeCliente': 'Pedro Alves',
         'titulo': 'Pintura completa da sala',
-        'descricao': 'Sala de 40m², paredes claras. Tinta por conta do cliente.',
+        'descricao':
+            'Sala de 40m², paredes claras. Tinta por conta do cliente.',
         'especialidade': 'Pintor',
         'valor': 600.0,
         'valorNegociavel': true,
@@ -497,10 +520,11 @@ class ApiServico {
     var resultado = todas;
     if (especialidade != null && especialidade.isNotEmpty) {
       resultado = todas
-          .where((s) =>
-              (s['especialidade'] as String)
-                  .toLowerCase()
-                  .contains(especialidade.toLowerCase()))
+          .where(
+            (s) => (s['especialidade'] as String).toLowerCase().contains(
+              especialidade.toLowerCase(),
+            ),
+          )
           .toList();
     }
 
@@ -515,10 +539,9 @@ class ApiServico {
   /// Verificar se o servidor está online
   static Future<bool> verificarSaude() async {
     try {
-      final resposta = await http.get(
-        Uri.parse('$_urlBase/saude'),
-        headers: _headers(),
-      ).timeout(const Duration(seconds: 5));
+      final resposta = await http
+          .get(Uri.parse('$_urlBase/saude'), headers: _headers())
+          .timeout(const Duration(seconds: 5));
       return resposta.statusCode == 200;
     } catch (_) {
       return false;
