@@ -1,61 +1,91 @@
-# Projeto iNeed
+# iNeed
 
-Este repositório contém a documentação, o planejamento e os arquivos iniciais da Entrega da Sprint 02 para a disciplina.
+Marketplace mobile que conecta clientes a prestadores de serviços pontuais (eletricista, encanador, pintor, faxina e outros), com backend próprio integrado ao Firebase.
 
 ## 👥 Membros da Equipe
-* **Rafael R. Lourenço** - Responsável pela fase inicial do Sprint.
-* **João Wilson Cunha Silva Pereira** - Responsável pela Documentação.
-* **Victor Hugo Vicente** - Responsável pelo Banco de Dados.
-* **Nikolas Eduardo da Silva** - Responsável pelos Testes & DevOps.
 
-## 📝 Sobre o Projeto (iNeed)
-O aplicativo **iNeed** é desenvolvido para conectar usuários que precisam de um colaborador ou prestador de serviço com profissionais aptos a realizar demandas gerais — sejam elas matinais ou noturnas. A plataforma oferece uma solução prática tanto para quem precisa de um serviço quanto para profissionais que buscam uma renda extra com mais visibilidade e simplicidade.
+* **Rafael R. Lourenço** — Desenvolvedor responsável pela concepção e construção do projeto: arquitetura da aplicação, desenvolvimento completo do app Flutter (todas as telas, navegação, design system e integrações), desenvolvimento do backend Node.js/Express, integração com Firebase (Authentication + Firestore) e deploy em produção no Render.
+* **João Wilson Cunha Silva Pereira** — Responsável pela documentação inicial do projeto e levantamento de requisitos das interfaces de cliente e prestador.
+* **Victor Hugo Vicente** — Responsável pela modelagem inicial do banco de dados (estrutura de coleções de Clientes e Prestadores).
+* **Nikolas Eduardo da Silva** — Responsável pela documentação do processo de testes e pela separação conceitual dos ambientes de desenvolvimento e produção.
+* **Savio Santos** — Responsável pelos POPs de gestão de Sprint (Scrum) e de gerenciamento de requisitos.
 
-### 🎯 Objetivo do Sistema
-A real intenção do aplicativo é proporcionar maior visibilidade pública de forma simples e acessível, beneficiando dois públicos principais:
+## 📝 Sobre o Projeto
+
+O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais aptos a realizá-lo. A plataforma oferece uma solução prática tanto para quem precisa contratar quanto para quem presta o serviço e busca renda extra com mais visibilidade.
 
 **Para Clientes:**
-* Encontrar profissionais freelancers disponíveis com rapidez.
-* Ter praticidade na contratação de serviços pontuais.
-* Contar com a confiabilidade garantida pela validação do aplicativo.
+* Encontrar profissionais disponíveis com rapidez, filtrando por especialidade e preço.
+* Enviar propostas de serviço diretamente pelo app (título, valor, data, horário, endereço).
+* Acompanhar o status de cada solicitação (pendente, em andamento, concluída).
 
-**Para Profissionais (PJ ou CLT):**
-* Cadastrar-se facilmente e expor seus serviços.
-* Receber propostas de tarefas diretamente dos clientes.
-* Obter uma renda extra com mais simplicidade e autonomia.
+**Para Prestadores:**
+* Cadastrar-se com especialidade, valor/hora e biografia.
+* Receber e gerenciar propostas recebidas dos clientes.
+* Autonomia para aceitar ou recusar cada solicitação.
 
-### 📱 Interfaces do Sistema
-* **Admin:** Painel de controle geral da plataforma, responsável por controle e supervisão geral do sistema, suporte a defeitos e bugs reportados, administração de prestadores e clientes cadastrados, e análise e acompanhamento do desenvolvimento do aplicativo.
-* **Cliente:** Interface amigável e simplificada, pensada para facilitar a experiência do usuário final, com barra de pesquisa para localizar o profissional ideal, filtros por função/preço por hora/diárias, e visualização clara de disponibilidade e avaliações dos prestadores.
-* **Prestador de Serviço:** Área de cadastro e perfil profissional, onde o colaborador pode selecionar as áreas de atuação desejadas, incluir documentos de recomendação (experiência comprovada, certificações, licenças, documentação validada) e receber propostas diretamente dos clientes.
+## ✅ Estado Atual
 
-## 💻 Tecnologias Previstas
-* **Frontend Mobile:** Flutter e Dart (Android e iOS).
-* **Controle de Versão:** Git e GitHub.
+**App Flutter** — completo em termos de UI/UX:
+- Onboarding, cadastro unificado (cliente/prestador), login
+- Home, busca e pedidos (cliente) · Home, busca e propostas (prestador)
+- Perfil compartilhado, navegação por abas, design system Material 3 com identidade visual própria
 
-## 📂 Links para os Documentos de Planejamento
-Acesse abaixo a documentação detalhada do nosso fluxo e planejamento:
+**Backend (Node.js + Express)** — publicado em produção:
+- API REST com rotas de autenticação, prestadores e propostas
+- Login valida a senha de verdade contra o Firebase (não é mock)
+- Middleware de autenticação por token JWT
+- Deploy automático no [Render](https://render.com) a cada push na `main`: `https://ineed-app-9lzp.onrender.com`
 
-**Planejamento (Planning)**
+**Firebase** — projeto configurado e conectado:
+- Authentication (Email/Senha) e Cloud Firestore ativos
+- Cadastro de cliente/prestador e login já gravam e validam dados reais
+
+**Em andamento para a v1.0.0:**
+- Algumas listagens do app (prestadores, propostas, pedidos) ainda usam dados de exemplo, aguardando integração final com o backend
+- Testes automatizados
+
+## 💻 Tecnologias
+
+* **Frontend Mobile:** Flutter, Dart, Provider (state management)
+* **Backend:** Node.js, Express, Firebase Admin SDK
+* **Banco de Dados / Auth:** Firebase Authentication + Cloud Firestore
+* **Hospedagem do Backend:** Render
+* **Controle de Versão:** Git e GitHub
+
+## 📂 Documentação
+
+**Planejamento**
 * [Visão Geral do Projeto](docs/planning/project-vision.md)
 * [Backlog do Produto](docs/planning/backlog.md)
 * [Roadmap](docs/planning/roadmap.md)
 
-**Fluxo de Trabalho (Workflow)**
+**Fluxo de Trabalho**
 * [Desenvolvimento vs. Produção](docs/workflow/development-vs-production.md)
 * [Organização da Equipe](docs/workflow/team-organization.md)
 * [Kanban](docs/workflow/kanban.md) / [Gantt](docs/workflow/gantt.md)
 
-**Evidências**
-* [Histórico e Prints de Versionamento](docs/evidences/version-control/)
+**Processos (POPs)**
+* [docs/pops/](docs/pops/)
 
-## Contribuições
+## 🚀 Como rodar o projeto
 
-*Revisão e testes realizados por Nikolas.
-
-## 🚀 Como baixar este projeto
-Para os membros da equipe clonarem o repositório, utilizem o comando abaixo no terminal:
+Clonar o repositório:
 ```bash
-git clone [https://github.com/rafaellourenco10/projeto-sprint-02.git](https://github.com/rafaellourenco10/projeto-sprint-02.git)
+git clone https://github.com/rafaellourenco10/iNeed-App.git
+```
 
-*Atualizado por um colaborador.*
+**App Flutter** (pasta `src/`):
+```bash
+cd src
+flutter pub get
+flutter run
+```
+
+**Backend** (pasta `backend/`) — só necessário para rodar localmente, já que o backend em produção está publicado no Render:
+```bash
+cd backend
+npm install
+npm run dev
+```
+Requer um `.env` com `PORTA`, `FIREBASE_WEB_API_KEY` e a credencial do Firebase (`serviceAccountKey.json` local ou `FIREBASE_SERVICE_ACCOUNT`) — ver [docs/development-environment.md](docs/development-environment.md).
