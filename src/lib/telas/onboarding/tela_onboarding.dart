@@ -47,24 +47,24 @@ class _TelaOnboardingState extends State<TelaOnboarding>
       parent: _ctrl,
       curve: const Interval(0.35, 0.65, curve: Curves.easeOut),
     );
-    _titleSlide = Tween<Offset>(
-      begin: const Offset(0, 0.4),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _ctrl,
-      curve: const Interval(0.35, 0.65, curve: Curves.easeOut),
-    ));
+    _titleSlide = Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _ctrl,
+            curve: const Interval(0.35, 0.65, curve: Curves.easeOut),
+          ),
+        );
     _cardsFade = CurvedAnimation(
       parent: _ctrl,
       curve: const Interval(0.58, 0.9, curve: Curves.easeOut),
     );
-    _cardsSlide = Tween<Offset>(
-      begin: const Offset(0, 0.35),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _ctrl,
-      curve: const Interval(0.58, 0.9, curve: Curves.easeOut),
-    ));
+    _cardsSlide = Tween<Offset>(begin: const Offset(0, 0.35), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _ctrl,
+            curve: const Interval(0.58, 0.9, curve: Curves.easeOut),
+          ),
+        );
 
     _ctrl.forward();
   }
@@ -92,7 +92,8 @@ class _TelaOnboardingState extends State<TelaOnboarding>
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.arrow_back),
                   style: IconButton.styleFrom(
-                      foregroundColor: CoresApp.onSurface),
+                    foregroundColor: CoresApp.onSurface,
+                  ),
                 ),
               ),
 
@@ -111,7 +112,9 @@ class _TelaOnboardingState extends State<TelaOnboarding>
                       borderRadius: BorderRadius.circular(28),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF00288E).withValues(alpha: 0.18),
+                          color: const Color(
+                            0xFF00288E,
+                          ).withValues(alpha: 0.18),
                           blurRadius: 40,
                           spreadRadius: 2,
                           offset: const Offset(0, 12),
@@ -146,16 +149,15 @@ class _TelaOnboardingState extends State<TelaOnboarding>
                       Text(
                         'Como podemos ajudar\nvocê hoje?',
                         textAlign: TextAlign.center,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
+                        style: Theme.of(context).textTheme.headlineMedium
                             ?.copyWith(
                               fontWeight: FontWeight.w700,
                               color: CoresApp.onSurface,
                               shadows: [
                                 Shadow(
-                                  color: const Color(0xFF00288E)
-                                      .withValues(alpha: 0.12),
+                                  color: const Color(
+                                    0xFF00288E,
+                                  ).withValues(alpha: 0.12),
                                   blurRadius: 16,
                                   offset: const Offset(0, 4),
                                 ),
@@ -167,8 +169,8 @@ class _TelaOnboardingState extends State<TelaOnboarding>
                         'Escolha como deseja usar o iNeed',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: CoresApp.onSurfaceVariant,
-                            ),
+                          color: CoresApp.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
@@ -190,12 +192,17 @@ class _TelaOnboardingState extends State<TelaOnboarding>
                         subtitulo:
                             'Encontre os melhores profissionais para o que você precisa.',
                         aoPresionar: () async {
-                          final auth = Provider.of<AuthServico>(context,
-                              listen: false);
+                          final auth = Provider.of<AuthServico>(
+                            context,
+                            listen: false,
+                          );
                           await auth.definirComoCliente();
                           if (context.mounted) {
                             Navigator.pushNamedAndRemoveUntil(
-                                context, '/home', (r) => false);
+                              context,
+                              '/home',
+                              (r) => false,
+                            );
                           }
                         },
                       ),
@@ -206,6 +213,18 @@ class _TelaOnboardingState extends State<TelaOnboarding>
                         subtitulo:
                             'Informe suas habilidades e comece a receber pedidos.',
                         aoPresionar: () {
+                          final auth = Provider.of<AuthServico>(
+                            context,
+                            listen: false,
+                          );
+                          if (auth.usuarioAtual == null || auth.token == null) {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/login',
+                              (r) => false,
+                            );
+                            return;
+                          }
                           Navigator.pushNamed(context, '/completar-prestador');
                         },
                       ),
@@ -303,16 +322,16 @@ class _CardOpcaoState extends State<_CardOpcao> {
                     Text(
                       widget.titulo,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       widget.subtitulo,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: CoresApp.onSurfaceVariant,
-                            height: 1.4,
-                          ),
+                        color: CoresApp.onSurfaceVariant,
+                        height: 1.4,
+                      ),
                     ),
                   ],
                 ),
@@ -325,8 +344,11 @@ class _CardOpcaoState extends State<_CardOpcao> {
                   color: const Color(0xFF00288E).withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.chevron_right,
-                    color: CoresApp.primary, size: 20),
+                child: const Icon(
+                  Icons.chevron_right,
+                  color: CoresApp.primary,
+                  size: 20,
+                ),
               ),
             ],
           ),

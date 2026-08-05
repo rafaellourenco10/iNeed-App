@@ -101,22 +101,28 @@ class TelaPerfil extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: CoresApp.surfaceContainerLowest,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: CoresApp.outlineVariant, width: 0.5),
+                            border: Border.all(
+                              color: CoresApp.outlineVariant,
+                              width: 0.5,
+                            ),
                           ),
                           child: Column(
                             children: [
-                              const Icon(Icons.work_outline, color: CoresApp.primary),
+                              const Icon(
+                                Icons.work_outline,
+                                color: CoresApp.primary,
+                              ),
                               const SizedBox(height: 8),
                               Text(
                                 '${usuario?.totalServicos ?? 0}',
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                    ),
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.w700),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'SERVIÇOS',
-                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(
                                       color: CoresApp.onSurfaceVariant,
                                       letterSpacing: 1,
                                     ),
@@ -132,23 +138,28 @@ class TelaPerfil extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: CoresApp.surfaceContainerLowest,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: CoresApp.outlineVariant, width: 0.5),
+                            border: Border.all(
+                              color: CoresApp.outlineVariant,
+                              width: 0.5,
+                            ),
                           ),
                           child: Column(
                             children: [
-                              const Icon(Icons.star_outline,
-                                  color: CoresApp.secondaryContainer),
+                              const Icon(
+                                Icons.star_outline,
+                                color: CoresApp.secondaryContainer,
+                              ),
                               const SizedBox(height: 8),
                               Text(
                                 (usuario?.avaliacao ?? 0).toStringAsFixed(1),
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.w700,
-                                    ),
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.w700),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'AVALIAÇÃO',
-                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(
                                       color: CoresApp.onSurfaceVariant,
                                       letterSpacing: 1,
                                     ),
@@ -162,11 +173,71 @@ class TelaPerfil extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
+                  // ───── Tornar-se Prestador (só para clientes) ─────
+                  if (usuario != null && usuario.isCliente) ...[
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF00288E), Color(0xFF1565C0)],
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        leading: const Icon(
+                          Icons.work_outline,
+                          color: Colors.white,
+                        ),
+                        title: const Text(
+                          'Tornar-se Prestador',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: Text(
+                          'Ofereça seus serviços sem perder sua conta atual',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.85),
+                            fontSize: 12,
+                          ),
+                        ),
+                        trailing: const Icon(
+                          Icons.chevron_right,
+                          color: Colors.white,
+                        ),
+                        onTap: () => Navigator.pushNamed(
+                          context,
+                          '/completar-prestador',
+                        ),
+                      ),
+                    ),
+                  ],
+
                   // ───── Menu de Opções ─────
-                  _buildMenuItem(context, Icons.person_outline, 'Dados Pessoais'),
-                  _buildMenuItem(context, Icons.payment_outlined, 'Métodos de Pagamento'),
-                  _buildMenuItem(context, Icons.location_on_outlined, 'Endereços Salvos'),
-                  _buildMenuItem(context, Icons.notifications_outlined, 'Notificações'),
+                  _buildMenuItem(
+                    context,
+                    Icons.person_outline,
+                    'Dados Pessoais',
+                  ),
+                  _buildMenuItem(
+                    context,
+                    Icons.payment_outlined,
+                    'Métodos de Pagamento',
+                  ),
+                  _buildMenuItem(
+                    context,
+                    Icons.location_on_outlined,
+                    'Endereços Salvos',
+                  ),
+                  _buildMenuItem(
+                    context,
+                    Icons.notifications_outlined,
+                    'Notificações',
+                  ),
                   _buildMenuItem(context, Icons.shield_outlined, 'Segurança'),
 
                   const SizedBox(height: 24),
@@ -177,9 +248,8 @@ class TelaPerfil extends StatelessWidget {
                     children: [
                       Text(
                         'Histórico de Serviços',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       TextButton(
                         onPressed: () {},
@@ -224,7 +294,10 @@ class TelaPerfil extends StatelessWidget {
                       await auth.logout();
                       if (context.mounted) {
                         Navigator.pushNamedAndRemoveUntil(
-                            context, '/onboarding', (r) => false);
+                          context,
+                          '/login',
+                          (r) => false,
+                        );
                       }
                     },
                   ),
@@ -258,20 +331,19 @@ class TelaPerfil extends StatelessWidget {
       decoration: BoxDecoration(
         color: CoresApp.surfaceContainerLowest,
         border: Border(
-          bottom: BorderSide(color: CoresApp.outlineVariant.withValues(alpha: 0.5)),
+          bottom: BorderSide(
+            color: CoresApp.outlineVariant.withValues(alpha: 0.5),
+          ),
         ),
       ),
       child: ListTile(
         leading: Icon(icon, color: CoresApp.primary, size: 22),
-        title: Text(
-          titulo,
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
+        title: Text(titulo, style: Theme.of(context).textTheme.bodyLarge),
         trailing: const Icon(Icons.chevron_right, color: CoresApp.outline),
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('$titulo - Em breve!')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('$titulo - Em breve!')));
         },
       ),
     );
@@ -310,14 +382,11 @@ class TelaPerfil extends StatelessWidget {
               children: [
                 Text(
                   titulo,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                 ),
-                Text(
-                  subtitulo,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                Text(subtitulo, style: Theme.of(context).textTheme.bodySmall),
               ],
             ),
           ),
