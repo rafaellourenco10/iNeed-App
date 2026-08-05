@@ -13,7 +13,8 @@ const rotasPrestadores = require('./rotas/rotasPrestadores');
 const rotasPropostas = require('./rotas/rotasPropostas');
 
 const app = express();
-const PORTA = process.env.PORTA || 3000;
+// Em produção (Render) a porta vem via PORT, injetada pela plataforma.
+const PORTA = process.env.PORT || process.env.PORTA || 3000;
 
 // ============================================
 // Middlewares Globais

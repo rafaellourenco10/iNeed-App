@@ -149,17 +149,26 @@ async function cadastrarPrestador(req, res) {
 // -----------------------------------------------
 // POST /api/auth/login
 // -----------------------------------------------
-// Nota: O login real com email/senha é feito no lado do cliente
-// usando o Firebase Auth SDK (ou via REST API do Firebase Auth).
-// Este endpoint serve para buscar os dados do usuário após o login.
+// O Firebase Admin SDK não consegue validar senha (isso só existe do lado
+// cliente). Por isso o backend chama a REST API do Firebase Identity
+// Toolkit pra validar email+senha de verdade, mantendo o app Flutter
+// sem contato direto com o Firebase.
+const MENSAGENS_ERRO_LOGIN = {
+  EMAIL_NOT_FOUND: 'Nenhuma conta encontrada com este email.',
+  INVALID_PASSWORD: 'Senha incorreta.',
+  INVALID_LOGIN_CREDENTIALS: 'Email ou senha incorretos.',
+  USER_DISABLED: 'Esta conta foi desativada.',
+  TOO_MANY_ATTEMPTS_TRY_LATER: 'Muitas tentativas. Tente novamente mais tarde.'
+};
+
 async function loginUsuario(req, res) {
   try {
-    const { email } = req.body;
+    const { email, senha } = req.body;
 
-    if (!email) {
+    if (!email || !senha) {
       return res.status(400).json({
         erro: 'Dados incompletos',
-        mensagem: 'Email é obrigatório.'
+        mensagem: 'Email e senha são obrigatórios.'
       });
     }
 
@@ -170,11 +179,36 @@ async function loginUsuario(req, res) {
       });
     }
 
-    // Buscar usuário pelo email no Firebase Auth
-    const usuarioAuth = await auth.getUserByEmail(email);
+    const chaveApi = process.env.FIREBASE_WEB_API_KEY;
+    if (!chaveApi) {
+      return res.status(503).json({
+        erro: 'Serviço indisponível',
+        mensagem: 'FIREBASE_WEB_API_KEY não está configurada no servidor.'
+      });
+    }
 
-    // Buscar dados complementares no Firestore
-    const docUsuario = await db.collection('usuarios').doc(usuarioAuth.uid).get();
+    // Valida email+senha na REST API do Firebase Auth
+    const respostaAuth = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${chaveApi}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: senha, returnSecureToken: true })
+      }
+    );
+
+    const dadosAuth = await respostaAuth.json();
+
+    if (!respostaAuth.ok) {
+      const codigo = dadosAuth.error?.message || '';
+      return res.status(401).json({
+        erro: 'Credenciais inválidas',
+        mensagem: MENSAGENS_ERRO_LOGIN[codigo] || 'Não foi possível fazer login. Verifique seus dados.'
+      });
+    }
+
+    // Busca os dados complementares no Firestore
+    const docUsuario = await db.collection('usuarios').doc(dadosAuth.localId).get();
 
     if (!docUsuario.exists) {
       return res.status(404).json({
@@ -183,26 +217,17 @@ async function loginUsuario(req, res) {
       });
     }
 
-    const dadosUsuario = docUsuario.data();
-
     res.status(200).json({
-      mensagem: 'Dados do usuário obtidos com sucesso!',
+      mensagem: 'Login realizado com sucesso!',
+      token: dadosAuth.idToken,
       usuario: {
-        uid: usuarioAuth.uid,
-        ...dadosUsuario
+        uid: dadosAuth.localId,
+        ...docUsuario.data()
       }
     });
 
   } catch (erro) {
     console.error('❌ Erro no login:', erro.message);
-
-    if (erro.code === 'auth/user-not-found') {
-      return res.status(404).json({
-        erro: 'Usuário não encontrado',
-        mensagem: 'Nenhuma conta encontrada com este email.'
-      });
-    }
-
     res.status(500).json({
       erro: 'Erro no login',
       mensagem: erro.message
