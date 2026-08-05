@@ -167,7 +167,16 @@ class _TelaLoginState extends State<TelaLogin> with TickerProviderStateMixin {
     if (!mounted) return;
 
     if (sucesso) {
-      Navigator.pushNamedAndRemoveUntil(context, '/explicacao', (r) => false);
+      if (auth.estaLogado) {
+        // Já tem papel definido (cliente ou prestador) — vai direto pra home,
+        // sem repassar pela explicação/escolha de papel de novo.
+        final destino = auth.usuarioAtual!.isPrestador
+            ? '/home-prestador'
+            : '/home';
+        Navigator.pushNamedAndRemoveUntil(context, destino, (r) => false);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(context, '/explicacao', (r) => false);
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
