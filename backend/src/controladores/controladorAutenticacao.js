@@ -11,7 +11,7 @@ const { auth, db } = require('../configuracao/firebase');
 // -----------------------------------------------
 async function cadastrarCliente(req, res) {
   try {
-    const { nome, email, telefone, localizacao, senha } = req.body;
+    const { nome, email, telefone, localizacao, senha, cpf, cep, endereco, cidade } = req.body;
 
     // Validações básicas
     if (!nome || !email || !senha) {
@@ -41,6 +41,10 @@ async function cadastrarCliente(req, res) {
       email: email,
       telefone: telefone || null,
       localizacao: localizacao || null,
+      cpf: cpf || null,
+      cep: cep || null,
+      endereco: endereco || null,
+      cidade: cidade || null,
       tipo: 'cliente',
       criadoEm: new Date().toISOString(),
       atualizadoEm: new Date().toISOString()
@@ -235,8 +239,74 @@ async function loginUsuario(req, res) {
   }
 }
 
+// -----------------------------------------------
+// PATCH /api/auth/tornar-prestador
+// -----------------------------------------------
+// Adiciona informações de prestador a uma conta já existente (cliente
+// que decide também prestar serviços). Não cria usuário novo — só
+// atualiza o documento já existente no Firestore, dono do token.
+async function tornarPrestador(req, res) {
+  try {
+    const { especialidade, valorHora, biografia } = req.body;
+
+    if (!especialidade || valorHora === undefined || valorHora === null) {
+      return res.status(400).json({
+        erro: 'Dados incompletos',
+        mensagem: 'Especialidade e valor por hora são obrigatórios.'
+      });
+    }
+
+    if (!db) {
+      return res.status(503).json({
+        erro: 'Serviço indisponível',
+        mensagem: 'Firebase não está configurado.'
+      });
+    }
+
+    const uid = req.usuario.uid;
+    const docRef = db.collection('usuarios').doc(uid);
+    const docUsuario = await docRef.get();
+
+    if (!docUsuario.exists) {
+      return res.status(404).json({
+        erro: 'Usuário não encontrado',
+        mensagem: 'Conta não encontrada no banco de dados.'
+      });
+    }
+
+    await docRef.update({
+      tipo: 'prestador',
+      especialidade: especialidade,
+      valorHora: parseFloat(valorHora),
+      biografia: biografia || null,
+      avaliacao: 0,
+      totalServicos: 0,
+      disponivel: true,
+      atualizadoEm: new Date().toISOString()
+    });
+
+    const docAtualizado = await docRef.get();
+
+    res.status(200).json({
+      mensagem: 'Perfil de prestador criado com sucesso!',
+      usuario: {
+        uid: uid,
+        ...docAtualizado.data()
+      }
+    });
+
+  } catch (erro) {
+    console.error('❌ Erro ao tornar prestador:', erro.message);
+    res.status(500).json({
+      erro: 'Erro ao atualizar perfil',
+      mensagem: erro.message
+    });
+  }
+}
+
 module.exports = {
   cadastrarCliente,
   cadastrarPrestador,
-  loginUsuario
+  loginUsuario,
+  tornarPrestador
 };
