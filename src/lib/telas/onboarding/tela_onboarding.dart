@@ -225,6 +225,16 @@ class _TelaOnboardingState extends State<TelaOnboarding>
                             );
                             return;
                           }
+                          if (auth.usuarioAtual!.isPrestador) {
+                            // Já tem cadastro de prestador — pula a coleta
+                            // de dados e vai direto pra home dele.
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              '/home-prestador',
+                              (r) => false,
+                            );
+                            return;
+                          }
                           Navigator.pushNamed(context, '/completar-prestador');
                         },
                       ),
