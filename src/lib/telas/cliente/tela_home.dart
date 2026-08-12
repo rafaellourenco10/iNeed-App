@@ -41,7 +41,10 @@ class _TelaHomeState extends State<TelaHome> {
   Future<void> _carregarPrestadores() async {
     setState(() => _carregando = true);
     try {
-      final resposta = await ApiServico.listarPrestadores();
+      final auth = Provider.of<AuthServico>(context, listen: false);
+      final resposta = await ApiServico.listarPrestadores(
+        excluirUid: auth.usuarioAtual?.uid,
+      );
       if (resposta.containsKey('prestadores')) {
         final lista = (resposta['prestadores'] as List)
             .map((p) => Usuario.fromJson(p as Map<String, dynamic>))
@@ -63,7 +66,8 @@ class _TelaHomeState extends State<TelaHome> {
       _prestadores = _todos.where((p) {
         final nomeOk = p.nome.toLowerCase().contains(query);
         final espOk = (p.especialidade ?? '').toLowerCase().contains(query);
-        final categoriaOk = _categoriaSelecionada == null ||
+        final categoriaOk =
+            _categoriaSelecionada == null ||
             (p.especialidade ?? '').toLowerCase() ==
                 _categoriaSelecionada!.toLowerCase();
         return (nomeOk || espOk) && categoriaOk;
@@ -120,7 +124,9 @@ class _TelaHomeState extends State<TelaHome> {
                           onTap: () => Navigator.pushNamed(context, '/perfil'),
                           child: CircleAvatar(
                             radius: 20,
-                            backgroundColor: Colors.white.withValues(alpha: 0.2),
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.2,
+                            ),
                             child: Text(
                               nomeUsuario[0].toUpperCase(),
                               style: const TextStyle(
@@ -168,10 +174,16 @@ class _TelaHomeState extends State<TelaHome> {
                         controller: _buscaController,
                         decoration: InputDecoration(
                           hintText: 'Buscar serviços (ex: encanador)',
-                          prefixIcon: const Icon(Icons.search, color: CoresApp.outline),
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: CoresApp.outline,
+                          ),
                           suffixIcon: _buscaController.text.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(Icons.clear, color: CoresApp.outline),
+                                  icon: const Icon(
+                                    Icons.clear,
+                                    color: CoresApp.outline,
+                                  ),
                                   onPressed: () => _buscaController.clear(),
                                 )
                               : null,
@@ -198,8 +210,8 @@ class _TelaHomeState extends State<TelaHome> {
                     Text(
                       'Categorias',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     TextButton(
                       onPressed: () {},
@@ -247,16 +259,14 @@ class _TelaHomeState extends State<TelaHome> {
                       children: [
                         Text(
                           'Profissionais em Destaque',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           'Perto de você',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: CoresApp.onSurfaceVariant,
-                              ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: CoresApp.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -295,9 +305,8 @@ class _TelaHomeState extends State<TelaHome> {
                         const SizedBox(height: 16),
                         Text(
                           'Nenhum profissional encontrado.',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: CoresApp.onSurfaceVariant,
-                              ),
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(color: CoresApp.onSurfaceVariant),
                         ),
                         const SizedBox(height: 8),
                         Text(
@@ -311,27 +320,22 @@ class _TelaHomeState extends State<TelaHome> {
               )
             else
               SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return CardPrestador(
-                      prestador: _prestadores[index],
-                      aoVerPerfil: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/perfil-prestador',
-                          arguments: _prestadores[index],
-                        );
-                      },
-                    );
-                  },
-                  childCount: _prestadores.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  return CardPrestador(
+                    prestador: _prestadores[index],
+                    aoVerPerfil: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/perfil-prestador',
+                        arguments: _prestadores[index],
+                      );
+                    },
+                  );
+                }, childCount: _prestadores.length),
               ),
 
             // Espaço para a bottom nav
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 100),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),

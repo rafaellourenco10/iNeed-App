@@ -110,74 +110,29 @@ class ApiServico {
 
   // ───── Prestadores ─────
 
-  /// Listar todos os prestadores (MOCK PARA TESTE DE UI)
+  /// Listar prestadores cadastrados de verdade (Firestore, via backend)
   static Future<Map<String, dynamic>> listarPrestadores({
     String? especialidade,
     double? valorMaximo,
+    String? excluirUid,
   }) async {
-    // Simula tempo de rede
-    await Future.delayed(const Duration(milliseconds: 800));
-
-    final todosPrestadores = [
-      {
-        'uid': '1',
-        'nome': 'João Silva',
-        'email': 'joao@email.com',
-        'especialidade': 'Eletricista',
-        'biografia':
-            'Mais de 10 anos de experiência com instalações elétricas.',
-        'avaliacao': 4.8,
-        'totalServicos': 120,
-        'valorHora': 80.0,
-      },
-      {
-        'uid': '2',
-        'nome': 'Maria Souza',
-        'email': 'maria@email.com',
-        'especialidade': 'Encanador',
-        'biografia': 'Especialista em vazamentos e tubulações.',
-        'avaliacao': 4.9,
-        'totalServicos': 85,
-        'valorHora': 90.0,
-      },
-      {
-        'uid': '3',
-        'nome': 'Carlos Eduardo',
-        'email': 'carlos@email.com',
-        'especialidade': 'Pintor',
-        'biografia': 'Pintura residencial e comercial com ótimo acabamento.',
-        'avaliacao': 4.7,
-        'totalServicos': 45,
-        'valorHora': 60.0,
-      },
-      {
-        'uid': '4',
-        'nome': 'Ana Clara',
-        'email': 'ana@email.com',
-        'especialidade': 'Faxina',
-        'biografia': 'Limpeza pesada, pós-obra e diarista.',
-        'avaliacao': 5.0,
-        'totalServicos': 200,
-        'valorHora': 50.0,
-      },
-    ];
-
-    // Filtro mockado
-    var filtrados = todosPrestadores;
+    final query = <String, String>{};
     if (especialidade != null && especialidade.isNotEmpty) {
-      filtrados = filtrados
-          .where(
-            (p) =>
-                (p['especialidade'] as String).toLowerCase() ==
-                especialidade.toLowerCase(),
-          )
-          .toList();
+      query['especialidade'] = especialidade;
+    }
+    if (valorMaximo != null) {
+      query['valorMaximo'] = valorMaximo.toString();
+    }
+    if (excluirUid != null && excluirUid.isNotEmpty) {
+      query['excluirUid'] = excluirUid;
     }
 
-    return {
-      'mensagem': '${filtrados.length} prestador(es) encontrado(s).',
-      'prestadores': filtrados,
-    };
+    final uri = Uri.parse(
+      '$_urlBase/prestadores',
+    ).replace(queryParameters: query.isEmpty ? null : query);
+
+    final resposta = await http.get(uri, headers: _headers());
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
   }
 
   /// Obter detalhes de um prestador específico
