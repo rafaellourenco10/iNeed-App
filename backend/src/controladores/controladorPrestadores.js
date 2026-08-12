@@ -22,7 +22,7 @@ async function listarPrestadores(req, res) {
     let consulta = db.collection('usuarios').where('tipo', '==', 'prestador');
 
     // Filtro por especialidade
-    const { especialidade, valorMaximo } = req.query;
+    const { especialidade, valorMaximo, excluirUid } = req.query;
 
     if (especialidade) {
       consulta = consulta.where('especialidade', '==', especialidade);
@@ -43,9 +43,16 @@ async function listarPrestadores(req, res) {
     // não suporta filtros em campos diferentes sem índice composto)
     if (valorMaximo) {
       const valorMax = parseFloat(valorMaximo);
-      prestadores = prestadores.filter(p => 
+      prestadores = prestadores.filter(p =>
         p.valorHora && p.valorHora <= valorMax
       );
+    }
+
+    // Exclui o próprio usuário da lista — quem tem conta de cliente e
+    // também de prestador não pode se ver como opção pra contratar
+    // (não tem como atender a si mesmo)
+    if (excluirUid) {
+      prestadores = prestadores.filter(p => p.uid !== excluirUid);
     }
 
     res.status(200).json({
