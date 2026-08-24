@@ -56,6 +56,8 @@ async function criarProposta(req, res) {
       emailCliente: req.usuario.email,
       idPrestador: idPrestador,
       nomePrestador: docPrestador.data().nome,
+      telefonePrestador: docPrestador.data().telefone || null,
+      especialidadePrestador: docPrestador.data().especialidade || null,
       titulo: titulo,
       descricao: descricao || null,
       valor: parseFloat(valor),
@@ -89,11 +91,20 @@ async function criarProposta(req, res) {
 // -----------------------------------------------
 // GET /api/propostas/:idPrestador
 // -----------------------------------------------
-// Lista as propostas recebidas por um prestador
+// Lista as propostas recebidas por um prestador (protegida — só o
+// próprio prestador pode ver suas propostas, evita vazar dados de
+// clientes pra qualquer um que souber o uid de um prestador)
 async function listarPropostas(req, res) {
   try {
     const { idPrestador } = req.params;
     const { status } = req.query;
+
+    if (idPrestador !== req.usuario.uid) {
+      return res.status(403).json({
+        erro: 'Acesso negado',
+        mensagem: 'Você só pode ver as próprias propostas.'
+      });
+    }
 
     if (!db) {
       return res.status(503).json({
@@ -102,16 +113,16 @@ async function listarPropostas(req, res) {
       });
     }
 
+    // Sem orderBy no Firestore (evita exigir índice composto pra
+    // where+orderBy em campos diferentes) — ordena em memória depois.
     let consulta = db.collection('propostas')
-      .where('idPrestador', '==', idPrestador)
-      .orderBy('criadaEm', 'desc');
+      .where('idPrestador', '==', idPrestador);
 
     // Filtro opcional por status
     if (status) {
       consulta = db.collection('propostas')
         .where('idPrestador', '==', idPrestador)
-        .where('status', '==', status)
-        .orderBy('criadaEm', 'desc');
+        .where('status', '==', status);
     }
 
     const snapshot = await consulta.get();
@@ -123,6 +134,8 @@ async function listarPropostas(req, res) {
         ...doc.data()
       });
     });
+
+    propostas.sort((a, b) => (b.criadaEm || '').localeCompare(a.criadaEm || ''));
 
     res.status(200).json({
       mensagem: `${propostas.length} proposta(s) encontrada(s).`,
@@ -173,6 +186,13 @@ async function atualizarProposta(req, res) {
       });
     }
 
+    if (docProposta.data().idPrestador !== req.usuario.uid) {
+      return res.status(403).json({
+        erro: 'Acesso negado',
+        mensagem: 'Você só pode atualizar propostas endereçadas a você.'
+      });
+    }
+
     await docRef.update({
       status: status,
       atualizadaEm: new Date().toISOString()
@@ -195,8 +215,50 @@ async function atualizarProposta(req, res) {
   }
 }
 
+// -----------------------------------------------
+// GET /api/propostas/cliente/minhas
+// -----------------------------------------------
+// Lista as propostas enviadas pelo cliente autenticado
+async function listarPropostasCliente(req, res) {
+  try {
+    if (!db) {
+      return res.status(503).json({
+        erro: 'Serviço indisponível',
+        mensagem: 'Firebase não está configurado.'
+      });
+    }
+
+    const snapshot = await db.collection('propostas')
+      .where('idCliente', '==', req.usuario.uid)
+      .get();
+
+    const propostas = [];
+    snapshot.forEach((doc) => {
+      propostas.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    propostas.sort((a, b) => (b.criadaEm || '').localeCompare(a.criadaEm || ''));
+
+    res.status(200).json({
+      mensagem: `${propostas.length} proposta(s) encontrada(s).`,
+      propostas: propostas
+    });
+
+  } catch (erro) {
+    console.error('❌ Erro ao listar propostas do cliente:', erro.message);
+    res.status(500).json({
+      erro: 'Erro ao buscar propostas',
+      mensagem: erro.message
+    });
+  }
+}
+
 module.exports = {
   criarProposta,
   listarPropostas,
-  atualizarProposta
+  atualizarProposta,
+  listarPropostasCliente
 };
