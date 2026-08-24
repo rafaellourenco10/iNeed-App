@@ -232,43 +232,47 @@ class _TelaPerfilState extends State<TelaPerfil> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          decoration: BoxDecoration(
-                            color: CoresApp.surfaceContainerLowest,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: CoresApp.outlineVariant,
-                              width: 0.5,
+                      // Avaliação só faz sentido pra quem presta serviço —
+                      // um cliente não é avaliado por ninguém.
+                      if (usuario != null && usuario.isPrestador) ...[
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            decoration: BoxDecoration(
+                              color: CoresApp.surfaceContainerLowest,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: CoresApp.outlineVariant,
+                                width: 0.5,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                const Icon(
+                                  Icons.star_outline,
+                                  color: CoresApp.secondaryContainer,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  (usuario.avaliacao ?? 0).toStringAsFixed(1),
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(fontWeight: FontWeight.w700),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'AVALIAÇÃO',
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color: CoresApp.onSurfaceVariant,
+                                        letterSpacing: 1,
+                                      ),
+                                ),
+                              ],
                             ),
                           ),
-                          child: Column(
-                            children: [
-                              const Icon(
-                                Icons.star_outline,
-                                color: CoresApp.secondaryContainer,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                (usuario?.avaliacao ?? 0).toStringAsFixed(1),
-                                style: Theme.of(context).textTheme.titleLarge
-                                    ?.copyWith(fontWeight: FontWeight.w700),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'AVALIAÇÃO',
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: CoresApp.onSurfaceVariant,
-                                      letterSpacing: 1,
-                                    ),
-                              ),
-                            ],
-                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
 
