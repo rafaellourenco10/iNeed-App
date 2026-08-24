@@ -304,9 +304,74 @@ async function tornarPrestador(req, res) {
   }
 }
 
+// -----------------------------------------------
+// PATCH /api/auth/atualizar-perfil
+// -----------------------------------------------
+// Atualiza os dados pessoais do usuário autenticado (nome, telefone,
+// cpf, cep, endereço, cidade). Email não é editável aqui — é a
+// identidade da conta no Firebase Auth, exige fluxo próprio.
+async function atualizarPerfil(req, res) {
+  try {
+    const { nome, telefone, cpf, cep, endereco, cidade } = req.body;
+
+    if (!nome || !nome.trim()) {
+      return res.status(400).json({
+        erro: 'Dados incompletos',
+        mensagem: 'O nome é obrigatório.'
+      });
+    }
+
+    if (!db) {
+      return res.status(503).json({
+        erro: 'Serviço indisponível',
+        mensagem: 'Firebase não está configurado.'
+      });
+    }
+
+    const uid = req.usuario.uid;
+    const docRef = db.collection('usuarios').doc(uid);
+    const docUsuario = await docRef.get();
+
+    if (!docUsuario.exists) {
+      return res.status(404).json({
+        erro: 'Usuário não encontrado',
+        mensagem: 'Conta não encontrada no banco de dados.'
+      });
+    }
+
+    await docRef.update({
+      nome: nome.trim(),
+      telefone: telefone || null,
+      cpf: cpf || null,
+      cep: cep || null,
+      endereco: endereco || null,
+      cidade: cidade || null,
+      atualizadoEm: new Date().toISOString()
+    });
+
+    const docAtualizado = await docRef.get();
+
+    res.status(200).json({
+      mensagem: 'Dados atualizados com sucesso!',
+      usuario: {
+        uid: uid,
+        ...docAtualizado.data()
+      }
+    });
+
+  } catch (erro) {
+    console.error('❌ Erro ao atualizar perfil:', erro.message);
+    res.status(500).json({
+      erro: 'Erro ao atualizar perfil',
+      mensagem: erro.message
+    });
+  }
+}
+
 module.exports = {
   cadastrarCliente,
   cadastrarPrestador,
   loginUsuario,
-  tornarPrestador
+  tornarPrestador,
+  atualizarPerfil
 };

@@ -18,6 +18,7 @@ import 'telas/autenticacao/tela_cadastro.dart';
 import 'telas/autenticacao/tela_completar_prestador.dart';
 import 'telas/shell_navegacao.dart';
 import 'telas/perfil/tela_perfil.dart';
+import 'telas/perfil/tela_dados_pessoais.dart';
 import 'telas/cliente/tela_perfil_prestador.dart';
 import 'telas/cliente/tela_detalhes_servico.dart';
 import 'telas/cliente/tela_avaliar_servico.dart';
@@ -89,6 +90,7 @@ class INeedApp extends StatelessWidget {
               '/cadastro': (_) => const TelaCadastro(),
               '/completar-prestador': (_) => const TelaCompletarPrestador(),
               '/perfil': (_) => const TelaPerfil(),
+              '/dados-pessoais': (_) => const TelaDadosPessoais(),
             },
 
             // ───── Rotas com argumentos ─────

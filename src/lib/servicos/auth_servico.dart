@@ -202,6 +202,59 @@ class AuthServico extends ChangeNotifier {
     return true;
   }
 
+  /// Atualiza os dados pessoais do usuário logado (via backend)
+  Future<bool> atualizarDadosPessoais({
+    required String nome,
+    String? telefone,
+    String? cpf,
+    String? cep,
+    String? endereco,
+    String? cidade,
+  }) async {
+    if (_usuarioAtual == null || _token == null) {
+      _erro = 'Sessão expirada. Faça login novamente.';
+      notifyListeners();
+      return false;
+    }
+
+    _carregando = true;
+    _erro = null;
+    notifyListeners();
+
+    try {
+      final resposta = await ApiServico.atualizarPerfil(
+        token: _token!,
+        nome: nome,
+        telefone: telefone,
+        cpf: cpf,
+        cep: cep,
+        endereco: endereco,
+        cidade: cidade,
+      );
+
+      if (resposta.containsKey('erro')) {
+        _erro = resposta['mensagem'] as String? ?? 'Erro ao atualizar dados.';
+        _carregando = false;
+        notifyListeners();
+        return false;
+      }
+
+      _usuarioAtual = Usuario.fromJson(
+        resposta['usuario'] as Map<String, dynamic>,
+      );
+      await _salvarSessao();
+    } catch (_) {
+      _erro = 'Não foi possível conectar ao servidor.';
+      _carregando = false;
+      notifyListeners();
+      return false;
+    }
+
+    _carregando = false;
+    notifyListeners();
+    return true;
+  }
+
   /// Logout
   Future<void> logout() async {
     _usuarioAtual = null;

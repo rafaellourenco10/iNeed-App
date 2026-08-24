@@ -333,6 +333,8 @@ class _TelaPerfilState extends State<TelaPerfil> {
                     context,
                     Icons.person_outline,
                     'Dados Pessoais',
+                    aoTocar: () =>
+                        Navigator.pushNamed(context, '/dados-pessoais'),
                   ),
                   _buildMenuItem(
                     context,
@@ -459,7 +461,12 @@ class _TelaPerfilState extends State<TelaPerfil> {
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, IconData icon, String titulo) {
+  Widget _buildMenuItem(
+    BuildContext context,
+    IconData icon,
+    String titulo, {
+    VoidCallback? aoTocar,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 1),
       decoration: BoxDecoration(
@@ -474,11 +481,13 @@ class _TelaPerfilState extends State<TelaPerfil> {
         leading: Icon(icon, color: CoresApp.primary, size: 22),
         title: Text(titulo, style: Theme.of(context).textTheme.bodyLarge),
         trailing: const Icon(Icons.chevron_right, color: CoresApp.outline),
-        onTap: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('$titulo - Em breve!')));
-        },
+        onTap:
+            aoTocar ??
+            () {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('$titulo - Em breve!')));
+            },
       ),
     );
   }

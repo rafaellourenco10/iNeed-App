@@ -10,7 +10,8 @@ const {
   cadastrarCliente,
   cadastrarPrestador,
   loginUsuario,
-  tornarPrestador
+  tornarPrestador,
+  atualizarPerfil
 } = require('../controladores/controladorAutenticacao');
 
 // POST /api/auth/cadastro-cliente
@@ -24,5 +25,8 @@ roteador.post('/login', loginUsuario);
 
 // PATCH /api/auth/tornar-prestador (protegida — requer autenticação)
 roteador.patch('/tornar-prestador', verificarToken, tornarPrestador);
+
+// PATCH /api/auth/atualizar-perfil (protegida — requer autenticação)
+roteador.patch('/atualizar-perfil', verificarToken, atualizarPerfil);
 
 module.exports = roteador;

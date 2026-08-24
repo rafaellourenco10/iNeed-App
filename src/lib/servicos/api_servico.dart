@@ -69,6 +69,31 @@ class ApiServico {
     return jsonDecode(resposta.body) as Map<String, dynamic>;
   }
 
+  /// Atualizar dados pessoais do usuário logado (requer token)
+  static Future<Map<String, dynamic>> atualizarPerfil({
+    required String token,
+    required String nome,
+    String? telefone,
+    String? cpf,
+    String? cep,
+    String? endereco,
+    String? cidade,
+  }) async {
+    final resposta = await http.patch(
+      Uri.parse('$_urlBase/auth/atualizar-perfil'),
+      headers: _headers(token: token),
+      body: jsonEncode({
+        'nome': nome,
+        'telefone': telefone,
+        'cpf': cpf,
+        'cep': cep,
+        'endereco': endereco,
+        'cidade': cidade,
+      }),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
   /// Cadastrar um novo prestador
   static Future<Map<String, dynamic>> cadastrarPrestador({
     required String nome,
