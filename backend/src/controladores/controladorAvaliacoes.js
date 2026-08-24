@@ -5,6 +5,7 @@
 // a avaliação aparece no perfil público do prestador.
 
 const { db } = require('../configuracao/firebase');
+const { criarNotificacao } = require('./controladorNotificacoes');
 
 // -----------------------------------------------
 // POST /api/avaliacoes
@@ -91,6 +92,14 @@ async function criarAvaliacao(req, res) {
     await db.collection('usuarios').doc(proposta.idPrestador).update({
       avaliacao: Math.round(media * 10) / 10,
       totalServicos: total
+    });
+
+    await criarNotificacao({
+      idUsuario: proposta.idPrestador,
+      tipo: 'avaliacao_recebida',
+      titulo: 'Nova avaliação recebida',
+      mensagem: `${proposta.nomeCliente} te avaliou com ${estrelas} estrela(s) em "${proposta.titulo}".`,
+      idProposta
     });
 
     res.status(201).json({

@@ -280,6 +280,42 @@ class ApiServico {
     return jsonDecode(resposta.body) as Map<String, dynamic>;
   }
 
+  // ───── Notificações ─────
+
+  /// Listar notificações do usuário logado (requer token)
+  static Future<Map<String, dynamic>> listarNotificacoes({
+    required String token,
+  }) async {
+    final resposta = await http.get(
+      Uri.parse('$_urlBase/notificacoes'),
+      headers: _headers(token: token),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
+  /// Marcar uma notificação como lida (requer token)
+  static Future<Map<String, dynamic>> marcarNotificacaoLida({
+    required String token,
+    required String id,
+  }) async {
+    final resposta = await http.patch(
+      Uri.parse('$_urlBase/notificacoes/$id/lida'),
+      headers: _headers(token: token),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
+  /// Marcar todas as notificações como lidas (requer token)
+  static Future<Map<String, dynamic>> marcarTodasNotificacoesLidas({
+    required String token,
+  }) async {
+    final resposta = await http.patch(
+      Uri.parse('$_urlBase/notificacoes/marcar-todas-lidas'),
+      headers: _headers(token: token),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
   // ───── Health Check ─────
 
   /// Verificar se o servidor está online

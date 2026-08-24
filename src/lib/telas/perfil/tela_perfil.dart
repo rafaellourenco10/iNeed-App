@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../tema/cores.dart';
 import '../../modelos/proposta.dart';
+import '../../modelos/notificacao.dart';
 import '../../servicos/api_servico.dart';
 import '../../servicos/auth_servico.dart';
 import '../../widgets/botao_primario.dart';
@@ -20,12 +21,33 @@ class TelaPerfil extends StatefulWidget {
 class _TelaPerfilState extends State<TelaPerfil> {
   List<Proposta> _historico = [];
   int _totalContratados = 0;
+  int _notificacoesNaoLidas = 0;
   bool _carregando = true;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _carregarHistorico();
+    _carregarNotificacoes();
+  }
+
+  Future<void> _carregarNotificacoes() async {
+    final auth = Provider.of<AuthServico>(context, listen: false);
+    if (auth.token == null) return;
+    try {
+      final resposta = await ApiServico.listarNotificacoes(token: auth.token!);
+      if (!mounted) return;
+      if (resposta.containsKey('notificacoes')) {
+        final lista = (resposta['notificacoes'] as List)
+            .map((n) => Notificacao.fromJson(n as Map<String, dynamic>))
+            .toList();
+        setState(() {
+          _notificacoesNaoLidas = lista.where((n) => !n.lida).length;
+        });
+      }
+    } catch (_) {
+      // Contador é só um detalhe visual — falha silenciosa
+    }
   }
 
   Future<void> _carregarHistorico() async {
@@ -347,6 +369,11 @@ class _TelaPerfilState extends State<TelaPerfil> {
                     context,
                     Icons.notifications_outlined,
                     'Notificações',
+                    contador: _notificacoesNaoLidas,
+                    aoTocar: () async {
+                      await Navigator.pushNamed(context, '/notificacoes');
+                      _carregarNotificacoes();
+                    },
                   ),
                   _buildMenuItem(context, Icons.shield_outlined, 'Segurança'),
 
@@ -463,6 +490,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
     IconData icon,
     String titulo, {
     VoidCallback? aoTocar,
+    int contador = 0,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 1),
@@ -477,7 +505,30 @@ class _TelaPerfilState extends State<TelaPerfil> {
       child: ListTile(
         leading: Icon(icon, color: CoresApp.primary, size: 22),
         title: Text(titulo, style: Theme.of(context).textTheme.bodyLarge),
-        trailing: const Icon(Icons.chevron_right, color: CoresApp.outline),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (contador > 0) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: CoresApp.error,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$contador',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            const Icon(Icons.chevron_right, color: CoresApp.outline),
+          ],
+        ),
         onTap:
             aoTocar ??
             () {

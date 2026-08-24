@@ -12,6 +12,7 @@ const rotasAutenticacao = require('./rotas/rotasAutenticacao');
 const rotasPrestadores = require('./rotas/rotasPrestadores');
 const rotasPropostas = require('./rotas/rotasPropostas');
 const rotasAvaliacoes = require('./rotas/rotasAvaliacoes');
+const rotasNotificacoes = require('./rotas/rotasNotificacoes');
 
 const app = express();
 // Em produção (Render) a porta vem via PORT, injetada pela plataforma.
@@ -41,6 +42,7 @@ app.use('/api/auth', rotasAutenticacao);
 app.use('/api/prestadores', rotasPrestadores);
 app.use('/api/propostas', rotasPropostas);
 app.use('/api/avaliacoes', rotasAvaliacoes);
+app.use('/api/notificacoes', rotasNotificacoes);
 
 // ============================================
 // Middleware de Erro Global

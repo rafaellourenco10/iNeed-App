@@ -4,6 +4,7 @@
 // CRUD de propostas: criar, listar, aceitar e recusar.
 
 const { db } = require('../configuracao/firebase');
+const { criarNotificacao } = require('./controladorNotificacoes');
 
 // -----------------------------------------------
 // POST /api/propostas
@@ -75,6 +76,14 @@ async function criarProposta(req, res) {
     };
 
     const docRef = await db.collection('propostas').add(novaProposta);
+
+    await criarNotificacao({
+      idUsuario: idPrestador,
+      tipo: 'proposta_criada',
+      titulo: 'Nova proposta recebida',
+      mensagem: `${novaProposta.nomeCliente} te enviou uma proposta: "${titulo}".`,
+      idProposta: docRef.id
+    });
 
     res.status(201).json({
       mensagem: 'Proposta enviada com sucesso!',
@@ -225,6 +234,41 @@ async function atualizarProposta(req, res) {
       status: status,
       atualizadaEm: new Date().toISOString()
     });
+
+    // Notifica a outra parte sobre a mudança de status
+    if (papel === 'prestador' && status === 'aceita') {
+      await criarNotificacao({
+        idUsuario: dados.idCliente,
+        tipo: 'proposta_aceita',
+        titulo: 'Proposta aceita',
+        mensagem: `${dados.nomePrestador} aceitou sua proposta: "${dados.titulo}".`,
+        idProposta: id
+      });
+    } else if (papel === 'prestador' && status === 'recusada') {
+      await criarNotificacao({
+        idUsuario: dados.idCliente,
+        tipo: 'proposta_recusada',
+        titulo: 'Proposta recusada',
+        mensagem: `${dados.nomePrestador} recusou sua proposta: "${dados.titulo}".`,
+        idProposta: id
+      });
+    } else if (papel === 'cliente' && status === 'recusada') {
+      await criarNotificacao({
+        idUsuario: dados.idPrestador,
+        tipo: 'proposta_cancelada',
+        titulo: 'Proposta cancelada',
+        mensagem: `${dados.nomeCliente} cancelou a proposta: "${dados.titulo}".`,
+        idProposta: id
+      });
+    } else if (papel === 'cliente' && status === 'concluida') {
+      await criarNotificacao({
+        idUsuario: dados.idPrestador,
+        tipo: 'proposta_concluida',
+        titulo: 'Serviço concluído',
+        mensagem: `${dados.nomeCliente} marcou como concluído: "${dados.titulo}".`,
+        idProposta: id
+      });
+    }
 
     res.status(200).json({
       mensagem: `Proposta ${status} com sucesso!`,
