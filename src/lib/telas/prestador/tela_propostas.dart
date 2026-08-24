@@ -43,6 +43,7 @@ class _TelaPropostasState extends State<TelaPropostas>
     setState(() => _carregando = true);
     try {
       final resposta = await ApiServico.listarPropostas(
+        token: auth.token ?? '',
         idPrestador: auth.usuarioAtual!.uid,
       );
       if (resposta.containsKey('propostas')) {
@@ -70,9 +71,10 @@ class _TelaPropostasState extends State<TelaPropostas>
   }
 
   Future<void> _atualizarStatus(String idProposta, String novoStatus) async {
+    final auth = Provider.of<AuthServico>(context, listen: false);
     try {
       await ApiServico.atualizarProposta(
-        token: '', // TODO: Implementar token real
+        token: auth.token ?? '',
         id: idProposta,
         status: novoStatus,
       );
@@ -80,7 +82,9 @@ class _TelaPropostasState extends State<TelaPropostas>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Proposta ${novoStatus == 'aceita' ? 'aceita' : 'recusada'} com sucesso!'),
+            content: Text(
+              'Proposta ${novoStatus == 'aceita' ? 'aceita' : 'recusada'} com sucesso!',
+            ),
             backgroundColor: novoStatus == 'aceita'
                 ? CoresApp.statusConcluida
                 : CoresApp.outline,
@@ -155,15 +159,15 @@ class _TelaPropostasState extends State<TelaPropostas>
                   Text(
                     'Propostas',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Gerencie suas solicitações de serviços.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: CoresApp.onSurfaceVariant,
-                        ),
+                      color: CoresApp.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -215,9 +219,9 @@ class _TelaPropostasState extends State<TelaPropostas>
             const SizedBox(height: 16),
             Text(
               'Nenhuma proposta encontrada.',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: CoresApp.onSurfaceVariant,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: CoresApp.onSurfaceVariant),
             ),
           ],
         ),

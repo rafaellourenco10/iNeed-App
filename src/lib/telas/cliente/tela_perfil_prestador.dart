@@ -3,11 +3,8 @@
 // ============================================
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../tema/cores.dart';
 import '../../modelos/usuario.dart';
-import '../../servicos/api_servico.dart';
-import '../../servicos/auth_servico.dart';
 
 class TelaPerfilPrestador extends StatelessWidget {
   final Usuario prestador;
@@ -21,10 +18,7 @@ class TelaPerfilPrestador extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Perfil do Prestador'),
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.share_outlined),
-          ),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.share_outlined)),
         ],
       ),
       body: SingleChildScrollView(
@@ -37,7 +31,9 @@ class TelaPerfilPrestador extends StatelessWidget {
               radius: 50,
               backgroundColor: CoresApp.surfaceContainerHigh,
               child: Text(
-                prestador.nome.isNotEmpty ? prestador.nome[0].toUpperCase() : 'P',
+                prestador.nome.isNotEmpty
+                    ? prestador.nome[0].toUpperCase()
+                    : 'P',
                 style: const TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.w700,
@@ -52,8 +48,8 @@ class TelaPerfilPrestador extends StatelessWidget {
                 Text(
                   prestador.nome,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(width: 6),
                 const Icon(Icons.verified, color: CoresApp.primary, size: 20),
@@ -63,8 +59,8 @@ class TelaPerfilPrestador extends StatelessWidget {
             Text(
               prestador.especialidade ?? 'Profissional',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: CoresApp.onSurfaceVariant,
-                  ),
+                color: CoresApp.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 12),
 
@@ -72,20 +68,24 @@ class TelaPerfilPrestador extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.star, color: CoresApp.secondaryContainer, size: 18),
+                const Icon(
+                  Icons.star,
+                  color: CoresApp.secondaryContainer,
+                  size: 18,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   (prestador.avaliacao ?? 0).toStringAsFixed(1),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(width: 16),
                 Text(
                   '${prestador.totalServicos ?? 0}+ serviços',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: CoresApp.onSurfaceVariant,
-                      ),
+                    color: CoresApp.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -101,7 +101,12 @@ class TelaPerfilPrestador extends StatelessWidget {
                   const SizedBox(width: 12),
                   _buildStatCard(context, Icons.work_outline, '5', 'Anos Exp.'),
                   const SizedBox(width: 12),
-                  _buildStatCard(context, Icons.location_on_outlined, '2km', 'Distância'),
+                  _buildStatCard(
+                    context,
+                    Icons.location_on_outlined,
+                    '2km',
+                    'Distância',
+                  ),
                 ],
               ),
             ),
@@ -124,17 +129,17 @@ class TelaPerfilPrestador extends StatelessWidget {
                     Text(
                       'Sobre',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     Text(
                       prestador.biografia ??
                           'Profissional dedicado com ampla experiência na área de ${prestador.especialidade ?? "serviços"}. Comprometido em entregar trabalhos de qualidade com pontualidade e eficiência.',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: CoresApp.onSurfaceVariant,
-                            height: 1.6,
-                          ),
+                        color: CoresApp.onSurfaceVariant,
+                        height: 1.6,
+                      ),
                     ),
                   ],
                 ),
@@ -152,8 +157,8 @@ class TelaPerfilPrestador extends StatelessWidget {
                   Text(
                     'Especialidades',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Wrap(
@@ -181,8 +186,8 @@ class TelaPerfilPrestador extends StatelessWidget {
                   Text(
                     'Avaliações (${prestador.totalServicos ?? 0})',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   _buildAvaliacaoItem(
@@ -259,7 +264,9 @@ class TelaPerfilPrestador extends StatelessWidget {
                 child: OutlinedButton.icon(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Solicitação de orçamento enviada!')),
+                      const SnackBar(
+                        content: Text('Solicitação de orçamento enviada!'),
+                      ),
                     );
                   },
                   icon: const Icon(Icons.receipt_long_outlined),
@@ -279,24 +286,10 @@ class TelaPerfilPrestador extends StatelessWidget {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    final auth = Provider.of<AuthServico>(context, listen: false);
-                    ApiServico.contratarServico(
-                      idCliente: auth.usuarioAtual?.uid ?? '',
-                      idPrestador: prestador.uid,
-                      nomePrestador: prestador.nome,
-                      especialidade: prestador.especialidade ?? 'Serviço',
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${prestador.nome} contratado com sucesso!'),
-                        backgroundColor: CoresApp.statusConcluida,
-                      ),
-                    );
-                    Navigator.pushNamedAndRemoveUntil(
+                    Navigator.pushNamed(
                       context,
-                      '/home',
-                      (r) => false,
-                      arguments: 1,
+                      '/nova-proposta',
+                      arguments: prestador,
                     );
                   },
                   icon: const Icon(Icons.handshake_outlined),
@@ -319,7 +312,12 @@ class TelaPerfilPrestador extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(BuildContext context, IconData icon, String valor, String label) {
+  Widget _buildStatCard(
+    BuildContext context,
+    IconData icon,
+    String valor,
+    String label,
+  ) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -334,16 +332,16 @@ class TelaPerfilPrestador extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               valor,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 2),
             Text(
               label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: CoresApp.onSurfaceVariant,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: CoresApp.onSurfaceVariant),
             ),
           ],
         ),
@@ -404,13 +402,10 @@ class TelaPerfilPrestador extends StatelessWidget {
                     Text(
                       nome,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    Text(
-                      tempo,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
+                    Text(tempo, style: Theme.of(context).textTheme.bodySmall),
                   ],
                 ),
               ),
@@ -429,9 +424,7 @@ class TelaPerfilPrestador extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             comentario,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  height: 1.5,
-                ),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(height: 1.5),
           ),
         ],
       ),

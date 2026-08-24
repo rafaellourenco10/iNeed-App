@@ -40,18 +40,36 @@ class _TelaPedidosState extends State<TelaPedidos>
     final auth = Provider.of<AuthServico>(context, listen: false);
     setState(() => _carregando = true);
     try {
-      final resposta = await ApiServico.listarPedidosCliente(
-        idCliente: auth.usuarioAtual?.uid ?? '',
+      final resposta = await ApiServico.listarPropostasCliente(
+        token: auth.token ?? '',
       );
-      if (resposta.containsKey('pedidos')) {
+      if (resposta.containsKey('propostas')) {
         setState(() {
-          _pedidos = List<Map<String, dynamic>>.from(resposta['pedidos'] as List);
+          _pedidos = List<Map<String, dynamic>>.from(
+            resposta['propostas'] as List,
+          );
           _carregando = false;
         });
+      } else {
+        setState(() => _carregando = false);
       }
     } catch (_) {
       setState(() => _carregando = false);
     }
+  }
+
+  Future<void> _cancelar(String idProposta) async {
+    final auth = Provider.of<AuthServico>(context, listen: false);
+    await ApiServico.atualizarProposta(
+      token: auth.token ?? '',
+      id: idProposta,
+      status: 'recusada',
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Pedido cancelado.')));
+    _carregar();
   }
 
   List<Map<String, dynamic>> _filtrar(List<String> status) {
@@ -76,8 +94,8 @@ class _TelaPedidosState extends State<TelaPedidos>
               child: Text(
                 'Meus Pedidos',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             Padding(
@@ -85,8 +103,8 @@ class _TelaPedidosState extends State<TelaPedidos>
               child: Text(
                 'Acompanhe seus serviços contratados.',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: CoresApp.onSurfaceVariant,
-                    ),
+                  color: CoresApp.onSurfaceVariant,
+                ),
               ),
             ),
 
@@ -112,7 +130,12 @@ class _TelaPedidosState extends State<TelaPedidos>
                   : TabBarView(
                       controller: _tabController,
                       children: [
-                        _buildLista(emAberto, mostrarCancelar: true, mostrarWhatsApp: true),
+                        _buildLista(
+                          emAberto,
+                          mostrarCancelar: true,
+                          mostrarWhatsApp: true,
+                          aoCancelar: _cancelar,
+                        ),
                         _buildLista(emAndamento, mostrarWhatsApp: true),
                         _buildLista(historico),
                       ],
@@ -124,20 +147,28 @@ class _TelaPedidosState extends State<TelaPedidos>
     );
   }
 
-  Widget _buildLista(List<Map<String, dynamic>> lista, {bool mostrarCancelar = false, bool mostrarWhatsApp = false}) {
+  Widget _buildLista(
+    List<Map<String, dynamic>> lista, {
+    bool mostrarCancelar = false,
+    bool mostrarWhatsApp = false,
+    void Function(String idProposta)? aoCancelar,
+  }) {
     if (lista.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox_outlined, size: 64,
-                color: CoresApp.outline.withValues(alpha: 0.4)),
+            Icon(
+              Icons.inbox_outlined,
+              size: 64,
+              color: CoresApp.outline.withValues(alpha: 0.4),
+            ),
             const SizedBox(height: 16),
             Text(
               'Nenhum pedido aqui.',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: CoresApp.onSurfaceVariant,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge?.copyWith(color: CoresApp.onSurfaceVariant),
             ),
           ],
         ),
@@ -150,10 +181,11 @@ class _TelaPedidosState extends State<TelaPedidos>
         padding: const EdgeInsets.only(top: 12, bottom: 100),
         itemCount: lista.length,
         itemBuilder: (context, index) => _CardPedido(
-              pedido: lista[index],
-              mostrarCancelar: mostrarCancelar,
-              mostrarWhatsApp: mostrarWhatsApp,
-            ),
+          pedido: lista[index],
+          mostrarCancelar: mostrarCancelar,
+          mostrarWhatsApp: mostrarWhatsApp,
+          aoCancelar: aoCancelar,
+        ),
       ),
     );
   }
@@ -163,11 +195,13 @@ class _CardPedido extends StatelessWidget {
   final Map<String, dynamic> pedido;
   final bool mostrarCancelar;
   final bool mostrarWhatsApp;
+  final void Function(String idProposta)? aoCancelar;
 
   const _CardPedido({
     required this.pedido,
     this.mostrarCancelar = false,
     this.mostrarWhatsApp = false,
+    this.aoCancelar,
   });
 
   Future<void> _abrirWhatsApp(BuildContext context) async {
@@ -254,7 +288,10 @@ class _CardPedido extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: cor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
@@ -271,9 +308,9 @@ class _CardPedido extends StatelessWidget {
                 Text(
                   'R\$ ${(pedido['valor'] as num).toStringAsFixed(0)}',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: CoresApp.primary,
-                      ),
+                    fontWeight: FontWeight.w700,
+                    color: CoresApp.primary,
+                  ),
                 ),
               ],
             ),
@@ -283,9 +320,9 @@ class _CardPedido extends StatelessWidget {
             // ───── Título ─────
             Text(
               pedido['titulo'] as String,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
 
             if ((pedido['descricao'] as String?)?.isNotEmpty == true) ...[
@@ -293,8 +330,8 @@ class _CardPedido extends StatelessWidget {
               Text(
                 pedido['descricao'] as String,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: CoresApp.onSurfaceVariant,
-                    ),
+                  color: CoresApp.onSurfaceVariant,
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -309,7 +346,9 @@ class _CardPedido extends StatelessWidget {
                   radius: 18,
                   backgroundColor: CoresApp.surfaceContainerHigh,
                   child: Text(
-                    (pedido['nomePrestador'] as String)[0].toUpperCase(),
+                    ((pedido['nomePrestador'] as String?) ?? '?')
+                        .substring(0, 1)
+                        .toUpperCase(),
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -322,16 +361,17 @@ class _CardPedido extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      pedido['nomePrestador'] as String,
+                      (pedido['nomePrestador'] as String?) ?? 'Prestador',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     Text(
-                      pedido['especialidadePrestador'] as String,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: CoresApp.primary,
-                          ),
+                      (pedido['especialidadePrestador'] as String?) ??
+                          'Serviço',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: CoresApp.primary),
                     ),
                   ],
                 ),
@@ -344,8 +384,11 @@ class _CardPedido extends StatelessWidget {
             if (pedido['data'] != null)
               Row(
                 children: [
-                  const Icon(Icons.calendar_today_outlined,
-                      size: 14, color: CoresApp.outline),
+                  const Icon(
+                    Icons.calendar_today_outlined,
+                    size: 14,
+                    color: CoresApp.outline,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     '${pedido['data']}  •  ${pedido['horario'] ?? ''}',
@@ -358,8 +401,11 @@ class _CardPedido extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(Icons.location_on_outlined,
-                      size: 14, color: CoresApp.outline),
+                  const Icon(
+                    Icons.location_on_outlined,
+                    size: 14,
+                    color: CoresApp.outline,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
@@ -381,11 +427,8 @@ class _CardPedido extends StatelessWidget {
                   if (mostrarCancelar) ...[
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Pedido cancelado.')),
-                          );
-                        },
+                        onPressed: () =>
+                            aoCancelar?.call(pedido['id'] as String),
                         icon: const Icon(Icons.cancel_outlined, size: 18),
                         label: const Text('Cancelar'),
                         style: OutlinedButton.styleFrom(

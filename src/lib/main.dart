@@ -21,10 +21,11 @@ import 'telas/perfil/tela_perfil.dart';
 import 'telas/cliente/tela_perfil_prestador.dart';
 import 'telas/cliente/tela_detalhes_servico.dart';
 import 'telas/cliente/tela_avaliar_servico.dart';
+import 'telas/cliente/tela_nova_proposta.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Captura erros de renderização e exibe na tela para debugar a tela em branco
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return Material(
@@ -34,9 +35,19 @@ void main() {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('⚠️ Erro de Renderização', style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold)),
+              const Text(
+                '⚠️ Erro de Renderização',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 10),
-              Text(details.exceptionAsString(), style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                details.exceptionAsString(),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 10),
               Text(details.stack.toString()),
             ],
@@ -67,8 +78,8 @@ class INeedApp extends StatelessWidget {
             initialRoute: auth.estaLogado
                 ? (auth.usuarioAtual!.isPrestador ? '/home-prestador' : '/home')
                 : auth.aguardandoPapel
-                    ? '/onboarding'
-                    : '/login',
+                ? '/onboarding'
+                : '/login',
 
             // ───── Rotas nomeadas ─────
             routes: {
@@ -87,12 +98,20 @@ class INeedApp extends StatelessWidget {
                 case '/home':
                   final indice = (settings.arguments as int?) ?? 0;
                   return MaterialPageRoute(
-                    builder: (_) => ShellNavegacao(isPrestador: false, indiceInicial: indice),
+                    builder: (_) => ShellNavegacao(
+                      isPrestador: false,
+                      indiceInicial: indice,
+                    ),
                   );
                 case '/perfil-prestador':
                   final prestador = settings.arguments as Usuario;
                   return MaterialPageRoute(
                     builder: (_) => TelaPerfilPrestador(prestador: prestador),
+                  );
+                case '/nova-proposta':
+                  final prestador = settings.arguments as Usuario;
+                  return MaterialPageRoute(
+                    builder: (_) => TelaNovaProposta(prestador: prestador),
                   );
                 case '/detalhes-servico':
                   final proposta = settings.arguments as Proposta;

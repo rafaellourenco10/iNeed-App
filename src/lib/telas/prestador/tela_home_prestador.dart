@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../tema/cores.dart';
+import '../../modelos/proposta.dart';
 import '../../servicos/api_servico.dart';
 import '../../servicos/auth_servico.dart';
+import '../../widgets/card_proposta.dart';
 
 class TelaHomePrestador extends StatefulWidget {
   const TelaHomePrestador({super.key});
@@ -13,8 +15,8 @@ class TelaHomePrestador extends StatefulWidget {
 
 class _TelaHomePrestadorState extends State<TelaHomePrestador> {
   final TextEditingController _buscaCtrl = TextEditingController();
-  List<Map<String, dynamic>> _todas = [];
-  List<Map<String, dynamic>> _solicitacoes = [];
+  List<Proposta> _todas = [];
+  List<Proposta> _solicitacoes = [];
   bool _carregando = true;
   bool _disponivel = true;
 
@@ -33,13 +35,21 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
 
   Future<void> _carregar() async {
     if (!mounted) return;
+    final auth = Provider.of<AuthServico>(context, listen: false);
+    if (auth.usuarioAtual == null) return;
+
     setState(() => _carregando = true);
     try {
-      final resp = await ApiServico.listarSolicitacoes();
+      final resp = await ApiServico.listarPropostas(
+        token: auth.token ?? '',
+        idPrestador: auth.usuarioAtual!.uid,
+        status: 'pendente',
+      );
       if (!mounted) return;
-      if (resp.containsKey('solicitacoes')) {
-        final lista = List<Map<String, dynamic>>.from(
-            resp['solicitacoes'] as List);
+      if (resp.containsKey('propostas')) {
+        final lista = (resp['propostas'] as List)
+            .map((p) => Proposta.fromJson(p as Map<String, dynamic>))
+            .toList();
         setState(() {
           _todas = lista;
           _solicitacoes = lista;
@@ -58,23 +68,56 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
     setState(() {
       _solicitacoes = q.isEmpty
           ? List.of(_todas)
-          : _todas.where((s) {
-              final titulo = (s['titulo'] as String).toLowerCase();
-              final esp = (s['especialidade'] as String).toLowerCase();
-              final bairro = (s['bairro'] as String).toLowerCase();
-              return titulo.contains(q) || esp.contains(q) || bairro.contains(q);
+          : _todas.where((p) {
+              return p.titulo.toLowerCase().contains(q) ||
+                  p.nomeCliente.toLowerCase().contains(q) ||
+                  (p.endereco?.toLowerCase().contains(q) ?? false);
             }).toList();
     });
   }
 
-  int get _urgentes =>
-      _solicitacoes.where((s) => s['urgente'] == true).length;
+  Future<void> _atualizarStatus(String idProposta, String novoStatus) async {
+    final auth = Provider.of<AuthServico>(context, listen: false);
+    try {
+      await ApiServico.atualizarProposta(
+        token: auth.token ?? '',
+        id: idProposta,
+        status: novoStatus,
+      );
+      await _carregar();
+      _filtrar();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              novoStatus == 'aceita'
+                  ? 'Proposta aceita com sucesso!'
+                  : 'Proposta recusada.',
+            ),
+            backgroundColor: novoStatus == 'aceita'
+                ? CoresApp.statusConcluida
+                : CoresApp.outline,
+          ),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro ao atualizar proposta.'),
+            backgroundColor: CoresApp.error,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthServico>(context, listen: false);
+    final auth = Provider.of<AuthServico>(context);
     final nome = auth.usuarioAtual?.nome.split(' ').first ?? 'Prestador';
     final especialidade = auth.usuarioAtual?.especialidade ?? '';
+    final avaliacao = auth.usuarioAtual?.avaliacao;
 
     return Scaffold(
       backgroundColor: CoresApp.surface,
@@ -118,10 +161,14 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
                                   setState(() => _disponivel = !_disponivel),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: _disponivel
-                                      ? const Color(0xFF4CAF50).withValues(alpha: 0.2)
+                                      ? const Color(
+                                          0xFF4CAF50,
+                                        ).withValues(alpha: 0.2)
                                       : Colors.white.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
@@ -140,19 +187,25 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
                                       decoration: BoxDecoration(
                                         color: _disponivel
                                             ? const Color(0xFF4CAF50)
-                                            : Colors.white.withValues(alpha: 0.6),
+                                            : Colors.white.withValues(
+                                                alpha: 0.6,
+                                              ),
                                         shape: BoxShape.circle,
                                       ),
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
-                                      _disponivel ? 'Disponível' : 'Indisponível',
+                                      _disponivel
+                                          ? 'Disponível'
+                                          : 'Indisponível',
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color: _disponivel
                                             ? const Color(0xFF4CAF50)
-                                            : Colors.white.withValues(alpha: 0.8),
+                                            : Colors.white.withValues(
+                                                alpha: 0.8,
+                                              ),
                                       ),
                                     ),
                                   ],
@@ -165,7 +218,9 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
                                   Navigator.pushNamed(context, '/perfil'),
                               child: CircleAvatar(
                                 radius: 20,
-                                backgroundColor: Colors.white.withValues(alpha: 0.2),
+                                backgroundColor: Colors.white.withValues(
+                                  alpha: 0.2,
+                                ),
                                 child: Text(
                                   nome[0].toUpperCase(),
                                   style: const TextStyle(
@@ -192,8 +247,8 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
                     const SizedBox(height: 4),
                     Text(
                       especialidade.isNotEmpty
-                          ? 'Veja as solicitações de $especialidade na sua área.'
-                          : 'Veja as solicitações abertas na sua área.',
+                          ? 'Veja suas propostas de $especialidade pendentes.'
+                          : 'Veja suas propostas pendentes.',
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.8),
                         fontSize: 14,
@@ -216,19 +271,25 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
                       child: TextField(
                         controller: _buscaCtrl,
                         decoration: InputDecoration(
-                          hintText: 'Buscar por serviço ou bairro...',
-                          prefixIcon: const Icon(Icons.search,
-                              color: CoresApp.outline),
+                          hintText: 'Buscar por título, cliente ou endereço...',
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: CoresApp.outline,
+                          ),
                           suffixIcon: _buscaCtrl.text.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(Icons.clear,
-                                      color: CoresApp.outline),
+                                  icon: const Icon(
+                                    Icons.clear,
+                                    color: CoresApp.outline,
+                                  ),
                                   onPressed: () => _buscaCtrl.clear(),
                                 )
                               : null,
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 16),
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
                         ),
                       ),
                     ),
@@ -254,19 +315,21 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: _StatCard(
-                    valor: '$_urgentes',
-                    label: 'Urgentes',
-                    icone: Icons.bolt_outlined,
+                    valor: '${_todas.length}',
+                    label: 'Pendentes',
+                    icone: Icons.pending_actions_outlined,
                     cor: const Color(0xFFFF6B35),
                   ),
                 ),
                 const SizedBox(width: 10),
-                const Expanded(
+                Expanded(
                   child: _StatCard(
-                    valor: '—',
+                    valor: avaliacao != null
+                        ? avaliacao.toStringAsFixed(1)
+                        : '—',
                     label: 'Avaliação',
                     icone: Icons.star_outline,
-                    cor: Color(0xFFFFC107),
+                    cor: const Color(0xFFFFC107),
                   ),
                 ),
               ],
@@ -276,36 +339,11 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
           // ── Título da seção ───────────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Solicitações em Destaque',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                ),
-                if (_urgentes > 0)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color:
-                          const Color(0xFFFF6B35).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '$_urgentes urgente${_urgentes > 1 ? 's' : ''}',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFFF6B35),
-                      ),
-                    ),
-                  ),
-              ],
+            child: Text(
+              'Propostas Pendentes',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
 
@@ -314,34 +352,43 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
             child: _carregando
                 ? const Center(child: CircularProgressIndicator())
                 : _solicitacoes.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.inbox_outlined,
-                              size: 64,
-                              color: CoresApp.outline.withValues(alpha: 0.4),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Nenhuma solicitação encontrada.',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge
-                                  ?.copyWith(
-                                      color: CoresApp.onSurfaceVariant),
-                            ),
-                          ],
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.inbox_outlined,
+                          size: 64,
+                          color: CoresApp.outline.withValues(alpha: 0.4),
                         ),
-                      )
-                    : ListView.builder(
-                        padding:
-                            const EdgeInsets.only(top: 4, bottom: 100),
-                        itemCount: _solicitacoes.length,
-                        itemBuilder: (ctx, i) => _CardSolicitacao(
-                            solicitacao: _solicitacoes[i]),
-                      ),
+                        const SizedBox(height: 16),
+                        Text(
+                          _todas.isEmpty
+                              ? 'Nenhuma proposta pendente no momento.'
+                              : 'Nenhum resultado encontrado.',
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(color: CoresApp.onSurfaceVariant),
+                        ),
+                      ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: _carregar,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.only(top: 4, bottom: 100),
+                      itemCount: _solicitacoes.length,
+                      itemBuilder: (ctx, i) {
+                        final proposta = _solicitacoes[i];
+                        return CardProposta(
+                          proposta: proposta,
+                          aoAceitar: () =>
+                              _atualizarStatus(proposta.id, 'aceita'),
+                          aoRecusar: () =>
+                              _atualizarStatus(proposta.id, 'recusada'),
+                        );
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
@@ -381,281 +428,18 @@ class _StatCard extends StatelessWidget {
           Text(
             valor,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: cor,
-                ),
+              fontWeight: FontWeight.w700,
+              color: cor,
+            ),
           ),
           Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: CoresApp.onSurfaceVariant,
-                  fontSize: 10,
-                ),
+              color: CoresApp.onSurfaceVariant,
+              fontSize: 10,
+            ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ─── Card de Solicitação ─────────────────────────────────────────────────────
-
-class _CardSolicitacao extends StatelessWidget {
-  final Map<String, dynamic> solicitacao;
-
-  const _CardSolicitacao({required this.solicitacao});
-
-  @override
-  Widget build(BuildContext context) {
-    final urgente = solicitacao['urgente'] as bool;
-    final valor = (solicitacao['valor'] as num).toDouble();
-    final negociavel = solicitacao['valorNegociavel'] as bool;
-    final nomeCliente = solicitacao['nomeCliente'] as String;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      decoration: BoxDecoration(
-        color: CoresApp.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(16),
-        border: urgente
-            ? Border.all(
-                color: const Color(0xFFFF6B35).withValues(alpha: 0.4),
-                width: 1.5)
-            : Border.all(color: CoresApp.outlineVariant, width: 0.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Tags + tempo
-            Row(
-              children: [
-                if (urgente) ...[
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF6B35).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(Icons.bolt, size: 12, color: Color(0xFFFF6B35)),
-                        SizedBox(width: 3),
-                        Text(
-                          'Urgente',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFFFF6B35),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                ],
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: CoresApp.primary.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    solicitacao['especialidade'] as String,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: CoresApp.primary,
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  solicitacao['criadoEm'] as String,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: CoresApp.onSurfaceVariant,
-                      ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 10),
-
-            // Título
-            Text(
-              solicitacao['titulo'] as String,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              solicitacao['descricao'] as String,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: CoresApp.onSurfaceVariant,
-                  ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-
-            const SizedBox(height: 12),
-
-            // Cliente info
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: CoresApp.surfaceContainerHigh,
-                  child: Text(
-                    nomeCliente[0].toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: CoresApp.primary,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        nomeCliente,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        '${solicitacao['bairro']}, ${solicitacao['cidade']}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: CoresApp.onSurfaceVariant),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.star,
-                        color: Color(0xFFFFC107), size: 13),
-                    const SizedBox(width: 2),
-                    Text(
-                      '${solicitacao['avaliacaoCliente']}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 12),
-            const Divider(height: 1),
-            const SizedBox(height: 12),
-
-            // Valor + Botões
-            Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      valor > 0
-                          ? 'R\$ ${valor.toStringAsFixed(0)}'
-                          : 'A combinar',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleSmall
-                          ?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: CoresApp.primary,
-                          ),
-                    ),
-                    if (negociavel && valor > 0)
-                      Text(
-                        'Negociável',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: CoresApp.onSurfaceVariant),
-                      ),
-                  ],
-                ),
-                const Spacer(),
-                OutlinedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Detalhes em desenvolvimento.')),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: CoresApp.primary,
-                    side: const BorderSide(color: CoresApp.primary),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: const Text('Detalhes',
-                      style: TextStyle(fontSize: 13)),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content:
-                            Text('Proposta enviada para $nomeCliente!'),
-                        backgroundColor: const Color(0xFF4CAF50),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: CoresApp.primary,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child:
-                      const Text('Aceitar', style: TextStyle(fontSize: 13)),
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }
