@@ -19,6 +19,7 @@ class TelaPerfil extends StatefulWidget {
 
 class _TelaPerfilState extends State<TelaPerfil> {
   List<Proposta> _historico = [];
+  int _totalContratados = 0;
   bool _carregando = true;
 
   @override
@@ -51,6 +52,9 @@ class _TelaPerfilState extends State<TelaPerfil> {
             .toList();
         setState(() {
           _historico = lista.take(3).toList();
+          _totalContratados = lista
+              .where((p) => p.isAceita || p.isEmAndamento || p.isConcluida)
+              .length;
           _carregando = false;
         });
       } else {
@@ -215,13 +219,15 @@ class _TelaPerfilState extends State<TelaPerfil> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                '${usuario?.totalServicos ?? 0}',
+                                '${usuario != null && usuario.isPrestador ? (usuario.totalServicos ?? 0) : _totalContratados}',
                                 style: Theme.of(context).textTheme.titleLarge
                                     ?.copyWith(fontWeight: FontWeight.w700),
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'SERVIÇOS',
+                                usuario != null && usuario.isPrestador
+                                    ? 'SERVIÇOS'
+                                    : 'CONTRATADOS',
                                 style: Theme.of(context).textTheme.labelSmall
                                     ?.copyWith(
                                       color: CoresApp.onSurfaceVariant,
