@@ -3,6 +3,7 @@
 // ============================================
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../tema/cores.dart';
 import '../modelos/proposta.dart';
 
@@ -17,6 +18,30 @@ class CardProposta extends StatelessWidget {
     this.aoAceitar,
     this.aoRecusar,
   });
+
+  bool get _podeContatar =>
+      proposta.isPendente || proposta.isAceita || proposta.isEmAndamento;
+
+  Future<void> _abrirWhatsApp(BuildContext context) async {
+    final telefone = proposta.telefoneCliente;
+    final mensagem = Uri.encodeComponent(
+      'Olá ${proposta.nomeCliente}! Entro em contato pelo app iNeed sobre a proposta: "${proposta.titulo}".',
+    );
+
+    final url = telefone != null
+        ? Uri.parse('https://wa.me/$telefone?text=$mensagem')
+        : Uri.parse('https://wa.me/?text=$mensagem');
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Não foi possível abrir o WhatsApp.')),
+        );
+      }
+    }
+  }
 
   Color _corStatus() {
     switch (proposta.status) {
@@ -77,7 +102,10 @@ class CardProposta extends StatelessWidget {
               children: [
                 // Chip de status
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: _corStatus().withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
@@ -94,9 +122,9 @@ class CardProposta extends StatelessWidget {
                 Text(
                   'R\$ ${proposta.valor.toStringAsFixed(0)}',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: CoresApp.primary,
-                      ),
+                    fontWeight: FontWeight.w700,
+                    color: CoresApp.primary,
+                  ),
                 ),
               ],
             ),
@@ -106,9 +134,9 @@ class CardProposta extends StatelessWidget {
             // ───── Título ─────
             Text(
               proposta.titulo,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
 
             const SizedBox(height: 12),
@@ -137,14 +165,17 @@ class CardProposta extends StatelessWidget {
                     Text(
                       proposta.nomeCliente,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     if (proposta.endereco != null)
                       Row(
                         children: [
-                          const Icon(Icons.location_on_outlined,
-                              size: 14, color: CoresApp.outline),
+                          const Icon(
+                            Icons.location_on_outlined,
+                            size: 14,
+                            color: CoresApp.outline,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             proposta.endereco!,
@@ -166,8 +197,11 @@ class CardProposta extends StatelessWidget {
                   if (proposta.data != null)
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today_outlined,
-                            size: 16, color: CoresApp.outline),
+                        const Icon(
+                          Icons.calendar_today_outlined,
+                          size: 16,
+                          color: CoresApp.outline,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           proposta.data!,
@@ -179,8 +213,11 @@ class CardProposta extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(Icons.access_time_outlined,
-                            size: 16, color: CoresApp.outline),
+                        const Icon(
+                          Icons.access_time_outlined,
+                          size: 16,
+                          color: CoresApp.outline,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           proposta.horario!,
@@ -191,6 +228,28 @@ class CardProposta extends StatelessWidget {
                   ],
                 ],
               ),
+
+            // ───── WhatsApp (contatar o cliente) ─────
+            if (_podeContatar) ...[
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => _abrirWhatsApp(context),
+                  icon: const Icon(Icons.chat, size: 18),
+                  label: const Text('Contatar Cliente'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF25D366),
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
 
             // ───── Botões Aceitar/Recusar (apenas para pendentes) ─────
             if (proposta.isPendente) ...[

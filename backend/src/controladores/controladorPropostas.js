@@ -49,11 +49,16 @@ async function criarProposta(req, res) {
       });
     }
 
+    // Busca o telefone do cliente pra salvar snapshot na proposta (o
+    // token só traz uid/email/nome, não telefone)
+    const docCliente = await db.collection('usuarios').doc(idCliente).get();
+
     // Criar a proposta no Firestore
     const novaProposta = {
       idCliente: idCliente,
       nomeCliente: nomeCliente || 'Cliente',
       emailCliente: req.usuario.email,
+      telefoneCliente: docCliente.exists ? (docCliente.data().telefone || null) : null,
       idPrestador: idPrestador,
       nomePrestador: docPrestador.data().nome,
       telefonePrestador: docPrestador.data().telefone || null,

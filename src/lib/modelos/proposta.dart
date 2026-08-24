@@ -7,6 +7,7 @@ class Proposta {
   final String idCliente;
   final String nomeCliente;
   final String? emailCliente;
+  final String? telefoneCliente;
   final String idPrestador;
   final String? nomePrestador;
   final String titulo;
@@ -25,6 +26,7 @@ class Proposta {
     required this.idCliente,
     required this.nomeCliente,
     this.emailCliente,
+    this.telefoneCliente,
     required this.idPrestador,
     this.nomePrestador,
     required this.titulo,
@@ -51,6 +53,7 @@ class Proposta {
       idCliente: json['idCliente'] ?? '',
       nomeCliente: json['nomeCliente'] ?? '',
       emailCliente: json['emailCliente'],
+      telefoneCliente: json['telefoneCliente'],
       idPrestador: json['idPrestador'] ?? '',
       nomePrestador: json['nomePrestador'],
       titulo: json['titulo'] ?? '',
