@@ -345,11 +345,6 @@ class _TelaPerfilState extends State<TelaPerfil> {
                   ),
                   _buildMenuItem(
                     context,
-                    Icons.location_on_outlined,
-                    'Endereços Salvos',
-                  ),
-                  _buildMenuItem(
-                    context,
                     Icons.notifications_outlined,
                     'Notificações',
                   ),
