@@ -48,6 +48,8 @@ class AuthServico extends ChangeNotifier {
         cep: prefs.getString('usuario_cep'),
         cidade: prefs.getString('usuario_cidade'),
         endereco: prefs.getString('usuario_endereco'),
+        chavePix: prefs.getString('usuario_chave_pix'),
+        formaPagamentoPreferida: prefs.getString('usuario_forma_pagamento'),
         especialidade: prefs.getString('usuario_especialidade'),
         valorHora: prefs.getDouble('usuario_valor_hora'),
         biografia: prefs.getString('usuario_biografia'),
@@ -230,6 +232,63 @@ class AuthServico extends ChangeNotifier {
         cep: cep,
         endereco: endereco,
         cidade: cidade,
+        // Reenvia os campos de pagamento atuais pra não perdê-los —
+        // o endpoint sobrescreve tudo que recebe.
+        chavePix: _usuarioAtual!.chavePix,
+        formaPagamentoPreferida: _usuarioAtual!.formaPagamentoPreferida,
+      );
+
+      if (resposta.containsKey('erro')) {
+        _erro = resposta['mensagem'] as String? ?? 'Erro ao atualizar dados.';
+        _carregando = false;
+        notifyListeners();
+        return false;
+      }
+
+      _usuarioAtual = Usuario.fromJson(
+        resposta['usuario'] as Map<String, dynamic>,
+      );
+      await _salvarSessao();
+    } catch (_) {
+      _erro = 'Não foi possível conectar ao servidor.';
+      _carregando = false;
+      notifyListeners();
+      return false;
+    }
+
+    _carregando = false;
+    notifyListeners();
+    return true;
+  }
+
+  /// Atualiza o método de pagamento do usuário logado — chave Pix pro
+  /// prestador (recebe), forma preferida pro cliente (referência, não
+  /// processa transação nenhuma)
+  Future<bool> atualizarMetodoPagamento({
+    String? chavePix,
+    String? formaPagamentoPreferida,
+  }) async {
+    if (_usuarioAtual == null || _token == null) {
+      _erro = 'Sessão expirada. Faça login novamente.';
+      notifyListeners();
+      return false;
+    }
+
+    _carregando = true;
+    _erro = null;
+    notifyListeners();
+
+    try {
+      final resposta = await ApiServico.atualizarPerfil(
+        token: _token!,
+        nome: _usuarioAtual!.nome,
+        telefone: _usuarioAtual!.telefone,
+        cpf: _usuarioAtual!.cpf,
+        cep: _usuarioAtual!.cep,
+        endereco: _usuarioAtual!.endereco,
+        cidade: _usuarioAtual!.cidade,
+        chavePix: chavePix,
+        formaPagamentoPreferida: formaPagamentoPreferida,
       );
 
       if (resposta.containsKey('erro')) {
@@ -288,6 +347,15 @@ class AuthServico extends ChangeNotifier {
     }
     if (_usuarioAtual!.endereco != null) {
       await prefs.setString('usuario_endereco', _usuarioAtual!.endereco!);
+    }
+    if (_usuarioAtual!.chavePix != null) {
+      await prefs.setString('usuario_chave_pix', _usuarioAtual!.chavePix!);
+    }
+    if (_usuarioAtual!.formaPagamentoPreferida != null) {
+      await prefs.setString(
+        'usuario_forma_pagamento',
+        _usuarioAtual!.formaPagamentoPreferida!,
+      );
     }
     if (_usuarioAtual!.especialidade != null) {
       await prefs.setString(

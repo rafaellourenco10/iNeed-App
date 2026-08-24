@@ -312,7 +312,7 @@ async function tornarPrestador(req, res) {
 // identidade da conta no Firebase Auth, exige fluxo próprio.
 async function atualizarPerfil(req, res) {
   try {
-    const { nome, telefone, cpf, cep, endereco, cidade } = req.body;
+    const { nome, telefone, cpf, cep, endereco, cidade, chavePix, formaPagamentoPreferida } = req.body;
 
     if (!nome || !nome.trim()) {
       return res.status(400).json({
@@ -346,6 +346,8 @@ async function atualizarPerfil(req, res) {
       cep: cep || null,
       endereco: endereco || null,
       cidade: cidade || null,
+      chavePix: chavePix || null,
+      formaPagamentoPreferida: formaPagamentoPreferida || null,
       atualizadoEm: new Date().toISOString()
     });
 

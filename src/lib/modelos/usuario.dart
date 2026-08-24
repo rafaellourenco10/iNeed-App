@@ -14,6 +14,10 @@ class Usuario {
   final String? cidade;
   final String? endereco;
 
+  // Método de pagamento (referência, não processa transação)
+  final String? chavePix; // prestador — chave pra receber
+  final String? formaPagamentoPreferida; // cliente — dinheiro, pix ou cartao
+
   // Campos específicos do Prestador
   final String? especialidade;
   final double? valorHora;
@@ -36,6 +40,8 @@ class Usuario {
     this.cep,
     this.cidade,
     this.endereco,
+    this.chavePix,
+    this.formaPagamentoPreferida,
     this.especialidade,
     this.valorHora,
     this.biografia,
@@ -62,6 +68,8 @@ class Usuario {
       cep: json['cep'],
       cidade: json['cidade'],
       endereco: json['endereco'],
+      chavePix: json['chavePix'],
+      formaPagamentoPreferida: json['formaPagamentoPreferida'],
       especialidade: json['especialidade'],
       valorHora: json['valorHora'] != null
           ? (json['valorHora'] as num).toDouble()
