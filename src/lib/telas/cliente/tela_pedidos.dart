@@ -72,6 +72,20 @@ class _TelaPedidosState extends State<TelaPedidos>
     _carregar();
   }
 
+  Future<void> _concluir(String idProposta) async {
+    final auth = Provider.of<AuthServico>(context, listen: false);
+    await ApiServico.atualizarProposta(
+      token: auth.token ?? '',
+      id: idProposta,
+      status: 'concluida',
+    );
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Serviço marcado como concluído!')),
+    );
+    _carregar();
+  }
+
   List<Map<String, dynamic>> _filtrar(List<String> status) {
     return _pedidos.where((p) => status.contains(p['status'])).toList();
   }
@@ -136,7 +150,12 @@ class _TelaPedidosState extends State<TelaPedidos>
                           mostrarWhatsApp: true,
                           aoCancelar: _cancelar,
                         ),
-                        _buildLista(emAndamento, mostrarWhatsApp: true),
+                        _buildLista(
+                          emAndamento,
+                          mostrarWhatsApp: true,
+                          mostrarConcluir: true,
+                          aoConcluir: _concluir,
+                        ),
                         _buildLista(historico),
                       ],
                     ),
@@ -151,7 +170,9 @@ class _TelaPedidosState extends State<TelaPedidos>
     List<Map<String, dynamic>> lista, {
     bool mostrarCancelar = false,
     bool mostrarWhatsApp = false,
+    bool mostrarConcluir = false,
     void Function(String idProposta)? aoCancelar,
+    void Function(String idProposta)? aoConcluir,
   }) {
     if (lista.isEmpty) {
       return Center(
@@ -184,7 +205,9 @@ class _TelaPedidosState extends State<TelaPedidos>
           pedido: lista[index],
           mostrarCancelar: mostrarCancelar,
           mostrarWhatsApp: mostrarWhatsApp,
+          mostrarConcluir: mostrarConcluir,
           aoCancelar: aoCancelar,
+          aoConcluir: aoConcluir,
         ),
       ),
     );
@@ -195,13 +218,17 @@ class _CardPedido extends StatelessWidget {
   final Map<String, dynamic> pedido;
   final bool mostrarCancelar;
   final bool mostrarWhatsApp;
+  final bool mostrarConcluir;
   final void Function(String idProposta)? aoCancelar;
+  final void Function(String idProposta)? aoConcluir;
 
   const _CardPedido({
     required this.pedido,
     this.mostrarCancelar = false,
     this.mostrarWhatsApp = false,
+    this.mostrarConcluir = false,
     this.aoCancelar,
+    this.aoConcluir,
   });
 
   Future<void> _abrirWhatsApp(BuildContext context) async {
@@ -419,7 +446,7 @@ class _CardPedido extends StatelessWidget {
             ],
 
             // ───── Botões de ação ─────
-            if (mostrarCancelar || mostrarWhatsApp) ...[
+            if (mostrarCancelar || mostrarConcluir || mostrarWhatsApp) ...[
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -434,6 +461,29 @@ class _CardPedido extends StatelessWidget {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: CoresApp.error,
                           side: const BorderSide(color: CoresApp.error),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                    if (mostrarConcluir || mostrarWhatsApp)
+                      const SizedBox(width: 10),
+                  ],
+                  // Concluir (só em andamento)
+                  if (mostrarConcluir) ...[
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () =>
+                            aoConcluir?.call(pedido['id'] as String),
+                        icon: const Icon(Icons.check_circle_outline, size: 18),
+                        label: const Text('Concluir'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: CoresApp.statusConcluida,
+                          side: const BorderSide(
+                            color: CoresApp.statusConcluida,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

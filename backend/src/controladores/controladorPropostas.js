@@ -186,10 +186,33 @@ async function atualizarProposta(req, res) {
       });
     }
 
-    if (docProposta.data().idPrestador !== req.usuario.uid) {
+    const dados = docProposta.data();
+    const uid = req.usuario.uid;
+    const souPrestador = dados.idPrestador === uid;
+    const souCliente = dados.idCliente === uid;
+
+    if (!souPrestador && !souCliente) {
       return res.status(403).json({
         erro: 'Acesso negado',
-        mensagem: 'Você só pode atualizar propostas endereçadas a você.'
+        mensagem: 'Você só pode atualizar propostas relacionadas a você.'
+      });
+    }
+
+    // Cada papel só pode fazer transições de status específicas: o
+    // prestador aceita/recusa uma proposta pendente, o cliente cancela
+    // uma pendente ou marca como concluída uma que já foi aceita.
+    const transicoesPermitidas = {
+      prestador: { pendente: ['aceita', 'recusada'] },
+      cliente: { pendente: ['recusada'], aceita: ['concluida'], em_andamento: ['concluida'] }
+    };
+    const papel = souPrestador ? 'prestador' : 'cliente';
+    const statusAtual = dados.status;
+    const permitido = transicoesPermitidas[papel][statusAtual]?.includes(status);
+
+    if (!permitido) {
+      return res.status(403).json({
+        erro: 'Transição inválida',
+        mensagem: `Como ${papel}, você não pode mudar o status de "${statusAtual}" para "${status}".`
       });
     }
 
