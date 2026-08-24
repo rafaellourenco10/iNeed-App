@@ -88,7 +88,6 @@ class INeedApp extends StatelessWidget {
               '/onboarding': (_) => const TelaOnboarding(),
               '/cadastro': (_) => const TelaCadastro(),
               '/completar-prestador': (_) => const TelaCompletarPrestador(),
-              '/home-prestador': (_) => const ShellNavegacao(isPrestador: true),
               '/perfil': (_) => const TelaPerfil(),
             },
 
@@ -100,6 +99,14 @@ class INeedApp extends StatelessWidget {
                   return MaterialPageRoute(
                     builder: (_) => ShellNavegacao(
                       isPrestador: false,
+                      indiceInicial: indice,
+                    ),
+                  );
+                case '/home-prestador':
+                  final indice = (settings.arguments as int?) ?? 0;
+                  return MaterialPageRoute(
+                    builder: (_) => ShellNavegacao(
+                      isPrestador: true,
                       indiceInicial: indice,
                     ),
                   );

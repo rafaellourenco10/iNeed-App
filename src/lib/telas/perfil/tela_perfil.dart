@@ -5,11 +5,112 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../tema/cores.dart';
+import '../../modelos/proposta.dart';
+import '../../servicos/api_servico.dart';
 import '../../servicos/auth_servico.dart';
 import '../../widgets/botao_primario.dart';
 
-class TelaPerfil extends StatelessWidget {
+class TelaPerfil extends StatefulWidget {
   const TelaPerfil({super.key});
+
+  @override
+  State<TelaPerfil> createState() => _TelaPerfilState();
+}
+
+class _TelaPerfilState extends State<TelaPerfil> {
+  List<Proposta> _historico = [];
+  bool _carregando = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _carregarHistorico();
+  }
+
+  Future<void> _carregarHistorico() async {
+    final auth = Provider.of<AuthServico>(context, listen: false);
+    final usuario = auth.usuarioAtual;
+    if (usuario == null || auth.token == null) {
+      setState(() => _carregando = false);
+      return;
+    }
+
+    setState(() => _carregando = true);
+    try {
+      final resposta = usuario.isPrestador
+          ? await ApiServico.listarPropostas(
+              token: auth.token!,
+              idPrestador: usuario.uid,
+            )
+          : await ApiServico.listarPropostasCliente(token: auth.token!);
+
+      if (!mounted) return;
+      if (resposta.containsKey('propostas')) {
+        final lista = (resposta['propostas'] as List)
+            .map((p) => Proposta.fromJson(p as Map<String, dynamic>))
+            .toList();
+        setState(() {
+          _historico = lista.take(3).toList();
+          _carregando = false;
+        });
+      } else {
+        setState(() => _carregando = false);
+      }
+    } catch (_) {
+      if (mounted) setState(() => _carregando = false);
+    }
+  }
+
+  Color _corStatus(String status) {
+    switch (status) {
+      case 'pendente':
+        return CoresApp.statusPendente;
+      case 'aceita':
+      case 'em_andamento':
+        return CoresApp.statusEmAndamento;
+      case 'concluida':
+        return CoresApp.statusConcluida;
+      case 'recusada':
+        return CoresApp.statusRecusada;
+      default:
+        return CoresApp.outline;
+    }
+  }
+
+  String _textoStatus(String status) {
+    switch (status) {
+      case 'pendente':
+        return 'PENDENTE';
+      case 'aceita':
+        return 'ACEITA';
+      case 'em_andamento':
+        return 'EM ANDAMENTO';
+      case 'concluida':
+        return 'CONCLUÍDO';
+      case 'recusada':
+        return 'RECUSADO';
+      default:
+        return status.toUpperCase();
+    }
+  }
+
+  String _subtitulo(Proposta p, bool souPrestador) {
+    final contraparte = souPrestador
+        ? p.nomeCliente
+        : (p.nomePrestador ?? 'Prestador');
+    final quando = p.data != null
+        ? '${p.data}${p.horario != null ? ' às ${p.horario}' : ''}'
+        : _formatarDataIso(p.criadaEm);
+    return '$contraparte • $quando';
+  }
+
+  String _formatarDataIso(String? iso) {
+    if (iso == null) return '';
+    final data = DateTime.tryParse(iso);
+    if (data == null) return '';
+    return '${data.day.toString().padLeft(2, '0')}/'
+        '${data.month.toString().padLeft(2, '0')}/${data.year}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -247,12 +348,23 @@ class TelaPerfil extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Histórico de Serviços',
+                        usuario != null && usuario.isPrestador
+                            ? 'Últimos Serviços Prestados'
+                            : 'Últimos Serviços Contratados',
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          usuario != null && usuario.isPrestador
+                              ? '/home-prestador'
+                              : '/home',
+                          (r) => false,
+                          arguments: usuario != null && usuario.isPrestador
+                              ? 2
+                              : 1,
+                        ),
                         child: const Text(
                           'Ver todos',
                           style: TextStyle(color: CoresApp.primary),
@@ -262,26 +374,38 @@ class TelaPerfil extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // Serviço exemplo 1
-                  _buildServicoHistorico(
-                    context,
-                    icone: Icons.plumbing,
-                    titulo: 'Conserto de Vazamento',
-                    subtitulo: 'Hoje, 14:30 - R. das Flores, 123',
-                    status: 'EM ANDAMENTO',
-                    corStatus: CoresApp.statusEmAndamento,
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Serviço exemplo 2
-                  _buildServicoHistorico(
-                    context,
-                    icone: Icons.cleaning_services,
-                    titulo: 'Limpeza Residencial',
-                    subtitulo: 'Ontem, 09:00 - Avaliado 5.0',
-                    status: 'CONCLUÍDO',
-                    corStatus: CoresApp.statusConcluida,
-                  ),
+                  if (_carregando)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (_historico.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        'Nenhum serviço ainda.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: CoresApp.onSurfaceVariant,
+                        ),
+                      ),
+                    )
+                  else
+                    ..._historico.map(
+                      (p) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: _buildServicoHistorico(
+                          context,
+                          icone: Icons.build_outlined,
+                          titulo: p.titulo,
+                          subtitulo: _subtitulo(
+                            p,
+                            usuario != null && usuario.isPrestador,
+                          ),
+                          status: _textoStatus(p.status),
+                          corStatus: _corStatus(p.status),
+                        ),
+                      ),
+                    ),
 
                   const SizedBox(height: 32),
 
