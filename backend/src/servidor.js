@@ -11,6 +11,7 @@ require('dotenv').config();
 const rotasAutenticacao = require('./rotas/rotasAutenticacao');
 const rotasPrestadores = require('./rotas/rotasPrestadores');
 const rotasPropostas = require('./rotas/rotasPropostas');
+const rotasAvaliacoes = require('./rotas/rotasAvaliacoes');
 
 const app = express();
 // Em produção (Render) a porta vem via PORT, injetada pela plataforma.
@@ -39,6 +40,7 @@ app.get('/api/saude', (req, res) => {
 app.use('/api/auth', rotasAutenticacao);
 app.use('/api/prestadores', rotasPrestadores);
 app.use('/api/propostas', rotasPropostas);
+app.use('/api/avaliacoes', rotasAvaliacoes);
 
 // ============================================
 // Middleware de Erro Global

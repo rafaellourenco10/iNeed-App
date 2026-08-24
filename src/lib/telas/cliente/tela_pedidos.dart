@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../tema/cores.dart';
+import '../../modelos/proposta.dart';
 import '../../servicos/api_servico.dart';
 import '../../servicos/auth_servico.dart';
 
@@ -86,6 +87,16 @@ class _TelaPedidosState extends State<TelaPedidos>
     _carregar();
   }
 
+  Future<void> _avaliar(Map<String, dynamic> pedido) async {
+    final proposta = Proposta.fromJson(pedido);
+    final avaliou = await Navigator.pushNamed(
+      context,
+      '/avaliar-servico',
+      arguments: proposta,
+    );
+    if (avaliou == true) _carregar();
+  }
+
   List<Map<String, dynamic>> _filtrar(List<String> status) {
     return _pedidos.where((p) => status.contains(p['status'])).toList();
   }
@@ -156,7 +167,7 @@ class _TelaPedidosState extends State<TelaPedidos>
                           mostrarConcluir: true,
                           aoConcluir: _concluir,
                         ),
-                        _buildLista(historico),
+                        _buildLista(historico, aoAvaliar: _avaliar),
                       ],
                     ),
             ),
@@ -173,6 +184,7 @@ class _TelaPedidosState extends State<TelaPedidos>
     bool mostrarConcluir = false,
     void Function(String idProposta)? aoCancelar,
     void Function(String idProposta)? aoConcluir,
+    void Function(Map<String, dynamic> pedido)? aoAvaliar,
   }) {
     if (lista.isEmpty) {
       return Center(
@@ -208,6 +220,7 @@ class _TelaPedidosState extends State<TelaPedidos>
           mostrarConcluir: mostrarConcluir,
           aoCancelar: aoCancelar,
           aoConcluir: aoConcluir,
+          aoAvaliar: aoAvaliar,
         ),
       ),
     );
@@ -221,6 +234,7 @@ class _CardPedido extends StatelessWidget {
   final bool mostrarConcluir;
   final void Function(String idProposta)? aoCancelar;
   final void Function(String idProposta)? aoConcluir;
+  final void Function(Map<String, dynamic> pedido)? aoAvaliar;
 
   const _CardPedido({
     required this.pedido,
@@ -229,6 +243,7 @@ class _CardPedido extends StatelessWidget {
     this.mostrarConcluir = false,
     this.aoCancelar,
     this.aoConcluir,
+    this.aoAvaliar,
   });
 
   Future<void> _abrirWhatsApp(BuildContext context) async {
@@ -291,6 +306,10 @@ class _CardPedido extends StatelessWidget {
   Widget build(BuildContext context) {
     final status = pedido['status'] as String;
     final cor = _corStatus(status);
+    final podeAvaliar =
+        status == 'concluida' &&
+        pedido['avaliada'] != true &&
+        aoAvaliar != null;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -446,7 +465,10 @@ class _CardPedido extends StatelessWidget {
             ],
 
             // ───── Botões de ação ─────
-            if (mostrarCancelar || mostrarConcluir || mostrarWhatsApp) ...[
+            if (mostrarCancelar ||
+                mostrarConcluir ||
+                mostrarWhatsApp ||
+                podeAvaliar) ...[
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -502,6 +524,24 @@ class _CardPedido extends StatelessWidget {
                         label: const Text('WhatsApp'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF25D366),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      ),
+                    ),
+                  // Avaliar (só no histórico, serviço concluído sem avaliação)
+                  if (podeAvaliar)
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () => aoAvaliar!.call(pedido),
+                        icon: const Icon(Icons.star_outline, size: 18),
+                        label: const Text('Avaliar'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: CoresApp.primary,
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(

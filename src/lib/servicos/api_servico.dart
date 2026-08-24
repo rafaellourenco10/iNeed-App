@@ -217,6 +217,40 @@ class ApiServico {
     return jsonDecode(resposta.body) as Map<String, dynamic>;
   }
 
+  // ───── Avaliações ─────
+
+  /// Avaliar um serviço concluído (requer token — só o cliente dono)
+  static Future<Map<String, dynamic>> criarAvaliacao({
+    required String token,
+    required String idProposta,
+    required int estrelas,
+    String? comentario,
+    List<String>? elogios,
+  }) async {
+    final resposta = await http.post(
+      Uri.parse('$_urlBase/avaliacoes'),
+      headers: _headers(token: token),
+      body: jsonEncode({
+        'idProposta': idProposta,
+        'estrelas': estrelas,
+        'comentario': comentario,
+        'elogios': elogios ?? [],
+      }),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
+  /// Listar avaliações recebidas por um prestador (pública)
+  static Future<Map<String, dynamic>> listarAvaliacoesPrestador(
+    String idPrestador,
+  ) async {
+    final resposta = await http.get(
+      Uri.parse('$_urlBase/avaliacoes/prestador/$idPrestador'),
+      headers: _headers(),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
   // ───── Health Check ─────
 
   /// Verificar se o servidor está online

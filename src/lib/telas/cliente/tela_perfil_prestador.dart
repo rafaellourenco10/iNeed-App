@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import '../../tema/cores.dart';
 import '../../modelos/usuario.dart';
+import '../../servicos/api_servico.dart';
 
 class TelaPerfilPrestador extends StatelessWidget {
   final Usuario prestador;
@@ -184,42 +185,53 @@ class TelaPerfilPrestador extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Avaliações (${prestador.totalServicos ?? 0})',
+                    'Avaliações',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildAvaliacaoItem(
-                    context,
-                    nome: 'Mariana Costa',
-                    tempo: 'Há 2 dias',
-                    estrelas: 5,
-                    comentario:
-                        'Serviço impecável! Muito pontual e profissional. Com certeza contratarei novamente.',
-                  ),
-                  const SizedBox(height: 12),
-                  _buildAvaliacaoItem(
-                    context,
-                    nome: 'Rafael Almeida',
-                    tempo: 'Semana passada',
-                    estrelas: 4,
-                    comentario:
-                        'Muito detalhista, especialmente na área de ${prestador.especialidade ?? "serviços"}. Recomendo o trabalho.',
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: const Text('Ver todas as avaliações'),
-                    ),
+                  FutureBuilder<Map<String, dynamic>>(
+                    future: ApiServico.listarAvaliacoesPrestador(prestador.uid),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState != ConnectionState.done) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+
+                      final avaliacoes = List<Map<String, dynamic>>.from(
+                        snapshot.data?['avaliacoes'] as List? ?? [],
+                      );
+
+                      if (avaliacoes.isEmpty) {
+                        return Text(
+                          'Ainda não há avaliações para este prestador.',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: CoresApp.onSurfaceVariant),
+                        );
+                      }
+
+                      return Column(
+                        children: avaliacoes
+                            .map(
+                              (a) => Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: _buildAvaliacaoItem(
+                                  context,
+                                  nome:
+                                      (a['nomeCliente'] as String?) ??
+                                      'Cliente',
+                                  criadaEm: a['criadaEm'] as String?,
+                                  estrelas: (a['estrelas'] as num).toInt(),
+                                  comentario: a['comentario'] as String?,
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -364,13 +376,23 @@ class TelaPerfilPrestador extends StatelessWidget {
     );
   }
 
+  String _formatarData(String? isoData) {
+    if (isoData == null) return '';
+    final data = DateTime.tryParse(isoData);
+    if (data == null) return '';
+    return '${data.day.toString().padLeft(2, '0')}/'
+        '${data.month.toString().padLeft(2, '0')}/'
+        '${data.year}';
+  }
+
   Widget _buildAvaliacaoItem(
     BuildContext context, {
     required String nome,
-    required String tempo,
+    required String? criadaEm,
     required int estrelas,
-    required String comentario,
+    required String? comentario,
   }) {
+    final tempo = _formatarData(criadaEm);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -421,11 +443,15 @@ class TelaPerfilPrestador extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Text(
-            comentario,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(height: 1.5),
-          ),
+          if (comentario != null && comentario.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text(
+              comentario,
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(height: 1.5),
+            ),
+          ],
         ],
       ),
     );

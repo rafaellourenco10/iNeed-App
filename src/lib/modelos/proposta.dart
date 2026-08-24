@@ -18,6 +18,7 @@ class Proposta {
   final String status; // pendente, aceita, recusada, em_andamento, concluida
   final String? criadaEm;
   final String? atualizadaEm;
+  final bool avaliada;
 
   Proposta({
     required this.id,
@@ -35,6 +36,7 @@ class Proposta {
     required this.status,
     this.criadaEm,
     this.atualizadaEm,
+    this.avaliada = false,
   });
 
   bool get isPendente => status == 'pendente';
@@ -53,15 +55,14 @@ class Proposta {
       nomePrestador: json['nomePrestador'],
       titulo: json['titulo'] ?? '',
       descricao: json['descricao'],
-      valor: json['valor'] != null
-          ? (json['valor'] as num).toDouble()
-          : 0.0,
+      valor: json['valor'] != null ? (json['valor'] as num).toDouble() : 0.0,
       data: json['data'],
       horario: json['horario'],
       endereco: json['endereco'],
       status: json['status'] ?? 'pendente',
       criadaEm: json['criadaEm'],
       atualizadaEm: json['atualizadaEm'],
+      avaliada: json['avaliada'] == true,
     );
   }
 

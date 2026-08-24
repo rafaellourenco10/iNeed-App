@@ -3,8 +3,11 @@
 // ============================================
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../tema/cores.dart';
 import '../../modelos/proposta.dart';
+import '../../servicos/api_servico.dart';
+import '../../servicos/auth_servico.dart';
 import '../../widgets/botao_primario.dart';
 
 class TelaAvaliarServico extends StatefulWidget {
@@ -20,6 +23,7 @@ class _TelaAvaliarServicoState extends State<TelaAvaliarServico> {
   int _estrelas = 0;
   final Set<String> _elogiosSelecionados = {};
   final _comentarioController = TextEditingController();
+  bool _enviando = false;
 
   static const List<String> _elogios = [
     'Pontual',
@@ -35,13 +39,63 @@ class _TelaAvaliarServicoState extends State<TelaAvaliarServico> {
     super.dispose();
   }
 
+  Future<void> _enviar() async {
+    if (_estrelas == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione uma nota de 1 a 5 estrelas.')),
+      );
+      return;
+    }
+
+    final auth = Provider.of<AuthServico>(context, listen: false);
+    final token = auth.token;
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sessão expirada. Faça login novamente.')),
+      );
+      return;
+    }
+
+    setState(() => _enviando = true);
+
+    final resposta = await ApiServico.criarAvaliacao(
+      token: token,
+      idProposta: widget.proposta.id,
+      estrelas: _estrelas,
+      comentario: _comentarioController.text.trim().isEmpty
+          ? null
+          : _comentarioController.text.trim(),
+      elogios: _elogiosSelecionados.toList(),
+    );
+
+    if (!mounted) return;
+    setState(() => _enviando = false);
+
+    if (resposta['erro'] == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Avaliação enviada com sucesso! Obrigado.'),
+          backgroundColor: CoresApp.statusConcluida,
+        ),
+      );
+      Navigator.pop(context, true);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            resposta['mensagem']?.toString() ?? 'Erro ao enviar avaliação.',
+          ),
+          backgroundColor: CoresApp.error,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CoresApp.surface,
-      appBar: AppBar(
-        title: const Text('Avaliar Serviço'),
-      ),
+      appBar: AppBar(title: const Text('Avaliar Serviço')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -78,15 +132,15 @@ class _TelaAvaliarServicoState extends State<TelaAvaliarServico> {
                   Text(
                     widget.proposta.nomePrestador ?? 'Prestador',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     widget.proposta.titulo,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: CoresApp.onSurfaceVariant,
-                        ),
+                      color: CoresApp.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -97,9 +151,9 @@ class _TelaAvaliarServicoState extends State<TelaAvaliarServico> {
             // ───── Estrelas ─────
             Text(
               'Como foi o serviço?',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             Row(
@@ -129,9 +183,9 @@ class _TelaAvaliarServicoState extends State<TelaAvaliarServico> {
               child: Text(
                 'ELOGIO RÁPIDO',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: CoresApp.onSurfaceVariant,
-                      letterSpacing: 1.2,
-                    ),
+                  color: CoresApp.onSurfaceVariant,
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -172,9 +226,7 @@ class _TelaAvaliarServicoState extends State<TelaAvaliarServico> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
-                        color: selecionado
-                            ? Colors.white
-                            : CoresApp.onSurface,
+                        color: selecionado ? Colors.white : CoresApp.onSurface,
                       ),
                     ),
                   ),
@@ -210,15 +262,8 @@ class _TelaAvaliarServicoState extends State<TelaAvaliarServico> {
             BotaoPrimario(
               texto: 'Enviar Avaliação',
               icone: Icons.send,
-              aoPresionar: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Avaliação enviada com sucesso! Obrigado.'),
-                    backgroundColor: CoresApp.statusConcluida,
-                  ),
-                );
-                Navigator.pop(context);
-              },
+              carregando: _enviando,
+              aoPresionar: _enviar,
             ),
 
             const SizedBox(height: 32),
