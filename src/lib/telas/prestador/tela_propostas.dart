@@ -178,6 +178,9 @@ class _TelaPropostasState extends State<TelaPropostas>
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
               child: TabBar(
                 controller: _tabController,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 16),
                 tabs: [
                   Tab(text: 'Pendentes (${pendentes.length})'),
                   const Tab(text: 'Em Andamento'),

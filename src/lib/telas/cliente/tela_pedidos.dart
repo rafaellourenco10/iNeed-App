@@ -140,6 +140,9 @@ class _TelaPedidosState extends State<TelaPedidos>
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TabBar(
                 controller: _tabController,
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 16),
                 tabs: [
                   Tab(text: 'Em Aberto (${emAberto.length})'),
                   Tab(text: 'Andamento (${emAndamento.length})'),
