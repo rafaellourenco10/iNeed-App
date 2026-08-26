@@ -3,8 +3,6 @@
 // ============================================
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../servicos/auth_servico.dart';
 import '../widgets/barra_navegacao.dart';
 import 'cliente/tela_home.dart';
 import 'cliente/tela_pedidos.dart';
@@ -34,8 +32,7 @@ class _ShellNavegacaoState extends State<ShellNavegacao> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthServico>(context);
-    final isPrestador = widget.isPrestador || (auth.usuarioAtual?.isPrestador ?? false);
+    final isPrestador = widget.isPrestador;
 
     final telas = isPrestador
         ? [
