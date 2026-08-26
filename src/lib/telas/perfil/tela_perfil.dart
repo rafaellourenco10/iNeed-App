@@ -358,13 +358,14 @@ class _TelaPerfilState extends State<TelaPerfil> {
                     aoTocar: () =>
                         Navigator.pushNamed(context, '/dados-pessoais'),
                   ),
-                  _buildMenuItem(
-                    context,
-                    Icons.payment_outlined,
-                    'Métodos de Pagamento',
-                    aoTocar: () =>
-                        Navigator.pushNamed(context, '/metodos-pagamento'),
-                  ),
+                  if (usuario != null && usuario.isPrestador)
+                    _buildMenuItem(
+                      context,
+                      Icons.payment_outlined,
+                      'Métodos de Pagamento',
+                      aoTocar: () =>
+                          Navigator.pushNamed(context, '/metodos-pagamento'),
+                    ),
                   _buildMenuItem(
                     context,
                     Icons.notifications_outlined,
