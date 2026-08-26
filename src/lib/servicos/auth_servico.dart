@@ -49,6 +49,7 @@ class AuthServico extends ChangeNotifier {
         cidade: prefs.getString('usuario_cidade'),
         endereco: prefs.getString('usuario_endereco'),
         chavePix: prefs.getString('usuario_chave_pix'),
+        formaPagamentoAceita: prefs.getString('usuario_forma_pagamento'),
         especialidade: prefs.getString('usuario_especialidade'),
         valorHora: prefs.getDouble('usuario_valor_hora'),
         biografia: prefs.getString('usuario_biografia'),
@@ -231,9 +232,10 @@ class AuthServico extends ChangeNotifier {
         cep: cep,
         endereco: endereco,
         cidade: cidade,
-        // Reenvia a chave Pix atual pra não perdê-la —
+        // Reenvia os campos de pagamento atuais pra não perdê-los —
         // o endpoint sobrescreve tudo que recebe.
         chavePix: _usuarioAtual!.chavePix,
+        formaPagamentoAceita: _usuarioAtual!.formaPagamentoAceita,
       );
 
       if (resposta.containsKey('erro')) {
@@ -259,9 +261,12 @@ class AuthServico extends ChangeNotifier {
     return true;
   }
 
-  /// Atualiza a chave Pix do prestador logado (referência, não
-  /// processa transação nenhuma)
-  Future<bool> atualizarMetodoPagamento({String? chavePix}) async {
+  /// Atualiza a chave Pix e as formas de pagamento aceitas pelo
+  /// prestador logado (referência, não processa transação nenhuma)
+  Future<bool> atualizarMetodoPagamento({
+    String? chavePix,
+    String? formaPagamentoAceita,
+  }) async {
     if (_usuarioAtual == null || _token == null) {
       _erro = 'Sessão expirada. Faça login novamente.';
       notifyListeners();
@@ -282,6 +287,7 @@ class AuthServico extends ChangeNotifier {
         endereco: _usuarioAtual!.endereco,
         cidade: _usuarioAtual!.cidade,
         chavePix: chavePix,
+        formaPagamentoAceita: formaPagamentoAceita,
       );
 
       if (resposta.containsKey('erro')) {
@@ -343,6 +349,12 @@ class AuthServico extends ChangeNotifier {
     }
     if (_usuarioAtual!.chavePix != null) {
       await prefs.setString('usuario_chave_pix', _usuarioAtual!.chavePix!);
+    }
+    if (_usuarioAtual!.formaPagamentoAceita != null) {
+      await prefs.setString(
+        'usuario_forma_pagamento',
+        _usuarioAtual!.formaPagamentoAceita!,
+      );
     }
     if (_usuarioAtual!.especialidade != null) {
       await prefs.setString(

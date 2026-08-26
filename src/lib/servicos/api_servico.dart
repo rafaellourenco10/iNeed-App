@@ -79,6 +79,7 @@ class ApiServico {
     String? endereco,
     String? cidade,
     String? chavePix,
+    String? formaPagamentoAceita,
   }) async {
     final resposta = await http.patch(
       Uri.parse('$_urlBase/auth/atualizar-perfil'),
@@ -91,6 +92,7 @@ class ApiServico {
         'endereco': endereco,
         'cidade': cidade,
         'chavePix': chavePix,
+        'formaPagamentoAceita': formaPagamentoAceita,
       }),
     );
     return jsonDecode(resposta.body) as Map<String, dynamic>;

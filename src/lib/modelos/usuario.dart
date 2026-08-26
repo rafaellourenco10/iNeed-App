@@ -16,6 +16,7 @@ class Usuario {
 
   // Método de pagamento (referência, não processa transação)
   final String? chavePix; // prestador — chave pra receber
+  final String? formaPagamentoAceita; // prestador — dinheiro, pix, cartao ou todas
 
   // Campos específicos do Prestador
   final String? especialidade;
@@ -40,6 +41,7 @@ class Usuario {
     this.cidade,
     this.endereco,
     this.chavePix,
+    this.formaPagamentoAceita,
     this.especialidade,
     this.valorHora,
     this.biografia,
@@ -67,6 +69,7 @@ class Usuario {
       cidade: json['cidade'],
       endereco: json['endereco'],
       chavePix: json['chavePix'],
+      formaPagamentoAceita: json['formaPagamentoAceita'],
       especialidade: json['especialidade'],
       valorHora: json['valorHora'] != null
           ? (json['valorHora'] as num).toDouble()

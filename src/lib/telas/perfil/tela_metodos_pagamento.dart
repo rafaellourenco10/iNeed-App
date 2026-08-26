@@ -1,8 +1,9 @@
 // ============================================
 // tela_metodos_pagamento.dart — Método de pagamento (referência)
 // ============================================
-// Não processa nenhuma transação — só guarda a chave Pix do prestador,
-// pra ele receber. Tela exclusiva do perfil de prestador.
+// Não processa nenhuma transação — só guarda a chave Pix do prestador
+// (pra receber) e quais formas de pagamento ele aceita. Tela exclusiva
+// do perfil de prestador.
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,24 @@ class TelaMetodosPagamento extends StatefulWidget {
 
 class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
   late final TextEditingController _chavePixCtrl;
+  String? _formaSelecionada;
+  bool _escolhendoForma = false;
   bool _salvando = false;
+
+  static const _formasPagamento = [
+    {
+      'valor': 'dinheiro',
+      'label': 'Dinheiro',
+      'icone': Icons.payments_outlined,
+    },
+    {'valor': 'pix', 'label': 'Pix', 'icone': Icons.qr_code},
+    {'valor': 'cartao', 'label': 'Cartão', 'icone': Icons.credit_card},
+    {
+      'valor': 'todas',
+      'label': 'Todas as formas',
+      'icone': Icons.all_inclusive,
+    },
+  ];
 
   @override
   void initState() {
@@ -28,6 +46,8 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
       listen: false,
     ).usuarioAtual;
     _chavePixCtrl = TextEditingController(text: usuario?.chavePix ?? '');
+    _formaSelecionada = usuario?.formaPagamentoAceita;
+    _escolhendoForma = _formaSelecionada == null;
   }
 
   @override
@@ -44,6 +64,7 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
       chavePix: _chavePixCtrl.text.trim().isEmpty
           ? null
           : _chavePixCtrl.text.trim(),
+      formaPagamentoAceita: _formaSelecionada,
     );
 
     if (!mounted) return;
@@ -65,6 +86,107 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
         ),
       );
     }
+  }
+
+  Widget _resumoFormaEscolhida() {
+    final forma = _formasPagamento.firstWhere(
+      (f) => f['valor'] == _formaSelecionada,
+      orElse: () => _formasPagamento.first,
+    );
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: CoresApp.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: CoresApp.primary, width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Icon(forma['icone'] as IconData, size: 20, color: CoresApp.primary),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              forma['label'] as String,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: CoresApp.primary,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => setState(() => _escolhendoForma = true),
+            child: const Text('Escolher outra'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _listaFormasPagamento() {
+    return Column(
+      children: _formasPagamento.map((forma) {
+        final selecionada = _formaSelecionada == forma['valor'];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: InkWell(
+            onTap: () => setState(() {
+              _formaSelecionada = forma['valor'] as String;
+              _escolhendoForma = false;
+            }),
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 14,
+              ),
+              decoration: BoxDecoration(
+                color: selecionada
+                    ? CoresApp.primary.withValues(alpha: 0.08)
+                    : CoresApp.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: selecionada
+                      ? CoresApp.primary
+                      : CoresApp.outlineVariant,
+                  width: selecionada ? 1.5 : 0.5,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    forma['icone'] as IconData,
+                    size: 20,
+                    color: selecionada ? CoresApp.primary : CoresApp.outline,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    forma['label'] as String,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: selecionada
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                      color: selecionada
+                          ? CoresApp.primary
+                          : CoresApp.onSurface,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (selecionada)
+                    const Icon(
+                      Icons.check_circle,
+                      color: CoresApp.primary,
+                      size: 20,
+                    ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 
   @override
@@ -100,7 +222,7 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'O pagamento é combinado diretamente com o cliente. Isso é só pra ele saber sua chave na hora de te pagar.',
+                      'O pagamento é combinado diretamente com o cliente. Isso é só pra ele saber sua chave e as formas que você aceita.',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: CoresApp.onSurface,
                         height: 1.4,
@@ -154,6 +276,21 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
                 ),
               ),
             ),
+
+            const SizedBox(height: 24),
+
+            Text(
+              'Formas de pagamento aceitas',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: CoresApp.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            if (!_escolhendoForma && _formaSelecionada != null)
+              _resumoFormaEscolhida()
+            else
+              _listaFormasPagamento(),
 
             const SizedBox(height: 32),
 
