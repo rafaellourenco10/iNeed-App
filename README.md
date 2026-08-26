@@ -16,34 +16,42 @@ O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais 
 
 **Para Clientes:**
 * Encontrar profissionais disponíveis com rapidez, filtrando por especialidade e preço.
-* Enviar propostas de serviço diretamente pelo app (título, valor, data, horário, endereço).
-* Acompanhar o status de cada solicitação (pendente, em andamento, concluída).
+* Enviar propostas de serviço diretamente pelo app (título, descrição, data, horário, endereço — o valor já é o valor/hora cadastrado pelo prestador).
+* Acompanhar o status de cada solicitação (pendente, em andamento, concluída) e falar com o prestador pelo WhatsApp.
+* Avaliar o serviço concluído com estrelas, elogios rápidos e comentário.
 
 **Para Prestadores:**
 * Cadastrar-se com especialidade, valor/hora e biografia.
-* Receber e gerenciar propostas recebidas dos clientes.
-* Autonomia para aceitar ou recusar cada solicitação.
+* Receber e gerenciar propostas recebidas dos clientes, com autonomia para aceitar ou recusar.
+* Definir chave Pix e formas de pagamento aceitas (Dinheiro/Pix/Cartão/Todas as formas).
+* Acompanhar avaliações reais no perfil público, com média recalculada automaticamente.
 
 ## ✅ Estado Atual
 
-**App Flutter** — completo em termos de UI/UX:
-- Onboarding, cadastro unificado (cliente/prestador), login
-- Home, busca e pedidos (cliente) · Home, busca e propostas (prestador)
-- Perfil compartilhado, navegação por abas, design system Material 3 com identidade visual própria
+**App Flutter** — completo, com dados reais de ponta a ponta (sem mocks):
+- Onboarding, cadastro unificado (cliente/prestador), login reais (Firebase Auth)
+- Home, busca e pedidos (cliente) · Home, busca e propostas (prestador), todos com dados reais do backend
+- Fluxo completo de contratação — proposta → aceitar/recusar → concluir → avaliar — com contato via WhatsApp nos dois sentidos (mensagem pré-programada) e notificações in-app a cada etapa
+- Perfil compartilhado: dados pessoais editáveis, notificações (com badge de não lidas), método de pagamento (chave Pix + formas aceitas — Dinheiro/Pix/Cartão/Todas as formas — exclusivo do prestador)
+- Design system Material 3 com identidade visual própria, navegação por abas
 
 **Backend (Node.js + Express)** — publicado em produção:
-- API REST com rotas de autenticação, prestadores e propostas
-- Login valida a senha de verdade contra o Firebase (não é mock)
-- Middleware de autenticação por token JWT
+- API REST completa: autenticação, prestadores, propostas, avaliações e notificações
+- Login e cadastro validam de verdade contra o Firebase (não é mock)
+- Middleware de autenticação por token JWT, permissões por papel (transições de status de proposta validadas, IDOR fechado)
 - Deploy automático no [Render](https://render.com) a cada push na `main`: `https://ineed-app-9lzp.onrender.com`
 
 **Firebase** — projeto configurado e conectado:
 - Authentication (Email/Senha) e Cloud Firestore ativos
-- Cadastro de cliente/prestador e login já gravam e validam dados reais
+- Todo o ciclo cliente↔prestador (cadastro, login, propostas, avaliações) grava e lê dados reais
+
+**Build Android:**
+- Primeiro APK de teste gerado (`0.1.0`) para instalação direta em aparelhos físicos, fora do Play Store — assinado com chave debug por enquanto
 
 **Em andamento para a v1.0.0:**
-- Algumas listagens do app (prestadores, propostas, pedidos) ainda usam dados de exemplo, aguardando integração final com o backend
-- Testes automatizados
+- Testes automatizados (backend e Flutter)
+- Tela de Segurança (menu de perfil, ainda "Em breve!")
+- Build de produção assinado para publicação nas lojas
 
 ## 💻 Tecnologias
 
@@ -81,6 +89,13 @@ cd src
 flutter pub get
 flutter run
 ```
+
+Gerar um APK para instalar em outro aparelho (fora do Play Store):
+```bash
+cd src
+flutter build apk --release
+```
+O arquivo sai em `src/build/app/outputs/flutter-apk/app-release.apk`.
 
 **Backend** (pasta `backend/`) — só necessário para rodar localmente, já que o backend em produção está publicado no Render:
 ```bash
