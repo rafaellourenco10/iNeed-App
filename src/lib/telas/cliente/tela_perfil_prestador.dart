@@ -3,6 +3,7 @@
 // ============================================
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../tema/cores.dart';
 import '../../modelos/usuario.dart';
 import '../../servicos/api_servico.dart';
@@ -12,16 +13,32 @@ class TelaPerfilPrestador extends StatelessWidget {
 
   const TelaPerfilPrestador({super.key, required this.prestador});
 
+  Future<void> _abrirWhatsApp(BuildContext context) async {
+    final telefone = prestador.telefone;
+    final mensagem = Uri.encodeComponent(
+      'Olá ${prestador.nome}! Vi seu perfil no app iNeed e gostaria de solicitar um orçamento para um serviço de ${prestador.especialidade ?? "serviço"}.',
+    );
+
+    final url = telefone != null
+        ? Uri.parse('https://wa.me/$telefone?text=$mensagem')
+        : Uri.parse('https://wa.me/?text=$mensagem');
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Não foi possível abrir o WhatsApp.')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CoresApp.surface,
-      appBar: AppBar(
-        title: const Text('Perfil do Prestador'),
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.share_outlined)),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Perfil do Prestador')),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -274,13 +291,7 @@ class TelaPerfilPrestador extends StatelessWidget {
               // ── Solicitar Orçamento ──
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Solicitação de orçamento enviada!'),
-                      ),
-                    );
-                  },
+                  onPressed: () => _abrirWhatsApp(context),
                   icon: const Icon(Icons.receipt_long_outlined),
                   label: const Text('Orçamento'),
                   style: OutlinedButton.styleFrom(

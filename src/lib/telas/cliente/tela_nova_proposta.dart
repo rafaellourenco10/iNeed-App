@@ -23,7 +23,6 @@ class _TelaNovaPropostaState extends State<TelaNovaProposta> {
 
   final _tituloCtrl = TextEditingController();
   final _descricaoCtrl = TextEditingController();
-  final _valorCtrl = TextEditingController();
   final _enderecoCtrl = TextEditingController();
 
   DateTime? _dataEscolhida;
@@ -35,7 +34,6 @@ class _TelaNovaPropostaState extends State<TelaNovaProposta> {
   void dispose() {
     _tituloCtrl.dispose();
     _descricaoCtrl.dispose();
-    _valorCtrl.dispose();
     _enderecoCtrl.dispose();
     super.dispose();
   }
@@ -92,7 +90,7 @@ class _TelaNovaPropostaState extends State<TelaNovaProposta> {
       token: token,
       idPrestador: widget.prestador.uid,
       titulo: _tituloCtrl.text.trim(),
-      valor: double.parse(_valorCtrl.text.replaceAll(',', '.')),
+      valor: widget.prestador.valorHora ?? 0,
       descricao: _descricaoCtrl.text.trim(),
       data: _dataEscolhida != null ? _formatarData(_dataEscolhida!) : null,
       horario: _horarioEscolhido != null
@@ -172,18 +170,7 @@ class _TelaNovaPropostaState extends State<TelaNovaProposta> {
               ),
               const SizedBox(height: 14),
 
-              _campo(
-                label: 'Valor (R\$)',
-                ctrl: _valorCtrl,
-                icone: Icons.attach_money,
-                tipo: const TextInputType.numberWithOptions(decimal: true),
-                validador: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Informe o valor';
-                  final numero = double.tryParse(v.replaceAll(',', '.'));
-                  if (numero == null || numero <= 0) return 'Valor inválido';
-                  return null;
-                },
-              ),
+              _valorFixo(),
               const SizedBox(height: 24),
 
               Text(
@@ -267,6 +254,59 @@ class _TelaNovaPropostaState extends State<TelaNovaProposta> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _valorFixo() {
+    final valorHora = widget.prestador.valorHora;
+    final valorFormatado = valorHora != null
+        ? 'R\$ ${valorHora.toStringAsFixed(2).replaceAll('.', ',')} / hora'
+        : 'A combinar';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: CoresApp.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: CoresApp.outlineVariant, width: 0.5),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.attach_money, size: 20, color: CoresApp.outline),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Valor do prestador',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: CoresApp.onSurfaceVariant,
+                  ),
+                ),
+                Text(
+                  valorFormatado,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Você poderá conversar com o prestador pelo WhatsApp após enviar a proposta para combinar detalhes e ajustar o valor.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: CoresApp.onSurfaceVariant,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
