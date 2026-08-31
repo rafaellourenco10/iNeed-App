@@ -405,6 +405,17 @@ class _TelaPerfilState extends State<TelaPerfil> {
 
                   const SizedBox(height: 32),
 
+                  // ───── Trocar de Perfil (sem deslogar) ─────
+                  BotaoPrimario(
+                    texto: 'Trocar de Perfil',
+                    tipo: TipoBotao.contorno,
+                    icone: Icons.swap_horiz,
+                    aoPresionar: () =>
+                        Navigator.pushNamed(context, '/onboarding'),
+                  ),
+
+                  const SizedBox(height: 12),
+
                   // ───── Sair ─────
                   BotaoPrimario(
                     texto: 'Sair da Conta',
