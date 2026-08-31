@@ -304,50 +304,6 @@ class _TelaPerfilState extends State<TelaPerfil> {
 
                   const SizedBox(height: 24),
 
-                  // ───── Tornar-se Prestador (só para clientes) ─────
-                  if (usuario != null && usuario.isCliente) ...[
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF00288E), Color(0xFF1565C0)],
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        leading: const Icon(
-                          Icons.work_outline,
-                          color: Colors.white,
-                        ),
-                        title: const Text(
-                          'Tornar-se Prestador',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        subtitle: Text(
-                          'Ofereça seus serviços sem perder sua conta atual',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.85),
-                            fontSize: 12,
-                          ),
-                        ),
-                        trailing: const Icon(
-                          Icons.chevron_right,
-                          color: Colors.white,
-                        ),
-                        onTap: () => Navigator.pushNamed(
-                          context,
-                          '/completar-prestador',
-                        ),
-                      ),
-                    ),
-                  ],
-
                   // ───── Menu de Opções ─────
                   _buildMenuItem(
                     context,
