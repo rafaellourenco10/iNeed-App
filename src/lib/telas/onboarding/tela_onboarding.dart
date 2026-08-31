@@ -196,14 +196,7 @@ class _TelaOnboardingState extends State<TelaOnboarding>
                             context,
                             listen: false,
                           );
-                          // Só grava tipo: 'cliente' se a conta ainda não
-                          // tem papel nenhum. Quem já é prestador e toca
-                          // aqui só está navegando pro lado cliente do
-                          // marketplace (pra contratar alguém) — não pode
-                          // sobrescrever o cadastro de prestador dele.
-                          if (auth.usuarioAtual?.semPapel ?? false) {
-                            await auth.definirComoCliente();
-                          }
+                          await auth.definirComoCliente();
                           if (context.mounted) {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
