@@ -71,5 +71,6 @@ class ChipCategoria extends StatelessWidget {
         {'nome': 'Jardinagem', 'icone': Icons.yard},
         {'nome': 'Montagem', 'icone': Icons.handyman},
         {'nome': 'Mudança', 'icone': Icons.local_shipping},
+        {'nome': 'Faz tudo', 'icone': Icons.all_inclusive},
       ];
 }

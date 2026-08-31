@@ -25,6 +25,7 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
     ('Marceneiro', Icons.handyman_outlined),
     ('Jardineiro', Icons.grass_outlined),
     ('Pedreiro', Icons.construction_outlined),
+    ('Faz tudo', Icons.all_inclusive),
     ('Outros', Icons.build_outlined),
   ];
 
