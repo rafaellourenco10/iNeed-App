@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../modelos/usuario.dart';
+import '../navegacao_global.dart';
 import 'api_servico.dart';
 
 class AuthServico extends ChangeNotifier {
@@ -67,13 +68,17 @@ class AuthServico extends ChangeNotifier {
 
   /// Busca os dados atuais do usuário no backend e atualiza a sessão local
   /// se algo tiver mudado. Silencioso — falha de rede não afeta o app,
-  /// só mantém os dados em cache até a próxima tentativa.
+  /// só mantém os dados em cache até a próxima tentativa. Se o token salvo
+  /// tiver expirado (dura só 1h), desloga e manda pro login.
   Future<void> sincronizarPerfil() async {
     if (_token == null) return;
 
     try {
       final resposta = await ApiServico.buscarMeuPerfil(token: _token!);
-      if (resposta.containsKey('erro')) return;
+      if (resposta.containsKey('erro')) {
+        await _tratarTokenExpirado(resposta);
+        return;
+      }
 
       _usuarioAtual = Usuario.fromJson(
         resposta['usuario'] as Map<String, dynamic>,
@@ -83,6 +88,19 @@ class AuthServico extends ChangeNotifier {
     } catch (_) {
       // Sem internet ou backend fora — mantém os dados em cache.
     }
+  }
+
+  /// Se a resposta indica token expirado/inválido, desloga e manda pro
+  /// login. Retorna true se tratou (chamador deve parar o que tava fazendo).
+  Future<bool> _tratarTokenExpirado(Map<String, dynamic> resposta) async {
+    if (resposta['erro'] != 'Token inválido') return false;
+
+    await logout();
+    chaveNavegadorGlobal.currentState?.pushNamedAndRemoveUntil(
+      '/login',
+      (rota) => false,
+    );
+    return true;
   }
 
   /// Cadastro real — cria a conta no backend/Firebase (sempre como cliente)
@@ -210,6 +228,7 @@ class AuthServico extends ChangeNotifier {
       );
 
       if (resposta.containsKey('erro')) {
+        if (await _tratarTokenExpirado(resposta)) return false;
         _erro = resposta['mensagem'] as String? ?? 'Erro ao atualizar perfil.';
         _carregando = false;
         notifyListeners();
@@ -267,6 +286,7 @@ class AuthServico extends ChangeNotifier {
       );
 
       if (resposta.containsKey('erro')) {
+        if (await _tratarTokenExpirado(resposta)) return false;
         _erro = resposta['mensagem'] as String? ?? 'Erro ao atualizar dados.';
         _carregando = false;
         notifyListeners();
@@ -319,6 +339,7 @@ class AuthServico extends ChangeNotifier {
       );
 
       if (resposta.containsKey('erro')) {
+        if (await _tratarTokenExpirado(resposta)) return false;
         _erro = resposta['mensagem'] as String? ?? 'Erro ao atualizar dados.';
         _carregando = false;
         notifyListeners();
@@ -361,6 +382,7 @@ class AuthServico extends ChangeNotifier {
       );
 
       if (resposta.containsKey('erro')) {
+        if (await _tratarTokenExpirado(resposta)) return false;
         _erro = resposta['mensagem'] as String? ?? 'Erro ao excluir conta.';
         _carregando = false;
         notifyListeners();

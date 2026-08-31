@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'tema/tema_app.dart';
 import 'servicos/auth_servico.dart';
 import 'servicos/tema_servico.dart';
+import 'navegacao_global.dart';
 import 'modelos/usuario.dart';
 import 'modelos/proposta.dart';
 
@@ -83,6 +84,7 @@ class INeedApp extends StatelessWidget {
           return MaterialApp(
             title: 'iNeed - Serviços sob Demanda',
             debugShowCheckedModeBanner: false,
+            navigatorKey: chaveNavegadorGlobal,
             theme: TemaApp.tema,
 
             // ───── Rota inicial ─────
