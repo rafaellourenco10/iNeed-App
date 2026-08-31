@@ -98,6 +98,21 @@ class ApiServico {
     return jsonDecode(resposta.body) as Map<String, dynamic>;
   }
 
+  /// Exclui a conta do usuário autenticado (e tudo que está ligado a ela —
+  /// propostas, avaliações, notificações). Exige a senha de novo, pra
+  /// confirmar que é o próprio dono da conta.
+  static Future<Map<String, dynamic>> excluirConta({
+    required String token,
+    required String senha,
+  }) async {
+    final resposta = await http.delete(
+      Uri.parse('$_urlBase/auth/excluir-conta'),
+      headers: _headers(token: token),
+      body: jsonEncode({'senha': senha}),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
   /// Cadastrar um novo prestador
   static Future<Map<String, dynamic>> cadastrarPrestador({
     required String nome,

@@ -314,6 +314,48 @@ class AuthServico extends ChangeNotifier {
     return true;
   }
 
+  /// Exclui a conta do usuário logado (e tudo ligado a ela) — irreversível.
+  /// Exige a senha de novo pra confirmar. Já limpa a sessão local no sucesso.
+  Future<bool> excluirConta({required String senha}) async {
+    if (_usuarioAtual == null || _token == null) {
+      _erro = 'Sessão expirada. Faça login novamente.';
+      notifyListeners();
+      return false;
+    }
+
+    _carregando = true;
+    _erro = null;
+    notifyListeners();
+
+    try {
+      final resposta = await ApiServico.excluirConta(
+        token: _token!,
+        senha: senha,
+      );
+
+      if (resposta.containsKey('erro')) {
+        _erro = resposta['mensagem'] as String? ?? 'Erro ao excluir conta.';
+        _carregando = false;
+        notifyListeners();
+        return false;
+      }
+
+      _usuarioAtual = null;
+      _token = null;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+    } catch (_) {
+      _erro = 'Não foi possível conectar ao servidor.';
+      _carregando = false;
+      notifyListeners();
+      return false;
+    }
+
+    _carregando = false;
+    notifyListeners();
+    return true;
+  }
+
   /// Logout
   Future<void> logout() async {
     _usuarioAtual = null;

@@ -409,10 +409,100 @@ async function atualizarPerfil(req, res) {
   }
 }
 
+// -----------------------------------------------
+// DELETE /api/auth/excluir-conta
+// -----------------------------------------------
+// Apaga a conta do usuário autenticado e tudo que está ligado a ela —
+// propostas e avaliações (como cliente OU como prestador, os dois lados),
+// notificações, o cadastro em usuarios/ e a conta no Firebase Auth.
+// Ação irreversível, por isso reconfirma a senha antes de apagar
+// qualquer coisa, mesmo a requisição já vindo com token válido.
+async function excluirConta(req, res) {
+  try {
+    const { senha } = req.body;
+    const { uid, email } = req.usuario;
+
+    if (!senha) {
+      return res.status(400).json({
+        erro: 'Dados incompletos',
+        mensagem: 'Informe sua senha pra confirmar a exclusão.'
+      });
+    }
+
+    if (!auth || !db) {
+      return res.status(503).json({
+        erro: 'Serviço indisponível',
+        mensagem: 'Firebase não está configurado.'
+      });
+    }
+
+    const chaveApi = process.env.FIREBASE_WEB_API_KEY;
+    if (!chaveApi) {
+      return res.status(503).json({
+        erro: 'Serviço indisponível',
+        mensagem: 'FIREBASE_WEB_API_KEY não está configurada no servidor.'
+      });
+    }
+
+    // Reconfirma a senha antes de apagar qualquer coisa
+    const respostaAuth = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${chaveApi}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: senha, returnSecureToken: true })
+      }
+    );
+
+    if (!respostaAuth.ok) {
+      return res.status(401).json({
+        erro: 'Senha incorreta',
+        mensagem: 'Senha incorreta. Não foi possível confirmar a exclusão.'
+      });
+    }
+
+    // Propostas — como cliente e como prestador
+    const propostasCliente = await db.collection('propostas').where('idCliente', '==', uid).get();
+    const propostasPrestador = await db.collection('propostas').where('idPrestador', '==', uid).get();
+    const loteA = db.batch();
+    propostasCliente.forEach(doc => loteA.delete(doc.ref));
+    propostasPrestador.forEach(doc => loteA.delete(doc.ref));
+    await loteA.commit();
+
+    // Avaliações — como cliente e como prestador
+    const avaliacoesCliente = await db.collection('avaliacoes').where('idCliente', '==', uid).get();
+    const avaliacoesPrestador = await db.collection('avaliacoes').where('idPrestador', '==', uid).get();
+    const loteB = db.batch();
+    avaliacoesCliente.forEach(doc => loteB.delete(doc.ref));
+    avaliacoesPrestador.forEach(doc => loteB.delete(doc.ref));
+    await loteB.commit();
+
+    // Notificações
+    const notificacoes = await db.collection('notificacoes').where('idUsuario', '==', uid).get();
+    const loteC = db.batch();
+    notificacoes.forEach(doc => loteC.delete(doc.ref));
+    await loteC.commit();
+
+    // Cadastro e conta
+    await db.collection('usuarios').doc(uid).delete();
+    await auth.deleteUser(uid);
+
+    res.status(200).json({ mensagem: 'Conta excluída com sucesso.' });
+
+  } catch (erro) {
+    console.error('❌ Erro ao excluir conta:', erro.message);
+    res.status(500).json({
+      erro: 'Erro ao excluir conta',
+      mensagem: erro.message
+    });
+  }
+}
+
 module.exports = {
   cadastrarCliente,
   cadastrarPrestador,
   loginUsuario,
   tornarPrestador,
-  atualizarPerfil
+  atualizarPerfil,
+  excluirConta
 };

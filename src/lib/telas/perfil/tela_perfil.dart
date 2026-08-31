@@ -376,7 +376,12 @@ class _TelaPerfilState extends State<TelaPerfil> {
                       _carregarNotificacoes();
                     },
                   ),
-                  _buildMenuItem(context, Icons.shield_outlined, 'Segurança'),
+                  _buildMenuItem(
+                    context,
+                    Icons.shield_outlined,
+                    'Segurança',
+                    aoTocar: () => Navigator.pushNamed(context, '/seguranca'),
+                  ),
 
                   const SizedBox(height: 24),
 
