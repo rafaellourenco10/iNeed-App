@@ -275,13 +275,13 @@ class _TelaNovaPropostaState extends State<TelaNovaProposta> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.attach_money, size: 20, color: CoresApp.outline),
+          Icon(Icons.attach_money, size: 20, color: CoresApp.outline),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Valor do prestador',
                   style: TextStyle(
                     fontSize: 11,
@@ -331,25 +331,19 @@ class _TelaNovaPropostaState extends State<TelaNovaProposta> {
         fillColor: CoresApp.surfaceContainerLowest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: CoresApp.outlineVariant,
-            width: 0.5,
-          ),
+          borderSide: BorderSide(color: CoresApp.outlineVariant, width: 0.5),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: CoresApp.outlineVariant,
-            width: 0.5,
-          ),
+          borderSide: BorderSide(color: CoresApp.outlineVariant, width: 0.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: CoresApp.primary, width: 1.5),
+          borderSide: BorderSide(color: CoresApp.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: CoresApp.error, width: 1),
+          borderSide: BorderSide(color: CoresApp.error, width: 1),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -385,7 +379,7 @@ class _TelaNovaPropostaState extends State<TelaNovaProposta> {
                 children: [
                   Text(
                     label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       color: CoresApp.onSurfaceVariant,
                     ),

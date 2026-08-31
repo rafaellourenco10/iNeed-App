@@ -73,7 +73,7 @@ class _TelaAvaliarServicoState extends State<TelaAvaliarServico> {
 
     if (resposta['erro'] == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Avaliação enviada com sucesso! Obrigado.'),
           backgroundColor: CoresApp.statusConcluida,
         ),

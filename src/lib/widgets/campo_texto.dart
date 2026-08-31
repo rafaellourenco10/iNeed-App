@@ -39,10 +39,7 @@ class CampoTexto extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (rotulo != null) ...[
-          Text(
-            rotulo!,
-            style: Theme.of(context).textTheme.labelLarge,
-          ),
+          Text(rotulo!, style: Theme.of(context).textTheme.labelLarge),
           const SizedBox(height: 8),
         ],
         TextFormField(
@@ -56,7 +53,11 @@ class CampoTexto extends StatelessWidget {
           decoration: InputDecoration(
             hintText: dica,
             prefixIcon: iconePrefixo != null
-                ? Icon(iconePrefixo, size: 22, color: Theme.of(context).colorScheme.outline)
+                ? Icon(
+                    iconePrefixo,
+                    size: 22,
+                    color: Theme.of(context).colorScheme.outline,
+                  )
                 : null,
             suffixIcon: sufixo,
           ),

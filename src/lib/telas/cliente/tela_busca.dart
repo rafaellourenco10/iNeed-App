@@ -139,16 +139,10 @@ class _TelaBuscaState extends State<TelaBusca> {
                   autofocus: false,
                   decoration: InputDecoration(
                     hintText: 'Nome ou especialidade...',
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      color: CoresApp.outline,
-                    ),
+                    prefixIcon: Icon(Icons.search, color: CoresApp.outline),
                     suffixIcon: _buscaController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(
-                              Icons.clear,
-                              color: CoresApp.outline,
-                            ),
+                            icon: Icon(Icons.clear, color: CoresApp.outline),
                             onPressed: () {
                               _buscaController.clear();
                               _filtrar();

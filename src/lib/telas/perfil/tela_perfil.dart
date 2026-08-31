@@ -169,7 +169,8 @@ class _TelaPerfilState extends State<TelaPerfil> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () =>
+                                Navigator.pushNamed(context, '/configuracoes'),
                             icon: const Icon(
                               Icons.settings_outlined,
                               color: Colors.white,
@@ -235,10 +236,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                           ),
                           child: Column(
                             children: [
-                              const Icon(
-                                Icons.work_outline,
-                                color: CoresApp.primary,
-                              ),
+                              Icon(Icons.work_outline, color: CoresApp.primary),
                               const SizedBox(height: 8),
                               Text(
                                 '${usuario != null && usuario.isPrestador ? (usuario.totalServicos ?? 0) : _totalContratados}',
@@ -277,7 +275,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                             ),
                             child: Column(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.star_outline,
                                   color: CoresApp.secondaryContainer,
                                 ),
@@ -407,7 +405,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                               ? 2
                               : 1,
                         ),
-                        child: const Text(
+                        child: Text(
                           'Ver todos',
                           style: TextStyle(color: CoresApp.primary),
                         ),
@@ -532,7 +530,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
               ),
               const SizedBox(width: 8),
             ],
-            const Icon(Icons.chevron_right, color: CoresApp.outline),
+            Icon(Icons.chevron_right, color: CoresApp.outline),
           ],
         ),
         onTap:

@@ -213,7 +213,7 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                   decoration: InputDecoration(
                     hintText: 'Ex: 80,00',
                     prefixText: 'R\$ ',
-                    prefixStyle: const TextStyle(
+                    prefixStyle: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: CoresApp.primary,
                     ),
@@ -221,31 +221,28 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                     fillColor: CoresApp.surfaceContainerLowest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
+                      borderSide: BorderSide(
                         color: CoresApp.outlineVariant,
                         width: 0.5,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
+                      borderSide: BorderSide(
                         color: CoresApp.outlineVariant,
                         width: 0.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
+                      borderSide: BorderSide(
                         color: CoresApp.primary,
                         width: 1.5,
                       ),
                     ),
                     errorBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: CoresApp.error,
-                        width: 1,
-                      ),
+                      borderSide: BorderSide(color: CoresApp.error, width: 1),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -282,21 +279,21 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
                     fillColor: CoresApp.surfaceContainerLowest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
+                      borderSide: BorderSide(
                         color: CoresApp.outlineVariant,
                         width: 0.5,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
+                      borderSide: BorderSide(
                         color: CoresApp.outlineVariant,
                         width: 0.5,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
+                      borderSide: BorderSide(
                         color: CoresApp.primary,
                         width: 1.5,
                       ),

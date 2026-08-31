@@ -167,10 +167,7 @@ class _DialogoExcluirContaState extends State<_DialogoExcluirConta> {
           ),
           if (_erro != null) ...[
             const SizedBox(height: 8),
-            Text(
-              _erro!,
-              style: const TextStyle(color: CoresApp.error, fontSize: 13),
-            ),
+            Text(_erro!, style: TextStyle(color: CoresApp.error, fontSize: 13)),
           ],
         ],
       ),
@@ -189,7 +186,7 @@ class _DialogoExcluirContaState extends State<_DialogoExcluirConta> {
                   height: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text(
+              : Text(
                   'Excluir',
                   style: TextStyle(
                     color: CoresApp.error,

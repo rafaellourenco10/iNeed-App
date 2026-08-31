@@ -151,7 +151,7 @@ class CardProposta extends StatelessWidget {
                     proposta.nomeCliente.isNotEmpty
                         ? proposta.nomeCliente[0].toUpperCase()
                         : 'C',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: CoresApp.primary,
@@ -171,7 +171,7 @@ class CardProposta extends StatelessWidget {
                     if (proposta.endereco != null)
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.location_on_outlined,
                             size: 14,
                             color: CoresApp.outline,
@@ -197,7 +197,7 @@ class CardProposta extends StatelessWidget {
                   if (proposta.data != null)
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.calendar_today_outlined,
                           size: 16,
                           color: CoresApp.outline,
@@ -213,7 +213,7 @@ class CardProposta extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.access_time_outlined,
                           size: 16,
                           color: CoresApp.outline,
@@ -261,7 +261,7 @@ class CardProposta extends StatelessWidget {
                       onPressed: aoRecusar,
                       style: OutlinedButton.styleFrom(
                         foregroundColor: CoresApp.onSurface,
-                        side: const BorderSide(color: CoresApp.outlineVariant),
+                        side: BorderSide(color: CoresApp.outlineVariant),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),

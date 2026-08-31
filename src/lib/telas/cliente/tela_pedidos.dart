@@ -398,7 +398,7 @@ class _CardPedido extends StatelessWidget {
                     ((pedido['nomePrestador'] as String?) ?? '?')
                         .substring(0, 1)
                         .toUpperCase(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: CoresApp.primary,
@@ -433,7 +433,7 @@ class _CardPedido extends StatelessWidget {
             if (pedido['data'] != null)
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.calendar_today_outlined,
                     size: 14,
                     color: CoresApp.outline,
@@ -450,7 +450,7 @@ class _CardPedido extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.location_on_outlined,
                     size: 14,
                     color: CoresApp.outline,
@@ -485,7 +485,7 @@ class _CardPedido extends StatelessWidget {
                         label: const Text('Cancelar'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: CoresApp.error,
-                          side: const BorderSide(color: CoresApp.error),
+                          side: BorderSide(color: CoresApp.error),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -506,9 +506,7 @@ class _CardPedido extends StatelessWidget {
                         label: const Text('Concluir'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: CoresApp.statusConcluida,
-                          side: const BorderSide(
-                            color: CoresApp.statusConcluida,
-                          ),
+                          side: BorderSide(color: CoresApp.statusConcluida),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),

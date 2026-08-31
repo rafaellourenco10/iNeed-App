@@ -596,7 +596,7 @@ class _TelaLoginState extends State<TelaLogin> with TickerProviderStateMixin {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  side: const BorderSide(
+                                  side: BorderSide(
                                     color: CoresApp.outlineVariant,
                                   ),
                                 ),
@@ -621,7 +621,7 @@ class _TelaLoginState extends State<TelaLogin> with TickerProviderStateMixin {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  side: const BorderSide(
+                                  side: BorderSide(
                                     color: CoresApp.outlineVariant,
                                   ),
                                 ),

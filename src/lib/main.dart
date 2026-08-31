@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import 'tema/tema_app.dart';
 import 'servicos/auth_servico.dart';
+import 'servicos/tema_servico.dart';
 import 'modelos/usuario.dart';
 import 'modelos/proposta.dart';
 
@@ -22,6 +23,7 @@ import 'telas/perfil/tela_dados_pessoais.dart';
 import 'telas/perfil/tela_metodos_pagamento.dart';
 import 'telas/perfil/tela_notificacoes.dart';
 import 'telas/perfil/tela_seguranca.dart';
+import 'telas/perfil/tela_configuracoes.dart';
 import 'telas/cliente/tela_perfil_prestador.dart';
 import 'telas/cliente/tela_detalhes_servico.dart';
 import 'telas/cliente/tela_avaliar_servico.dart';
@@ -69,14 +71,19 @@ class INeedApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AuthServico()..restaurarSessao(),
-      child: Consumer<AuthServico>(
-        builder: (context, auth, _) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthServico()..restaurarSessao()),
+        ChangeNotifierProvider(
+          create: (_) => TemaServico()..carregarPreferencia(),
+        ),
+      ],
+      child: Consumer2<AuthServico, TemaServico>(
+        builder: (context, auth, temaServico, _) {
           return MaterialApp(
             title: 'iNeed - Serviços sob Demanda',
             debugShowCheckedModeBanner: false,
-            theme: TemaApp.claro,
+            theme: TemaApp.tema,
 
             // ───── Rota inicial ─────
             initialRoute: auth.estaLogado
@@ -97,6 +104,7 @@ class INeedApp extends StatelessWidget {
               '/metodos-pagamento': (_) => const TelaMetodosPagamento(),
               '/notificacoes': (_) => const TelaNotificacoes(),
               '/seguranca': (_) => const TelaSeguranca(),
+              '/configuracoes': (_) => const TelaConfiguracoes(),
             },
 
             // ───── Rotas com argumentos ─────

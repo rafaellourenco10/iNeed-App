@@ -15,7 +15,11 @@ class ShellNavegacao extends StatefulWidget {
   final bool isPrestador;
   final int indiceInicial;
 
-  const ShellNavegacao({super.key, this.isPrestador = false, this.indiceInicial = 0});
+  const ShellNavegacao({
+    super.key,
+    this.isPrestador = false,
+    this.indiceInicial = 0,
+  });
 
   @override
   State<ShellNavegacao> createState() => _ShellNavegacaoState();
@@ -36,22 +40,19 @@ class _ShellNavegacaoState extends State<ShellNavegacao> {
 
     final telas = isPrestador
         ? [
-            const TelaHomePrestador(),      // Início
-            const TelaBuscaPrestador(),    // Busca
-            const TelaPropostas(),       // Serviços
-            const TelaPerfil(),          // Perfil
+            const TelaHomePrestador(), // Início
+            const TelaBuscaPrestador(), // Busca
+            const TelaPropostas(), // Serviços
+            const TelaPerfil(), // Perfil
           ]
         : [
-            const TelaHome(),           // Início
-            const TelaPedidos(),        // Pedidos
-            const TelaPerfil(),          // Perfil
+            const TelaHome(), // Início
+            const TelaPedidos(), // Pedidos
+            const TelaPerfil(), // Perfil
           ];
 
     return Scaffold(
-      body: IndexedStack(
-        index: _indiceAtual,
-        children: telas,
-      ),
+      body: IndexedStack(index: _indiceAtual, children: telas),
       bottomNavigationBar: BarraNavegacao(
         indiceAtual: _indiceAtual,
         isPrestador: isPrestador,
@@ -62,4 +63,3 @@ class _ShellNavegacaoState extends State<ShellNavegacao> {
     );
   }
 }
-

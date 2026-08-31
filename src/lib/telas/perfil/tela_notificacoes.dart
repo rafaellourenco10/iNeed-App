@@ -145,7 +145,7 @@ class _TelaNotificacoesState extends State<TelaNotificacoes> {
           if (temNaoLidas)
             TextButton(
               onPressed: _marcarTodasLidas,
-              child: const Text(
+              child: Text(
                 'Marcar todas',
                 style: TextStyle(color: CoresApp.primary),
               ),
@@ -255,7 +255,7 @@ class _TelaNotificacoesState extends State<TelaNotificacoes> {
                               margin: const EdgeInsets.only(top: 4, left: 8),
                               width: 8,
                               height: 8,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 color: CoresApp.primary,
                                 shape: BoxShape.circle,
                               ),

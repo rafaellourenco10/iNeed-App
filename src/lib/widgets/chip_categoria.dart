@@ -35,9 +35,7 @@ class ChipCategoria extends StatelessWidget {
                   : CoresApp.surfaceContainerLow,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: selecionado
-                    ? CoresApp.primary
-                    : CoresApp.outlineVariant,
+                color: selecionado ? CoresApp.primary : CoresApp.outlineVariant,
                 width: selecionado ? 2 : 1,
               ),
             ),
@@ -63,14 +61,14 @@ class ChipCategoria extends StatelessWidget {
 
   /// Categorias padrão do iNeed com ícones
   static List<Map<String, dynamic>> get categoriasPadrao => [
-        {'nome': 'Faxina', 'icone': Icons.cleaning_services},
-        {'nome': 'Eletricista', 'icone': Icons.electrical_services},
-        {'nome': 'Encanador', 'icone': Icons.plumbing},
-        {'nome': 'Beleza', 'icone': Icons.spa},
-        {'nome': 'Pintura', 'icone': Icons.format_paint},
-        {'nome': 'Jardinagem', 'icone': Icons.yard},
-        {'nome': 'Montagem', 'icone': Icons.handyman},
-        {'nome': 'Mudança', 'icone': Icons.local_shipping},
-        {'nome': 'Faz tudo', 'icone': Icons.all_inclusive},
-      ];
+    {'nome': 'Faxina', 'icone': Icons.cleaning_services},
+    {'nome': 'Eletricista', 'icone': Icons.electrical_services},
+    {'nome': 'Encanador', 'icone': Icons.plumbing},
+    {'nome': 'Beleza', 'icone': Icons.spa},
+    {'nome': 'Pintura', 'icone': Icons.format_paint},
+    {'nome': 'Jardinagem', 'icone': Icons.yard},
+    {'nome': 'Montagem', 'icone': Icons.handyman},
+    {'nome': 'Mudança', 'icone': Icons.local_shipping},
+    {'nome': 'Faz tudo', 'icone': Icons.all_inclusive},
+  ];
 }

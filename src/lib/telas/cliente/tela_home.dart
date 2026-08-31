@@ -174,13 +174,13 @@ class _TelaHomeState extends State<TelaHome> {
                         controller: _buscaController,
                         decoration: InputDecoration(
                           hintText: 'Buscar serviços (ex: encanador)',
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             Icons.search,
                             color: CoresApp.outline,
                           ),
                           suffixIcon: _buscaController.text.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.clear,
                                     color: CoresApp.outline,
                                   ),
@@ -215,7 +215,7 @@ class _TelaHomeState extends State<TelaHome> {
                     ),
                     TextButton(
                       onPressed: () {},
-                      child: const Text(
+                      child: Text(
                         'Ver todas',
                         style: TextStyle(color: CoresApp.primary),
                       ),

@@ -373,25 +373,19 @@ class _Campo extends StatelessWidget {
         fillColor: CoresApp.surfaceContainerLowest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: CoresApp.outlineVariant,
-            width: 0.5,
-          ),
+          borderSide: BorderSide(color: CoresApp.outlineVariant, width: 0.5),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: CoresApp.outlineVariant,
-            width: 0.5,
-          ),
+          borderSide: BorderSide(color: CoresApp.outlineVariant, width: 0.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: CoresApp.primary, width: 1.5),
+          borderSide: BorderSide(color: CoresApp.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: CoresApp.error, width: 1),
+          borderSide: BorderSide(color: CoresApp.error, width: 1),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -438,25 +432,19 @@ class _CampoSenha extends StatelessWidget {
         fillColor: CoresApp.surfaceContainerLowest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: CoresApp.outlineVariant,
-            width: 0.5,
-          ),
+          borderSide: BorderSide(color: CoresApp.outlineVariant, width: 0.5),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: CoresApp.outlineVariant,
-            width: 0.5,
-          ),
+          borderSide: BorderSide(color: CoresApp.outlineVariant, width: 0.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: CoresApp.primary, width: 1.5),
+          borderSide: BorderSide(color: CoresApp.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: CoresApp.error, width: 1),
+          borderSide: BorderSide(color: CoresApp.error, width: 1),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,

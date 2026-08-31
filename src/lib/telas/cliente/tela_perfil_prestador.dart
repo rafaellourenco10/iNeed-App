@@ -52,7 +52,7 @@ class TelaPerfilPrestador extends StatelessWidget {
                 prestador.nome.isNotEmpty
                     ? prestador.nome[0].toUpperCase()
                     : 'P',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 40,
                   fontWeight: FontWeight.w700,
                   color: CoresApp.primary,
@@ -70,7 +70,7 @@ class TelaPerfilPrestador extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 6),
-                const Icon(Icons.verified, color: CoresApp.primary, size: 20),
+                Icon(Icons.verified, color: CoresApp.primary, size: 20),
               ],
             ),
             const SizedBox(height: 4),
@@ -86,11 +86,7 @@ class TelaPerfilPrestador extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.star,
-                  color: CoresApp.secondaryContainer,
-                  size: 18,
-                ),
+                Icon(Icons.star, color: CoresApp.secondaryContainer, size: 18),
                 const SizedBox(width: 4),
                 Text(
                   (prestador.avaliacao ?? 0).toStringAsFixed(1),
@@ -296,7 +292,7 @@ class TelaPerfilPrestador extends StatelessWidget {
                   label: const Text('Orçamento'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: CoresApp.primary,
-                    side: const BorderSide(color: CoresApp.primary),
+                    side: BorderSide(color: CoresApp.primary),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -421,7 +417,7 @@ class TelaPerfilPrestador extends StatelessWidget {
                 backgroundColor: CoresApp.surfaceContainerHigh,
                 child: Text(
                   nome[0],
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: CoresApp.primary,
                   ),

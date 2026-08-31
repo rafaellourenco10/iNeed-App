@@ -103,7 +103,7 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Erro ao atualizar proposta.'),
             backgroundColor: CoresApp.error,
           ),
@@ -272,13 +272,13 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
                         controller: _buscaCtrl,
                         decoration: InputDecoration(
                           hintText: 'Buscar por título, cliente ou endereço...',
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             Icons.search,
                             color: CoresApp.outline,
                           ),
                           suffixIcon: _buscaCtrl.text.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.clear,
                                     color: CoresApp.outline,
                                   ),

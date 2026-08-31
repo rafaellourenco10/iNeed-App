@@ -10,14 +10,19 @@ import 'cores.dart';
 class TemaApp {
   TemaApp._();
 
-  static ThemeData get claro {
+  /// ThemeData atual — reflete o brilho definido em CoresApp (claro ou
+  /// escuro). Um único getter serve os dois temas: como todo token de
+  /// cor aqui vem de CoresApp, ele já responde ao tema sozinho.
+  static ThemeData get tema {
+    final brilho = CoresApp.brilho;
+
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
+      brightness: brilho,
 
       // ───── Color Scheme ─────
-      colorScheme: const ColorScheme(
-        brightness: Brightness.light,
+      colorScheme: ColorScheme(
+        brightness: brilho,
         primary: CoresApp.primary,
         onPrimary: CoresApp.onPrimary,
         primaryContainer: CoresApp.primaryContainer,
@@ -119,22 +124,25 @@ class TemaApp {
       // ───── Input Decoration ─────
       inputDecorationTheme: InputDecorationTheme(
         filled: false,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: CoresApp.outlineVariant),
+          borderSide: BorderSide(color: CoresApp.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: CoresApp.outlineVariant),
+          borderSide: BorderSide(color: CoresApp.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: CoresApp.primary, width: 2),
+          borderSide: BorderSide(color: CoresApp.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: CoresApp.error),
+          borderSide: BorderSide(color: CoresApp.error),
         ),
         hintStyle: GoogleFonts.inter(
           fontSize: 16,
@@ -154,9 +162,7 @@ class TemaApp {
           backgroundColor: CoresApp.primary,
           foregroundColor: CoresApp.onPrimary,
           minimumSize: const Size(double.infinity, 52),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           textStyle: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -170,10 +176,8 @@ class TemaApp {
         style: OutlinedButton.styleFrom(
           foregroundColor: CoresApp.primary,
           minimumSize: const Size(double.infinity, 52),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          side: const BorderSide(color: CoresApp.outlineVariant),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          side: BorderSide(color: CoresApp.outlineVariant),
           textStyle: GoogleFonts.inter(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -187,7 +191,7 @@ class TemaApp {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: CoresApp.outlineVariant, width: 0.5),
+          side: BorderSide(color: CoresApp.outlineVariant, width: 0.5),
         ),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
@@ -237,7 +241,7 @@ class TemaApp {
       ),
 
       // ───── Divider ─────
-      dividerTheme: const DividerThemeData(
+      dividerTheme: DividerThemeData(
         color: CoresApp.outlineVariant,
         thickness: 0.5,
         space: 0,

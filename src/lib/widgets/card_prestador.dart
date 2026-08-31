@@ -10,11 +10,7 @@ class CardPrestador extends StatelessWidget {
   final Usuario prestador;
   final VoidCallback? aoVerPerfil;
 
-  const CardPrestador({
-    super.key,
-    required this.prestador,
-    this.aoVerPerfil,
-  });
+  const CardPrestador({super.key, required this.prestador, this.aoVerPerfil});
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +56,9 @@ class CardPrestador extends StatelessWidget {
                     radius: 26,
                     backgroundColor: Colors.transparent,
                     child: Text(
-                      prestador.nome.isNotEmpty ? prestador.nome[0].toUpperCase() : 'P',
+                      prestador.nome.isNotEmpty
+                          ? prestador.nome[0].toUpperCase()
+                          : 'P',
                       style: const TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
@@ -80,18 +78,22 @@ class CardPrestador extends StatelessWidget {
                           Flexible(
                             child: Text(
                               prestador.nome,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           if (prestador.especialidade != null) ...[
                             const SizedBox(width: 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF00288E).withValues(alpha: 0.1),
+                                color: const Color(
+                                  0xFF00288E,
+                                ).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
@@ -111,13 +113,16 @@ class CardPrestador extends StatelessWidget {
                       // Avaliação
                       Row(
                         children: [
-                          const Icon(Icons.star, size: 16, color: Color(0xFFFACC15)),
+                          const Icon(
+                            Icons.star,
+                            size: 16,
+                            color: Color(0xFFFACC15),
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             (prestador.avaliacao ?? 0).toStringAsFixed(1),
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -132,7 +137,7 @@ class CardPrestador extends StatelessWidget {
                 // Botão favorito
                 IconButton(
                   onPressed: () {},
-                  icon: const Icon(Icons.favorite_border, color: CoresApp.outline),
+                  icon: Icon(Icons.favorite_border, color: CoresApp.outline),
                 ),
               ],
             ),
@@ -155,8 +160,8 @@ class CardPrestador extends StatelessWidget {
                     Text(
                       'R\$ ${(prestador.valorHora ?? 0).toStringAsFixed(0)}/h',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
                 ),
@@ -177,7 +182,10 @@ class CardPrestador extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
                       elevation: 0,
                     ),
                     child: const Text(

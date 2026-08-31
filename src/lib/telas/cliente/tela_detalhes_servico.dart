@@ -47,7 +47,7 @@ class TelaDetalhesServico extends StatelessWidget {
               child: Stack(
                 children: [
                   // Placeholder de mapa
-                  const Center(
+                  Center(
                     child: Icon(
                       Icons.location_on,
                       size: 48,
@@ -77,14 +77,16 @@ class TelaDetalhesServico extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.location_on_outlined,
-                                size: 16, color: CoresApp.primary),
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 16,
+                              color: CoresApp.primary,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               proposta.endereco!,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
@@ -112,9 +114,8 @@ class TelaDetalhesServico extends StatelessWidget {
                       Expanded(
                         child: Text(
                           proposta.titulo,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
                       _buildStatusChip(context),
@@ -124,8 +125,11 @@ class TelaDetalhesServico extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today_outlined,
-                            size: 16, color: CoresApp.outline),
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          size: 16,
+                          color: CoresApp.outline,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           proposta.data!,
@@ -149,15 +153,15 @@ class TelaDetalhesServico extends StatelessWidget {
                       Text(
                         'Valor Acordado',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: CoresApp.onSurfaceVariant,
-                            ),
+                          color: CoresApp.onSurfaceVariant,
+                        ),
                       ),
                       Text(
                         'R\$ ${proposta.valor.toStringAsFixed(2)}',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: CoresApp.primary,
-                            ),
+                          fontWeight: FontWeight.w700,
+                          color: CoresApp.primary,
+                        ),
                       ),
                     ],
                   ),
@@ -183,7 +187,7 @@ class TelaDetalhesServico extends StatelessWidget {
                     backgroundColor: CoresApp.surfaceContainerHigh,
                     child: Text(
                       (proposta.nomePrestador ?? 'P')[0].toUpperCase(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                         color: CoresApp.primary,
@@ -197,9 +201,8 @@ class TelaDetalhesServico extends StatelessWidget {
                       children: [
                         Text(
                           proposta.nomePrestador ?? 'Prestador',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                         Text(
                           'Profissional',
@@ -210,13 +213,17 @@ class TelaDetalhesServico extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      const Icon(Icons.star, color: CoresApp.secondaryContainer, size: 18),
+                      Icon(
+                        Icons.star,
+                        color: CoresApp.secondaryContainer,
+                        size: 18,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         '4.9',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -238,8 +245,11 @@ class TelaDetalhesServico extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.chat_bubble_outline,
-                          size: 20, color: CoresApp.primary),
+                      Icon(
+                        Icons.chat_bubble_outline,
+                        size: 20,
+                        color: CoresApp.primary,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -247,9 +257,8 @@ class TelaDetalhesServico extends StatelessWidget {
                           children: [
                             Text(
                               'Dúvidas sobre o serviço?',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                             ),
                             Text(
                               'Fale diretamente com o profissional.',
@@ -292,8 +301,11 @@ class TelaDetalhesServico extends StatelessWidget {
                       texto: 'Finalizar Serviço',
                       icone: Icons.check_circle_outline,
                       aoPresionar: () {
-                        Navigator.pushNamed(context, '/avaliar-servico',
-                            arguments: proposta);
+                        Navigator.pushNamed(
+                          context,
+                          '/avaliar-servico',
+                          arguments: proposta,
+                        );
                       },
                     ),
                   if (proposta.isPendente || proposta.isEmAndamento) ...[
@@ -345,11 +357,7 @@ class TelaDetalhesServico extends StatelessWidget {
       ),
       child: Text(
         texto,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: cor,
-        ),
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: cor),
       ),
     );
   }

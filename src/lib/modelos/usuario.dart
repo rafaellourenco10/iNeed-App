@@ -16,7 +16,8 @@ class Usuario {
 
   // Método de pagamento (referência, não processa transação)
   final String? chavePix; // prestador — chave pra receber
-  final String? formaPagamentoAceita; // prestador — dinheiro, pix, cartao ou todas
+  final String?
+  formaPagamentoAceita; // prestador — dinheiro, pix, cartao ou todas
 
   // Campos específicos do Prestador
   final String? especialidade;

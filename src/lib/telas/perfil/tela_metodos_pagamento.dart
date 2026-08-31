@@ -72,7 +72,7 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
 
     if (sucesso) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Método de pagamento atualizado!'),
           backgroundColor: CoresApp.statusConcluida,
         ),
@@ -108,7 +108,7 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
           Expanded(
             child: Text(
               forma['label'] as String,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: CoresApp.primary,
@@ -137,10 +137,7 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
             }),
             borderRadius: BorderRadius.circular(12),
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 14,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
                 color: selecionada
                     ? CoresApp.primary.withValues(alpha: 0.08)
@@ -175,11 +172,7 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
                   ),
                   const Spacer(),
                   if (selecionada)
-                    const Icon(
-                      Icons.check_circle,
-                      color: CoresApp.primary,
-                      size: 20,
-                    ),
+                    Icon(Icons.check_circle, color: CoresApp.primary, size: 20),
                 ],
               ),
             ),
@@ -214,11 +207,7 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
               ),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.info_outline,
-                    color: CoresApp.primary,
-                    size: 20,
-                  ),
+                  Icon(Icons.info_outline, color: CoresApp.primary, size: 20),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -251,24 +240,21 @@ class _TelaMetodosPagamentoState extends State<TelaMetodosPagamento> {
                 fillColor: CoresApp.surfaceContainerLowest,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
+                  borderSide: BorderSide(
                     color: CoresApp.outlineVariant,
                     width: 0.5,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
+                  borderSide: BorderSide(
                     color: CoresApp.outlineVariant,
                     width: 0.5,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(
-                    color: CoresApp.primary,
-                    width: 1.5,
-                  ),
+                  borderSide: BorderSide(color: CoresApp.primary, width: 1.5),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,

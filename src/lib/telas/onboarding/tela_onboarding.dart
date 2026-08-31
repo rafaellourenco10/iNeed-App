@@ -354,7 +354,7 @@ class _CardOpcaoState extends State<_CardOpcao> {
                   color: const Color(0xFF00288E).withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.chevron_right,
                   color: CoresApp.primary,
                   size: 20,

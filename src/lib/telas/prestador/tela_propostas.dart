@@ -94,7 +94,7 @@ class _TelaPropostasState extends State<TelaPropostas>
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Erro ao atualizar proposta.'),
             backgroundColor: CoresApp.error,
           ),
@@ -138,7 +138,7 @@ class _TelaPropostasState extends State<TelaPropostas>
                       child: Consumer<AuthServico>(
                         builder: (_, auth, __) => Text(
                           (auth.usuarioAtual?.nome ?? 'P')[0].toUpperCase(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: CoresApp.primary,
                           ),

@@ -107,7 +107,7 @@ class _TelaBuscaPrestadorState extends State<TelaBuscaPrestador> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Erro ao atualizar proposta.'),
             backgroundColor: CoresApp.error,
           ),
@@ -152,13 +152,10 @@ class _TelaBuscaPrestadorState extends State<TelaBuscaPrestador> {
                 autofocus: false,
                 decoration: InputDecoration(
                   hintText: 'Buscar por título, cliente ou endereço...',
-                  prefixIcon: const Icon(Icons.search, color: CoresApp.outline),
+                  prefixIcon: Icon(Icons.search, color: CoresApp.outline),
                   suffixIcon: _buscaCtrl.text.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(
-                            Icons.clear,
-                            color: CoresApp.outline,
-                          ),
+                          icon: Icon(Icons.clear, color: CoresApp.outline),
                           onPressed: () => _buscaCtrl.clear(),
                         )
                       : null,
@@ -166,24 +163,21 @@ class _TelaBuscaPrestadorState extends State<TelaBuscaPrestador> {
                   fillColor: CoresApp.surfaceContainerLowest,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
+                    borderSide: BorderSide(
                       color: CoresApp.outlineVariant,
                       width: 0.5,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
+                    borderSide: BorderSide(
                       color: CoresApp.outlineVariant,
                       width: 0.5,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: CoresApp.primary,
-                      width: 1.5,
-                    ),
+                    borderSide: BorderSide(color: CoresApp.primary, width: 1.5),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
