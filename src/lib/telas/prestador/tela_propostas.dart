@@ -11,7 +11,9 @@ import '../../servicos/api_servico.dart';
 import '../../servicos/auth_servico.dart';
 
 class TelaPropostas extends StatefulWidget {
-  const TelaPropostas({super.key});
+  final VoidCallback? aoAbrirPerfil;
+
+  const TelaPropostas({super.key, this.aoAbrirPerfil});
 
   @override
   State<TelaPropostas> createState() => _TelaPropostasState();
@@ -131,7 +133,7 @@ class _TelaPropostasState extends State<TelaPropostas>
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, '/perfil'),
+                    onTap: widget.aoAbrirPerfil,
                     child: CircleAvatar(
                       radius: 20,
                       backgroundColor: CoresApp.surfaceContainerHigh,

@@ -7,7 +7,9 @@ import '../../servicos/auth_servico.dart';
 import '../../widgets/card_proposta.dart';
 
 class TelaHomePrestador extends StatefulWidget {
-  const TelaHomePrestador({super.key});
+  final VoidCallback? aoAbrirPerfil;
+
+  const TelaHomePrestador({super.key, this.aoAbrirPerfil});
 
   @override
   State<TelaHomePrestador> createState() => _TelaHomePrestadorState();
@@ -214,8 +216,7 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
                             ),
                             const SizedBox(width: 12),
                             GestureDetector(
-                              onTap: () =>
-                                  Navigator.pushNamed(context, '/perfil'),
+                              onTap: widget.aoAbrirPerfil,
                               child: CircleAvatar(
                                 radius: 20,
                                 backgroundColor: Colors.white.withValues(

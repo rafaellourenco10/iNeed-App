@@ -40,13 +40,19 @@ class _ShellNavegacaoState extends State<ShellNavegacao> {
 
     final telas = isPrestador
         ? [
-            const TelaHomePrestador(), // Início
+            TelaHomePrestador(
+              aoAbrirPerfil: () => setState(() => _indiceAtual = 3),
+            ), // Início
             const TelaBuscaPrestador(), // Busca
-            const TelaPropostas(), // Serviços
+            TelaPropostas(
+              aoAbrirPerfil: () => setState(() => _indiceAtual = 3),
+            ), // Serviços
             const TelaPerfil(), // Perfil
           ]
         : [
-            const TelaHome(), // Início
+            TelaHome(
+              aoAbrirPerfil: () => setState(() => _indiceAtual = 2),
+            ), // Início
             const TelaPedidos(), // Pedidos
             const TelaPerfil(), // Perfil
           ];

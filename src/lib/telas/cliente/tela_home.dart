@@ -12,7 +12,9 @@ import '../../servicos/api_servico.dart';
 import '../../servicos/auth_servico.dart';
 
 class TelaHome extends StatefulWidget {
-  const TelaHome({super.key});
+  final VoidCallback? aoAbrirPerfil;
+
+  const TelaHome({super.key, this.aoAbrirPerfil});
 
   @override
   State<TelaHome> createState() => _TelaHomeState();
@@ -121,7 +123,7 @@ class _TelaHomeState extends State<TelaHome> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, '/perfil'),
+                          onTap: widget.aoAbrirPerfil,
                           child: CircleAvatar(
                             radius: 20,
                             backgroundColor: Colors.white.withValues(
