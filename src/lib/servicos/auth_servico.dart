@@ -185,19 +185,43 @@ class AuthServico extends ChangeNotifier {
     return true;
   }
 
-  /// Confirma papel de cliente e persiste a sessão
-  Future<void> definirComoCliente() async {
+  /// Confirma papel de cliente e persiste a sessão. Só troca o `tipo` —
+  /// preserva os campos de prestador (especialidade, valorHora, etc.) pra
+  /// quem é os dois não perder o cadastro de prestador só por navegar
+  /// pro lado cliente.
+  Future<void> definirComoCliente() => _trocarTipoLocal('cliente');
+
+  /// Volta o modo local pra prestador (sem chamar o backend) — usado
+  /// quando a conta já tem cadastro de prestador e só está alternando de
+  /// volta depois de ter navegado como cliente (ver TelaOnboarding).
+  Future<void> voltarParaPrestador() => _trocarTipoLocal('prestador');
+
+  /// Troca só o campo `tipo` do usuário em memória, preservando todo o
+  /// resto — é uma troca de "modo de navegação atual", não uma chamada
+  /// ao backend (que continua com os dados reais intactos).
+  Future<void> _trocarTipoLocal(String tipo) async {
     if (_usuarioAtual == null) return;
     _usuarioAtual = Usuario(
       uid: _usuarioAtual!.uid,
       nome: _usuarioAtual!.nome,
       email: _usuarioAtual!.email,
-      tipo: 'cliente',
+      tipo: tipo,
+      localizacao: _usuarioAtual!.localizacao,
       telefone: _usuarioAtual!.telefone,
       cpf: _usuarioAtual!.cpf,
       cep: _usuarioAtual!.cep,
       cidade: _usuarioAtual!.cidade,
       endereco: _usuarioAtual!.endereco,
+      chavePix: _usuarioAtual!.chavePix,
+      formaPagamentoAceita: _usuarioAtual!.formaPagamentoAceita,
+      especialidade: _usuarioAtual!.especialidade,
+      valorHora: _usuarioAtual!.valorHora,
+      biografia: _usuarioAtual!.biografia,
+      avaliacao: _usuarioAtual!.avaliacao,
+      totalServicos: _usuarioAtual!.totalServicos,
+      disponivel: _usuarioAtual!.disponivel,
+      criadoEm: _usuarioAtual!.criadoEm,
+      atualizadoEm: _usuarioAtual!.atualizadoEm,
     );
     await _salvarSessao();
     notifyListeners();

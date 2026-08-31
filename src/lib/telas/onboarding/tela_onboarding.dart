@@ -212,27 +212,42 @@ class _TelaOnboardingState extends State<TelaOnboarding>
                         titulo: 'Sou prestador de serviço',
                         subtitulo:
                             'Informe suas habilidades e comece a receber pedidos.',
-                        aoPresionar: () {
+                        aoPresionar: () async {
                           final auth = Provider.of<AuthServico>(
                             context,
                             listen: false,
                           );
                           if (auth.usuarioAtual == null || auth.token == null) {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              '/login',
-                              (r) => false,
-                            );
+                            if (context.mounted) {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                '/login',
+                                (r) => false,
+                              );
+                            }
                             return;
                           }
-                          if (auth.usuarioAtual!.isPrestador) {
-                            // Já tem cadastro de prestador — pula a coleta
-                            // de dados e vai direto pra home dele.
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              '/home-prestador',
-                              (r) => false,
-                            );
+                          // isPrestador sozinho não basta: quem navegou pro
+                          // lado cliente tem tipo: 'cliente' mesmo já tendo
+                          // cadastro de prestador. especialidade preenchida
+                          // é o sinal de que o cadastro já existe, não muda
+                          // quando a pessoa só troca de lado.
+                          final jaEhPrestador =
+                              auth.usuarioAtual!.isPrestador ||
+                              auth.usuarioAtual!.especialidade != null;
+                          if (jaEhPrestador) {
+                            // Já tem cadastro — corrige o tipo de volta pra
+                            // prestador (senão a tela de Perfil, que decide
+                            // o que mostrar pelo tipo, continuaria achando
+                            // que é cliente) e pula a coleta de dados.
+                            await auth.voltarParaPrestador();
+                            if (context.mounted) {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                '/home-prestador',
+                                (r) => false,
+                              );
+                            }
                             return;
                           }
                           Navigator.pushNamed(context, '/completar-prestador');
