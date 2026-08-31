@@ -98,6 +98,18 @@ class ApiServico {
     return jsonDecode(resposta.body) as Map<String, dynamic>;
   }
 
+  /// Busca os dados atuais do usuário autenticado no backend — usado pra
+  /// revalidar a sessão salva localmente (pode estar desatualizada).
+  static Future<Map<String, dynamic>> buscarMeuPerfil({
+    required String token,
+  }) async {
+    final resposta = await http.get(
+      Uri.parse('$_urlBase/auth/meu-perfil'),
+      headers: _headers(token: token),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
   /// Exclui a conta do usuário autenticado (e tudo que está ligado a ela —
   /// propostas, avaliações, notificações). Exige a senha de novo, pra
   /// confirmar que é o próprio dono da conta.

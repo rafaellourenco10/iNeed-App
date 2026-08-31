@@ -2,6 +2,8 @@
 // auth_servico.dart — Gerenciamento de Autenticação (MOCK PARA TESTE)
 // ============================================
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../modelos/usuario.dart';
@@ -55,6 +57,31 @@ class AuthServico extends ChangeNotifier {
         biografia: prefs.getString('usuario_biografia'),
       );
       notifyListeners();
+
+      // Sessão salva localmente pode estar desatualizada (ex: virou
+      // prestador num outro momento e este aparelho nunca soube) —
+      // revalida com o backend em segundo plano, sem travar a abertura.
+      unawaited(sincronizarPerfil());
+    }
+  }
+
+  /// Busca os dados atuais do usuário no backend e atualiza a sessão local
+  /// se algo tiver mudado. Silencioso — falha de rede não afeta o app,
+  /// só mantém os dados em cache até a próxima tentativa.
+  Future<void> sincronizarPerfil() async {
+    if (_token == null) return;
+
+    try {
+      final resposta = await ApiServico.buscarMeuPerfil(token: _token!);
+      if (resposta.containsKey('erro')) return;
+
+      _usuarioAtual = Usuario.fromJson(
+        resposta['usuario'] as Map<String, dynamic>,
+      );
+      await _salvarSessao();
+      notifyListeners();
+    } catch (_) {
+      // Sem internet ou backend fora — mantém os dados em cache.
     }
   }
 

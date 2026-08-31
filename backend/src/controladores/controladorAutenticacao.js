@@ -410,6 +410,48 @@ async function atualizarPerfil(req, res) {
 }
 
 // -----------------------------------------------
+// GET /api/auth/meu-perfil
+// -----------------------------------------------
+// Retorna os dados atuais do usuário autenticado direto do Firestore.
+// Usado pelo app pra revalidar a sessão salva localmente (SharedPreferences)
+// contra o backend ao abrir — evita mostrar dados desatualizados (ex: tipo
+// 'cliente' em cache num aparelho depois da conta ter virado 'prestador').
+async function meuPerfil(req, res) {
+  try {
+    if (!db) {
+      return res.status(503).json({
+        erro: 'Serviço indisponível',
+        mensagem: 'Firebase não está configurado.'
+      });
+    }
+
+    const uid = req.usuario.uid;
+    const docUsuario = await db.collection('usuarios').doc(uid).get();
+
+    if (!docUsuario.exists) {
+      return res.status(404).json({
+        erro: 'Usuário não encontrado',
+        mensagem: 'Conta não encontrada no banco de dados.'
+      });
+    }
+
+    res.status(200).json({
+      usuario: {
+        uid: uid,
+        ...docUsuario.data()
+      }
+    });
+
+  } catch (erro) {
+    console.error('❌ Erro ao buscar perfil:', erro.message);
+    res.status(500).json({
+      erro: 'Erro ao buscar perfil',
+      mensagem: erro.message
+    });
+  }
+}
+
+// -----------------------------------------------
 // DELETE /api/auth/excluir-conta
 // -----------------------------------------------
 // Apaga a conta do usuário autenticado e tudo que está ligado a ela —
@@ -504,5 +546,6 @@ module.exports = {
   loginUsuario,
   tornarPrestador,
   atualizarPerfil,
+  meuPerfil,
   excluirConta
 };

@@ -12,6 +12,7 @@ const {
   loginUsuario,
   tornarPrestador,
   atualizarPerfil,
+  meuPerfil,
   excluirConta
 } = require('../controladores/controladorAutenticacao');
 
@@ -29,6 +30,9 @@ roteador.patch('/tornar-prestador', verificarToken, tornarPrestador);
 
 // PATCH /api/auth/atualizar-perfil (protegida — requer autenticação)
 roteador.patch('/atualizar-perfil', verificarToken, atualizarPerfil);
+
+// GET /api/auth/meu-perfil (protegida — requer autenticação)
+roteador.get('/meu-perfil', verificarToken, meuPerfil);
 
 // DELETE /api/auth/excluir-conta (protegida — requer autenticação)
 roteador.delete('/excluir-conta', verificarToken, excluirConta);
