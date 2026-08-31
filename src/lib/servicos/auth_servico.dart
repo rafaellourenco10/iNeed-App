@@ -103,15 +103,16 @@ class AuthServico extends ChangeNotifier {
     return true;
   }
 
-  /// Login — valida credenciais de verdade contra o backend/Firebase Auth
-  Future<bool> login({String email = '', String senha = ''}) async {
+  /// Login — valida credenciais de verdade contra o backend/Firebase Auth.
+  /// [identificador] aceita email, CPF ou celular.
+  Future<bool> login({String identificador = '', String senha = ''}) async {
     _carregando = true;
     _erro = null;
     notifyListeners();
 
     try {
       final resposta = await ApiServico.login(
-        email: email.trim(),
+        identificador: identificador.trim(),
         senha: senha,
       );
 

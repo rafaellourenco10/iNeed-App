@@ -125,14 +125,16 @@ class ApiServico {
   }
 
   /// Login — valida email + senha no backend e retorna token + dados do usuário
+  /// [identificador] aceita email, CPF ou celular — o backend resolve
+  /// pro email antes de validar a senha no Firebase.
   static Future<Map<String, dynamic>> login({
-    required String email,
+    required String identificador,
     required String senha,
   }) async {
     final resposta = await http.post(
       Uri.parse('$_urlBase/auth/login'),
       headers: _headers(),
-      body: jsonEncode({'email': email, 'senha': senha}),
+      body: jsonEncode({'identificador': identificador, 'senha': senha}),
     );
     return jsonDecode(resposta.body) as Map<String, dynamic>;
   }

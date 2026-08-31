@@ -41,7 +41,7 @@ class _TelaLoginState extends State<TelaLogin> with TickerProviderStateMixin {
 
   // ── Formulário ───────────────────────────────────────────────
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _identificadorController = TextEditingController();
   final _senhaController = TextEditingController();
   bool _mostrarSenha = false;
 
@@ -99,7 +99,7 @@ class _TelaLoginState extends State<TelaLogin> with TickerProviderStateMixin {
   void dispose() {
     _ctrl.dispose();
     _bgCtrl.dispose();
-    _emailController.dispose();
+    _identificadorController.dispose();
     _senhaController.dispose();
     super.dispose();
   }
@@ -160,7 +160,7 @@ class _TelaLoginState extends State<TelaLogin> with TickerProviderStateMixin {
   Future<void> _fazerLogin() async {
     final auth = Provider.of<AuthServico>(context, listen: false);
     final sucesso = await auth.login(
-      email: _emailController.text.trim(),
+      identificador: _identificadorController.text.trim(),
       senha: _senhaController.text,
     );
 
@@ -400,12 +400,12 @@ class _TelaLoginState extends State<TelaLogin> with TickerProviderStateMixin {
 
                               const SizedBox(height: 32),
 
-                              // ── Email ─────────────────────────────
+                              // ── Email / CPF / Celular ─────────────
                               CampoTexto(
-                                dica: 'Seu e-mail',
-                                iconePrefixo: Icons.mail_outline,
-                                controlador: _emailController,
-                                tipoTeclado: TextInputType.emailAddress,
+                                dica: 'E-mail, CPF ou celular',
+                                iconePrefixo: Icons.person_outline,
+                                controlador: _identificadorController,
+                                tipoTeclado: TextInputType.text,
                                 validador: (_) => null,
                               ),
 

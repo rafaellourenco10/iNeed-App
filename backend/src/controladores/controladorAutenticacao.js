@@ -157,6 +157,11 @@ async function cadastrarPrestador(req, res) {
 // cliente). Por isso o backend chama a REST API do Firebase Identity
 // Toolkit pra validar email+senha de verdade, mantendo o app Flutter
 // sem contato direto com o Firebase.
+//
+// O usuário pode entrar com email, CPF ou celular — o Firebase Auth só
+// entende email, então quando o identificador não é um email o backend
+// busca em usuarios/ (comparando só os dígitos, pra não depender de
+// formatação igual) e resolve pro email antes de validar a senha.
 const MENSAGENS_ERRO_LOGIN = {
   EMAIL_NOT_FOUND: 'Nenhuma conta encontrada com este email.',
   INVALID_PASSWORD: 'Senha incorreta.',
@@ -165,14 +170,40 @@ const MENSAGENS_ERRO_LOGIN = {
   TOO_MANY_ATTEMPTS_TRY_LATER: 'Muitas tentativas. Tente novamente mais tarde.'
 };
 
+const apenasDigitos = (valor) => (valor || '').replace(/\D/g, '');
+
+// Recebe o que o usuário digitou (email, CPF ou celular) e devolve o email
+// pra autenticar no Firebase. Se já for email, devolve direto. Se for CPF
+// ou celular, procura em usuarios/ o primeiro documento cujo cpf/telefone
+// bate (comparando só os dígitos) e devolve o email daquela conta.
+async function resolverEmailDoIdentificador(identificador) {
+  if (identificador.includes('@')) return identificador;
+
+  const digitos = apenasDigitos(identificador);
+  if (!digitos) return null;
+
+  const snapshot = await db.collection('usuarios').get();
+  for (const doc of snapshot.docs) {
+    const dados = doc.data();
+    if (
+      (dados.cpf && apenasDigitos(dados.cpf) === digitos) ||
+      (dados.telefone && apenasDigitos(dados.telefone) === digitos)
+    ) {
+      return dados.email || null;
+    }
+  }
+  return null;
+}
+
 async function loginUsuario(req, res) {
   try {
-    const { email, senha } = req.body;
+    const identificador = (req.body.identificador || req.body.email || '').trim();
+    const { senha } = req.body;
 
-    if (!email || !senha) {
+    if (!identificador || !senha) {
       return res.status(400).json({
         erro: 'Dados incompletos',
-        mensagem: 'Email e senha são obrigatórios.'
+        mensagem: 'Informe seu email, CPF ou celular, e a senha.'
       });
     }
 
@@ -188,6 +219,14 @@ async function loginUsuario(req, res) {
       return res.status(503).json({
         erro: 'Serviço indisponível',
         mensagem: 'FIREBASE_WEB_API_KEY não está configurada no servidor.'
+      });
+    }
+
+    const email = await resolverEmailDoIdentificador(identificador);
+    if (!email) {
+      return res.status(401).json({
+        erro: 'Credenciais inválidas',
+        mensagem: 'Não foi possível fazer login. Verifique seus dados.'
       });
     }
 
