@@ -18,6 +18,7 @@ import 'telas/onboarding/tela_explicacao.dart';
 import 'telas/autenticacao/tela_login.dart';
 import 'telas/autenticacao/tela_cadastro.dart';
 import 'telas/autenticacao/tela_completar_prestador.dart';
+import 'telas/autenticacao/tela_enviar_documentos.dart';
 import 'telas/shell_navegacao.dart';
 import 'telas/perfil/tela_perfil.dart';
 import 'telas/perfil/tela_dados_pessoais.dart';
@@ -101,6 +102,7 @@ class INeedApp extends StatelessWidget {
               '/onboarding': (_) => const TelaOnboarding(),
               '/cadastro': (_) => const TelaCadastro(),
               '/completar-prestador': (_) => const TelaCompletarPrestador(),
+              '/enviar-documentos': (_) => const TelaEnviarDocumentos(),
               '/perfil': (_) => const TelaPerfil(),
               '/dados-pessoais': (_) => const TelaDadosPessoais(),
               '/metodos-pagamento': (_) => const TelaMetodosPagamento(),

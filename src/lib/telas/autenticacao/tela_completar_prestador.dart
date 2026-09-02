@@ -55,11 +55,7 @@ class _TelaCompletarPrestadorState extends State<TelaCompletarPrestador> {
     if (!mounted) return;
 
     if (sucesso) {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        '/home-prestador',
-        (r) => false,
-      );
+      Navigator.pushReplacementNamed(context, '/enviar-documentos');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
