@@ -30,11 +30,12 @@ O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais 
 
 **App Flutter** — completo, com dados reais de ponta a ponta (sem mocks):
 - Onboarding, cadastro unificado (cliente/prestador), login com email, CPF ou celular (Firebase Auth)
-- Home, busca e pedidos (cliente) · Home, busca e propostas (prestador), todos com dados reais do backend
+- Home e pedidos (cliente) · Home e propostas (prestador — sem aba de busca separada, já tem busca dentro da Home), todos com dados reais do backend
 - Fluxo completo de contratação — proposta → aceitar/recusar → concluir → avaliar — com contato via WhatsApp nos dois sentidos (mensagem pré-programada) e notificações in-app a cada etapa
 - Perfil compartilhado: dados pessoais editáveis, notificações (com badge de não lidas), método de pagamento (chave Pix + formas aceitas — Dinheiro/Pix/Cartão/Todas as formas — exclusivo do prestador), tema claro/escuro e exclusão de conta (reconfirma senha e apaga em cascata os dois papéis — propostas, avaliações e notificações)
 - Quem é cliente e prestador na mesma conta troca de perfil pelo menu sem precisar deslogar
 - Categoria "Faz tudo" para prestador com mais de uma especialidade
+- Card "Impulsione seu anúncio" na home do prestador (destaque pago futuro — ver "Em andamento")
 - Sessão salva no aparelho se revalida sozinha com o backend ao abrir o app, e desloga automaticamente se o token expirar
 - Design system Material 3 com identidade visual própria, navegação por abas
 
