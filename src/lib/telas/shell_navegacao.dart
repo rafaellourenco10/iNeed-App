@@ -7,7 +7,6 @@ import '../widgets/barra_navegacao.dart';
 import 'cliente/tela_home.dart';
 import 'cliente/tela_pedidos.dart';
 import 'prestador/tela_home_prestador.dart';
-import 'prestador/tela_busca_prestador.dart';
 import 'prestador/tela_propostas.dart';
 import 'perfil/tela_perfil.dart';
 
@@ -41,11 +40,10 @@ class _ShellNavegacaoState extends State<ShellNavegacao> {
     final telas = isPrestador
         ? [
             TelaHomePrestador(
-              aoAbrirPerfil: () => setState(() => _indiceAtual = 3),
+              aoAbrirPerfil: () => setState(() => _indiceAtual = 2),
             ), // Início
-            const TelaBuscaPrestador(), // Busca
             TelaPropostas(
-              aoAbrirPerfil: () => setState(() => _indiceAtual = 3),
+              aoAbrirPerfil: () => setState(() => _indiceAtual = 2),
             ), // Serviços
             const TelaPerfil(), // Perfil
           ]

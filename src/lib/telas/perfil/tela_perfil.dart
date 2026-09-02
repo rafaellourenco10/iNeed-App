@@ -367,9 +367,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                               ? '/home-prestador'
                               : '/home',
                           (r) => false,
-                          arguments: usuario != null && usuario.isPrestador
-                              ? 2
-                              : 1,
+                          arguments: 1,
                         ),
                         child: Text(
                           'Ver todos',
