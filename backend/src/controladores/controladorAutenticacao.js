@@ -35,6 +35,13 @@ async function cadastrarCliente(req, res) {
       });
     }
 
+    if (cpf && await cpfJaExiste(cpf)) {
+      return res.status(409).json({
+        erro: 'CPF já cadastrado',
+        mensagem: 'Já existe uma conta com este CPF.'
+      });
+    }
+
     // Criar usuário no Firebase Auth
     const usuarioCriado = await auth.createUser({
       email: email,
@@ -186,24 +193,29 @@ const MENSAGENS_ERRO_LOGIN = {
 
 const apenasDigitos = (valor) => (valor || '').replace(/\D/g, '');
 
-// Verifica se já existe outra conta com esse telefone (compara só os
-// dígitos, pra não depender de formatação igual). uidExcluir é usado nas
-// atualizações, pra não rejeitar a própria conta reenviando o telefone que
-// ela já tem salvo.
-async function telefoneJaExiste(telefone, uidExcluir) {
-  const digitos = apenasDigitos(telefone);
+// Verifica se já existe OUTRA conta com o mesmo valor num campo (telefone
+// ou cpf), comparando só os dígitos (pra não depender de formatação
+// igual). uidExcluir é usado nas atualizações, pra não rejeitar a própria
+// conta reenviando o valor que ela já tem salvo.
+async function valorJaExisteNoCampo(campo, valor, uidExcluir) {
+  const digitos = apenasDigitos(valor);
   if (!digitos) return false;
 
   const snapshot = await db.collection('usuarios').get();
   for (const doc of snapshot.docs) {
     if (doc.id === uidExcluir) continue;
     const dados = doc.data();
-    if (dados.telefone && apenasDigitos(dados.telefone) === digitos) {
+    if (dados[campo] && apenasDigitos(dados[campo]) === digitos) {
       return true;
     }
   }
   return false;
 }
+
+const telefoneJaExiste = (telefone, uidExcluir) =>
+  valorJaExisteNoCampo('telefone', telefone, uidExcluir);
+const cpfJaExiste = (cpf, uidExcluir) =>
+  valorJaExisteNoCampo('cpf', cpf, uidExcluir);
 
 // Recebe o que o usuário digitou (email, CPF ou celular) e devolve o email
 // pra autenticar no Firebase. Se já for email, devolve direto. Se for CPF
@@ -415,6 +427,13 @@ async function atualizarPerfil(req, res) {
       return res.status(409).json({
         erro: 'Telefone já cadastrado',
         mensagem: 'Já existe uma conta com este telefone.'
+      });
+    }
+
+    if (cpf && await cpfJaExiste(cpf, uid)) {
+      return res.status(409).json({
+        erro: 'CPF já cadastrado',
+        mensagem: 'Já existe uma conta com este CPF.'
       });
     }
 
