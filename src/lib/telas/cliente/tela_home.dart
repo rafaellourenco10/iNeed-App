@@ -84,6 +84,11 @@ class _TelaHomeState extends State<TelaHome> {
     _filtrar();
   }
 
+  void _limparCategoria() {
+    setState(() => _categoriaSelecionada = null);
+    _filtrar();
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthServico>(context);
@@ -216,7 +221,7 @@ class _TelaHomeState extends State<TelaHome> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: _limparCategoria,
                       child: Text(
                         'Ver todas',
                         style: TextStyle(color: CoresApp.primary),
