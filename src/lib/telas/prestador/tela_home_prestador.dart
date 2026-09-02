@@ -300,156 +300,167 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
             ),
           ),
 
-          // ── Stats ─────────────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _StatCard(
-                    valor: '${_solicitacoes.length}',
-                    label: 'Disponíveis',
-                    icone: Icons.list_alt_outlined,
-                    cor: CoresApp.primary,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _StatCard(
-                    valor: '${_todas.length}',
-                    label: 'Pendentes',
-                    icone: Icons.pending_actions_outlined,
-                    cor: const Color(0xFFFF6B35),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _StatCard(
-                    valor: avaliacao != null
-                        ? avaliacao.toStringAsFixed(1)
-                        : '—',
-                    label: 'Avaliação',
-                    icone: Icons.star_outline,
-                    cor: const Color(0xFFFFC107),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // ── Impulsionar Anúncio ────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            child: GestureDetector(
-              onTap: () =>
-                  Navigator.pushNamed(context, '/impulsionar-anuncio'),
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF00288E), Color(0xFF1565C0)],
-                  ),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.rocket_launch_outlined,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Impulsione seu anúncio',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Apareça em primeiro nas buscas dos clientes',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.85),
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Icon(Icons.chevron_right, color: Colors.white),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // ── Título da seção ───────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-            child: Text(
-              'Propostas Pendentes',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ),
-
-          // ── Lista ─────────────────────────────────────────────────
+          // ── Stats + Impulsionar + Lista, tudo rolando junto ─────────
           Expanded(
-            child: _carregando
-                ? const Center(child: CircularProgressIndicator())
-                : _solicitacoes.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+            child: RefreshIndicator(
+              onRefresh: _carregar,
+              child: ListView(
+                padding: const EdgeInsets.only(bottom: 100),
+                children: [
+                  // ── Stats ────────────────────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                    child: Row(
                       children: [
-                        Icon(
-                          Icons.inbox_outlined,
-                          size: 64,
-                          color: CoresApp.outline.withValues(alpha: 0.4),
+                        Expanded(
+                          child: _StatCard(
+                            valor: '${_solicitacoes.length}',
+                            label: 'Disponíveis',
+                            icone: Icons.list_alt_outlined,
+                            cor: CoresApp.primary,
+                          ),
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          _todas.isEmpty
-                              ? 'Nenhuma proposta pendente no momento.'
-                              : 'Nenhum resultado encontrado.',
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(color: CoresApp.onSurfaceVariant),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _StatCard(
+                            valor: '${_todas.length}',
+                            label: 'Pendentes',
+                            icone: Icons.pending_actions_outlined,
+                            cor: const Color(0xFFFF6B35),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _StatCard(
+                            valor: avaliacao != null
+                                ? avaliacao.toStringAsFixed(1)
+                                : '—',
+                            label: 'Avaliação',
+                            icone: Icons.star_outline,
+                            cor: const Color(0xFFFFC107),
+                          ),
                         ),
                       ],
                     ),
-                  )
-                : RefreshIndicator(
-                    onRefresh: _carregar,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.only(top: 4, bottom: 100),
-                      itemCount: _solicitacoes.length,
-                      itemBuilder: (ctx, i) {
-                        final proposta = _solicitacoes[i];
-                        return CardProposta(
-                          proposta: proposta,
-                          aoAceitar: () =>
-                              _atualizarStatus(proposta.id, 'aceita'),
-                          aoRecusar: () =>
-                              _atualizarStatus(proposta.id, 'recusada'),
-                        );
-                      },
+                  ),
+
+                  // ── Impulsionar Anúncio ──────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                    child: GestureDetector(
+                      onTap: () =>
+                          Navigator.pushNamed(context, '/impulsionar-anuncio'),
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF00288E), Color(0xFF1565C0)],
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Icon(
+                                Icons.rocket_launch_outlined,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Impulsione seu anúncio',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Apareça em primeiro nas buscas dos clientes',
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.85,
+                                      ),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(
+                              Icons.chevron_right,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
+
+                  // ── Título da seção ──────────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+                    child: Text(
+                      'Propostas Pendentes',
+                      style: Theme.of(context).textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+
+                  // ── Lista ────────────────────────────────────────
+                  if (_carregando)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 40),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (_solicitacoes.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.inbox_outlined,
+                            size: 64,
+                            color: CoresApp.outline.withValues(alpha: 0.4),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            _todas.isEmpty
+                                ? 'Nenhuma proposta pendente no momento.'
+                                : 'Nenhum resultado encontrado.',
+                            style: Theme.of(context).textTheme.bodyLarge
+                                ?.copyWith(color: CoresApp.onSurfaceVariant),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    ..._solicitacoes.map(
+                      (proposta) => CardProposta(
+                        proposta: proposta,
+                        aoAceitar: () =>
+                            _atualizarStatus(proposta.id, 'aceita'),
+                        aoRecusar: () =>
+                            _atualizarStatus(proposta.id, 'recusada'),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
