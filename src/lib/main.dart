@@ -26,6 +26,7 @@ import 'telas/perfil/tela_metodos_pagamento.dart';
 import 'telas/perfil/tela_notificacoes.dart';
 import 'telas/perfil/tela_seguranca.dart';
 import 'telas/perfil/tela_configuracoes.dart';
+import 'telas/perfil/tela_impulsionar_anuncio.dart';
 import 'telas/cliente/tela_perfil_prestador.dart';
 import 'telas/cliente/tela_detalhes_servico.dart';
 import 'telas/cliente/tela_avaliar_servico.dart';
@@ -109,6 +110,7 @@ class INeedApp extends StatelessWidget {
               '/notificacoes': (_) => const TelaNotificacoes(),
               '/seguranca': (_) => const TelaSeguranca(),
               '/configuracoes': (_) => const TelaConfiguracoes(),
+              '/impulsionar-anuncio': (_) => const TelaImpulsionarAnuncio(),
             },
 
             // ───── Rotas com argumentos ─────

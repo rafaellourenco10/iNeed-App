@@ -312,7 +312,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                     aoTocar: () =>
                         Navigator.pushNamed(context, '/dados-pessoais'),
                   ),
-                  if (usuario != null && usuario.isPrestador)
+                  if (usuario != null && usuario.isPrestador) ...[
                     _buildMenuItem(
                       context,
                       Icons.payment_outlined,
@@ -320,6 +320,16 @@ class _TelaPerfilState extends State<TelaPerfil> {
                       aoTocar: () =>
                           Navigator.pushNamed(context, '/metodos-pagamento'),
                     ),
+                    _buildMenuItem(
+                      context,
+                      Icons.rocket_launch_outlined,
+                      'Impulsionar Anúncio',
+                      aoTocar: () => Navigator.pushNamed(
+                        context,
+                        '/impulsionar-anuncio',
+                      ),
+                    ),
+                  ],
                   _buildMenuItem(
                     context,
                     Icons.notifications_outlined,
