@@ -28,6 +28,13 @@ async function cadastrarCliente(req, res) {
       });
     }
 
+    if (telefone && await telefoneJaExiste(telefone)) {
+      return res.status(409).json({
+        erro: 'Telefone já cadastrado',
+        mensagem: 'Já existe uma conta com este telefone.'
+      });
+    }
+
     // Criar usuário no Firebase Auth
     const usuarioCriado = await auth.createUser({
       email: email,
@@ -96,6 +103,13 @@ async function cadastrarPrestador(req, res) {
       return res.status(503).json({
         erro: 'Serviço indisponível',
         mensagem: 'Firebase não está configurado.'
+      });
+    }
+
+    if (telefone && await telefoneJaExiste(telefone)) {
+      return res.status(409).json({
+        erro: 'Telefone já cadastrado',
+        mensagem: 'Já existe uma conta com este telefone.'
       });
     }
 
@@ -171,6 +185,25 @@ const MENSAGENS_ERRO_LOGIN = {
 };
 
 const apenasDigitos = (valor) => (valor || '').replace(/\D/g, '');
+
+// Verifica se já existe outra conta com esse telefone (compara só os
+// dígitos, pra não depender de formatação igual). uidExcluir é usado nas
+// atualizações, pra não rejeitar a própria conta reenviando o telefone que
+// ela já tem salvo.
+async function telefoneJaExiste(telefone, uidExcluir) {
+  const digitos = apenasDigitos(telefone);
+  if (!digitos) return false;
+
+  const snapshot = await db.collection('usuarios').get();
+  for (const doc of snapshot.docs) {
+    if (doc.id === uidExcluir) continue;
+    const dados = doc.data();
+    if (dados.telefone && apenasDigitos(dados.telefone) === digitos) {
+      return true;
+    }
+  }
+  return false;
+}
 
 // Recebe o que o usuário digitou (email, CPF ou celular) e devolve o email
 // pra autenticar no Firebase. Se já for email, devolve direto. Se for CPF
@@ -375,6 +408,13 @@ async function atualizarPerfil(req, res) {
       return res.status(404).json({
         erro: 'Usuário não encontrado',
         mensagem: 'Conta não encontrada no banco de dados.'
+      });
+    }
+
+    if (telefone && await telefoneJaExiste(telefone, uid)) {
+      return res.status(409).json({
+        erro: 'Telefone já cadastrado',
+        mensagem: 'Já existe uma conta com este telefone.'
       });
     }
 
