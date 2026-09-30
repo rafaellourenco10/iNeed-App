@@ -347,6 +347,36 @@ class ApiServico {
 
   // ───── Health Check ─────
 
+  // ───── Verificação de perfil ─────
+
+  /// Envia as fotos (base64) do documento e do comprovante pra análise
+  static Future<Map<String, dynamic>> enviarVerificacao({
+    required String token,
+    required String documentoFoto,
+    required String comprovante,
+  }) async {
+    final resposta = await http.post(
+      Uri.parse('$_urlBase/verificacoes'),
+      headers: _headers(token: token),
+      body: jsonEncode({
+        'documentoFoto': documentoFoto,
+        'comprovante': comprovante,
+      }),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
+  /// Status da verificação do prestador logado (status null = nunca enviou)
+  static Future<Map<String, dynamic>> minhaVerificacao({
+    required String token,
+  }) async {
+    final resposta = await http.get(
+      Uri.parse('$_urlBase/verificacoes/minha'),
+      headers: _headers(token: token),
+    );
+    return jsonDecode(resposta.body) as Map<String, dynamic>;
+  }
+
   /// Verificar se o servidor está online
   static Future<bool> verificarSaude() async {
     try {

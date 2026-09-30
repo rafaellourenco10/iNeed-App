@@ -5,6 +5,7 @@
 // Cria o usuário no Firebase Auth E salva os dados no Firestore.
 
 const { auth, db } = require('../configuracao/firebase');
+const { apagarVerificacao } = require('./controladorVerificacoes');
 
 // -----------------------------------------------
 // POST /api/auth/cadastro-cliente
@@ -583,6 +584,9 @@ async function excluirConta(req, res) {
     const loteC = db.batch();
     notificacoes.forEach(doc => loteC.delete(doc.ref));
     await loteC.commit();
+
+    // Verificação de perfil (documentos enviados)
+    await apagarVerificacao(uid);
 
     // Cadastro e conta
     await db.collection('usuarios').doc(uid).delete();

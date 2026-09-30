@@ -26,6 +26,7 @@ class Usuario {
   final double? avaliacao;
   final int? totalServicos;
   final bool? disponivel;
+  final bool verificado; // selo — documentos aprovados pela equipe
 
   final String? criadoEm;
   final String? atualizadoEm;
@@ -49,6 +50,7 @@ class Usuario {
     this.avaliacao,
     this.totalServicos,
     this.disponivel,
+    this.verificado = false,
     this.criadoEm,
     this.atualizadoEm,
   });
@@ -81,6 +83,7 @@ class Usuario {
           : null,
       totalServicos: json['totalServicos'],
       disponivel: json['disponivel'],
+      verificado: json['verificado'] == true,
       criadoEm: json['criadoEm'],
       atualizadoEm: json['atualizadoEm'],
     );
@@ -100,6 +103,7 @@ class Usuario {
       'avaliacao': avaliacao,
       'totalServicos': totalServicos,
       'disponivel': disponivel,
+      'verificado': verificado,
     };
   }
 }

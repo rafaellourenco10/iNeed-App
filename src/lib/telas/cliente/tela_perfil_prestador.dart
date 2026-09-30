@@ -69,8 +69,10 @@ class TelaPerfilPrestador extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(width: 6),
-                Icon(Icons.verified, color: CoresApp.primary, size: 20),
+                if (prestador.verificado) ...[
+                  const SizedBox(width: 6),
+                  Icon(Icons.verified, color: CoresApp.primary, size: 20),
+                ],
               ],
             ),
             const SizedBox(height: 4),

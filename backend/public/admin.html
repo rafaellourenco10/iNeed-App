@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>iNeed — Validação</title>
+<style>
+  :root { --primaria: #00288E; --fundo: #f5f6fa; --card: #fff; --texto: #1a1c22; --suave: #5f6270; --borda: #e2e4ec; --ok: #15803d; --erro: #b91c1c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, sans-serif; background: var(--fundo); color: var(--texto); }
+  header { background: var(--primaria); color: #fff; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+  header h1 { font-size: 18px; margin: 0; }
+  main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  button { font: inherit; cursor: pointer; border: 0; border-radius: 8px; padding: 9px 16px; font-weight: 600; }
+  .primario { background: var(--primaria); color: #fff; }
+  .aprovar { background: var(--ok); color: #fff; }
+  .recusar { background: var(--erro); color: #fff; }
+  .fantasma { background: transparent; color: inherit; border: 1px solid currentColor; }
+  button:disabled { opacity: .5; cursor: default; }
+  input { font: inherit; width: 100%; padding: 10px; border: 1px solid var(--borda); border-radius: 8px; margin-bottom: 10px; }
+  .caixa { background: var(--card); border: 1px solid var(--borda); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  #login { max-width: 360px; margin: 48px auto; }
+  .abas { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .abas button { background: var(--card); border: 1px solid var(--borda); color: var(--texto); }
+  .abas button.ativa { background: var(--primaria); color: #fff; border-color: var(--primaria); }
+  .topo { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: start; }
+  .nome { font-weight: 700; font-size: 16px; }
+  .info { color: var(--suave); font-size: 14px; margin-top: 2px; }
+  .imagens { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
+  .imagens figure { margin: 0; }
+  .imagens figcaption { font-size: 13px; color: var(--suave); margin-bottom: 4px; }
+  .imagens img { width: 100%; border-radius: 8px; border: 1px solid var(--borda); background: #eee; }
+  .acoes { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .erro { color: var(--erro); font-size: 14px; }
+  .vazio { color: var(--suave); text-align: center; padding: 32px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>iNeed · Validação de prestadores</h1>
+  <button id="sair" class="fantasma" hidden>Sair</button>
+</header>
+<main>
+  <form id="login" class="caixa">
+    <p><strong>Entrar como validador</strong></p>
+    <input id="email" type="email" placeholder="E-mail" autocomplete="username" required>
+    <input id="senha" type="password" placeholder="Senha" autocomplete="current-password" required>
+    <button class="primario" style="width:100%">Entrar</button>
+    <p id="erroLogin" class="erro"></p>
+  </form>
+
+  <section id="painel" hidden>
+    <div class="abas">
+      <button data-status="pendente" class="ativa">Pendentes</button>
+      <button data-status="aprovado">Aprovados</button>
+      <button data-status="recusado">Recusados</button>
+    </div>
+    <div id="lista"></div>
+  </section>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  let token = sessionStorage.getItem('token');
+  let statusAtual = 'pendente';
+
+  async function api(caminho, opcoes = {}) {
+    const resposta = await fetch('/api' + caminho, {
+      ...opcoes,
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+    });
+    const dados = await resposta.json();
+    if (resposta.status === 401) { sair(); throw new Error('Sessão expirada. Entre de novo.'); }
+    if (!resposta.ok) throw new Error(dados.mensagem || 'Erro inesperado');
+    return dados;
+  }
+
+  function sair() {
+    token = null;
+    sessionStorage.removeItem('token');
+    mostrar();
+  }
+
+  function mostrar() {
+    $('login').hidden = !!token;
+    $('painel').hidden = !token;
+    $('sair').hidden = !token;
+    if (token) carregar();
+  }
+
+  $('login').onsubmit = async (e) => {
+    e.preventDefault();
+    $('erroLogin').textContent = '';
+    try {
+      const resposta = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: $('email').value, senha: $('senha').value }),
+      });
+      const dados = await resposta.json();
+      if (!resposta.ok) throw new Error(dados.mensagem || 'Falha no login');
+      token = dados.token;
+      // Confere a permissão já no login, antes de mostrar o painel
+      await api('/verificacoes?status=pendente');
+      sessionStorage.setItem('token', token);
+      mostrar();
+    } catch (erro) {
+      token = null;
+      $('erroLogin').textContent = erro.message;
+    }
+  };
+
+  $('sair').onclick = sair;
+
+  document.querySelectorAll('.abas button').forEach((botao) => {
+    botao.onclick = () => {
+      document.querySelector('.abas .ativa').classList.remove('ativa');
+      botao.classList.add('ativa');
+      statusAtual = botao.dataset.status;
+      carregar();
+    };
+  });
+
+  async function carregar() {
+    const lista = $('lista');
+    lista.innerHTML = '<p class="vazio">Carregando…</p>';
+    try {
+      const { verificacoes } = await api('/verificacoes?status=' + statusAtual);
+      lista.innerHTML = '';
+      if (!verificacoes.length) {
+        lista.innerHTML = '<p class="vazio">Nada por aqui.</p>';
+        return;
+      }
+      verificacoes.forEach((v) => lista.appendChild(cartao(v)));
+    } catch (erro) {
+      lista.innerHTML = '';
+      lista.appendChild(elemento('p', 'erro', erro.message));
+    }
+  }
+
+  // Cria elemento com texto via textContent — nome/e-mail vêm do usuário,
+  // nunca entram como HTML.
+  function elemento(tag, classe, texto) {
+    const el = document.createElement(tag);
+    if (classe) el.className = classe;
+    if (texto != null) el.textContent = texto;
+    return el;
+  }
+
+  function formatarData(iso) {
+    return iso ? new Date(iso).toLocaleString('pt-BR') : '—';
+  }
+
+  function cartao(v) {
+    const caixa = elemento('div', 'caixa');
+    const topo = elemento('div', 'topo');
+    const dados = elemento('div');
+    dados.append(
+      elemento('div', 'nome', v.nome || '(sem nome)'),
+      elemento('div', 'info', `${v.especialidade || 'Sem especialidade'} · ${v.email}`),
+      elemento('div', 'info', 'Enviado em ' + formatarData(v.enviadoEm)),
+    );
+    if (v.status !== 'pendente') {
+      dados.appendChild(elemento('div', 'info', `Analisado por ${v.analisadoPor} em ${formatarData(v.analisadoEm)}`));
+    }
+    if (v.motivoRecusa) dados.appendChild(elemento('div', 'info', 'Motivo: ' + v.motivoRecusa));
+
+    const verDocs = elemento('button', 'fantasma', 'Ver documentos');
+    topo.append(dados, verDocs);
+    caixa.appendChild(topo);
+
+    const imagens = elemento('div', 'imagens');
+    caixa.appendChild(imagens);
+
+    verDocs.onclick = async () => {
+      verDocs.disabled = true;
+      verDocs.textContent = 'Carregando…';
+      try {
+        const { arquivos } = await api(`/verificacoes/${encodeURIComponent(v.uid)}/arquivos`);
+        imagens.innerHTML = '';
+        [['documentoFoto', 'Documento com foto'], ['comprovante', 'Comprovante de qualificação']]
+          .forEach(([chave, legenda]) => {
+            const figura = elemento('figure');
+            figura.appendChild(elemento('figcaption', null, legenda));
+            if (arquivos[chave]) {
+              const img = document.createElement('img');
+              img.src = 'data:image/jpeg;base64,' + arquivos[chave];
+              img.alt = legenda;
+              img.title = 'Clique pra abrir em tamanho real';
+              img.onclick = () => window.open().document.write(`<img src="${img.src}">`);
+              figura.appendChild(img);
+            } else {
+              figura.appendChild(elemento('p', 'info', 'Não enviado'));
+            }
+            imagens.appendChild(figura);
+          });
+        verDocs.remove();
+      } catch (erro) {
+        verDocs.disabled = false;
+        verDocs.textContent = 'Ver documentos';
+        imagens.replaceChildren(elemento('p', 'erro', erro.message));
+      }
+    };
+
+    if (v.status === 'pendente') {
+      const acoes = elemento('div', 'acoes');
+      const aprovar = elemento('button', 'aprovar', 'Aprovar');
+      const recusar = elemento('button', 'recusar', 'Recusar');
+      acoes.append(aprovar, recusar);
+      caixa.appendChild(acoes);
+
+      const analisar = async (corpo) => {
+        aprovar.disabled = recusar.disabled = true;
+        try {
+          await api('/verificacoes/' + encodeURIComponent(v.uid), { method: 'PATCH', body: JSON.stringify(corpo) });
+          caixa.remove();
+          if (!$('lista').children.length) carregar();
+        } catch (erro) {
+          alert(erro.message);
+          aprovar.disabled = recusar.disabled = false;
+        }
+      };
+
+      aprovar.onclick = () => {
+        if (confirm(`Aprovar ${v.nome}? O perfil vai ganhar o selo de verificado.`)) analisar({ acao: 'aprovar' });
+      };
+      recusar.onclick = () => {
+        const motivo = prompt('Motivo da recusa (o prestador vai ver):');
+        if (motivo && motivo.trim()) analisar({ acao: 'recusar', motivo });
+      };
+    }
+
+    return caixa;
+  }
+
+  mostrar();
+</script>
+</body>
+</html>

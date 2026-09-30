@@ -70,5 +70,9 @@
 		<true/>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
+		<key>NSCameraUsageDescription</key>
+		<string>Usada pra fotografar seus documentos de verificação de perfil.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Usada pra escolher a foto dos seus documentos de verificação de perfil.</string>
 	</dict>
 </plist>

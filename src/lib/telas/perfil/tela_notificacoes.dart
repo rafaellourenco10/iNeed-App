@@ -111,6 +111,10 @@ class _TelaNotificacoesState extends State<TelaNotificacoes> {
         return Icons.task_alt_outlined;
       case 'avaliacao_recebida':
         return Icons.star_outline;
+      case 'verificacao_aprovada':
+        return Icons.verified_outlined;
+      case 'verificacao_recusada':
+        return Icons.cancel_outlined;
       default:
         return Icons.notifications_outlined;
     }

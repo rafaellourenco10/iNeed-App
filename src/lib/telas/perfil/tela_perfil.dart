@@ -322,12 +322,17 @@ class _TelaPerfilState extends State<TelaPerfil> {
                     ),
                     _buildMenuItem(
                       context,
+                      Icons.verified_outlined,
+                      'Verificação de Perfil',
+                      aoTocar: () =>
+                          Navigator.pushNamed(context, '/enviar-documentos'),
+                    ),
+                    _buildMenuItem(
+                      context,
                       Icons.rocket_launch_outlined,
                       'Impulsionar Anúncio',
-                      aoTocar: () => Navigator.pushNamed(
-                        context,
-                        '/impulsionar-anuncio',
-                      ),
+                      aoTocar: () =>
+                          Navigator.pushNamed(context, '/impulsionar-anuncio'),
                     ),
                   ],
                   _buildMenuItem(

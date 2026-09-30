@@ -5,6 +5,7 @@
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 // Importar rotas
@@ -13,6 +14,7 @@ const rotasPrestadores = require('./rotas/rotasPrestadores');
 const rotasPropostas = require('./rotas/rotasPropostas');
 const rotasAvaliacoes = require('./rotas/rotasAvaliacoes');
 const rotasNotificacoes = require('./rotas/rotasNotificacoes');
+const rotasVerificacoes = require('./rotas/rotasVerificacoes');
 
 const app = express();
 // Em produção (Render) a porta vem via PORT, injetada pela plataforma.
@@ -22,7 +24,8 @@ const PORTA = process.env.PORT || process.env.PORTA || 3000;
 // Middlewares Globais
 // ============================================
 app.use(cors());                    // Permitir requisições do app Flutter
-app.use(express.json());            // Parsear JSON no corpo das requisições
+// Limite maior que o padrão (100 KB) por causa das fotos de verificação em base64
+app.use(express.json({ limit: '3mb' }));
 
 // ============================================
 // Rota de Saúde (Health Check)
@@ -43,6 +46,10 @@ app.use('/api/prestadores', rotasPrestadores);
 app.use('/api/propostas', rotasPropostas);
 app.use('/api/avaliacoes', rotasAvaliacoes);
 app.use('/api/notificacoes', rotasNotificacoes);
+app.use('/api/verificacoes', rotasVerificacoes);
+
+// Página da equipe pra validar documentos dos prestadores
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, '../public/admin.html')));
 
 // ============================================
 // Middleware de Erro Global

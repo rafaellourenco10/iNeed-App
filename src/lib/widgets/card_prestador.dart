@@ -83,6 +83,14 @@ class CardPrestador extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                          if (prestador.verificado) ...[
+                            const SizedBox(width: 4),
+                            const Icon(
+                              Icons.verified,
+                              size: 16,
+                              color: Color(0xFF00288E),
+                            ),
+                          ],
                           if (prestador.especialidade != null) ...[
                             const SizedBox(width: 6),
                             Container(
