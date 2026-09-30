@@ -7,16 +7,23 @@
 // Aprovado → perfil ganha o selo de verificado.
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../servicos/api_servico.dart';
 import '../../servicos/auth_servico.dart';
 import '../../tema/cores.dart';
 
 class TelaEnviarDocumentos extends StatefulWidget {
   const TelaEnviarDocumentos({super.key});
+
+  /// Gravada enquanto a câmera/galeria está aberta. No Android o sistema
+  /// pode matar o app nesse meio-tempo por falta de memória; se o app
+  /// reabrir com essa chave presente, a sessão volta direto pra esta tela.
+  static const chaveFotoPendente = 'verif_foto_pendente';
 
   @override
   State<TelaEnviarDocumentos> createState() => _TelaEnviarDocumentosState();
@@ -35,6 +42,52 @@ class _TelaEnviarDocumentosState extends State<TelaEnviarDocumentos> {
   void initState() {
     super.initState();
     _carregarStatus();
+    _restaurarFotos();
+  }
+
+  // Fotos já escolhidas ficam salvas (caminho no cache do app) pra
+  // sobreviver ao app ser encerrado enquanto a câmera está aberta.
+  Future<void> _restaurarFotos() async {
+    final prefs = await SharedPreferences.getInstance();
+    XFile? salva(String chave) {
+      final caminho = prefs.getString('verif_$chave');
+      return caminho != null && File(caminho).existsSync()
+          ? XFile(caminho)
+          : null;
+    }
+
+    if (!mounted) return;
+    setState(() {
+      _documentoFoto = salva('documentoFoto');
+      _comprovante = salva('comprovante');
+    });
+
+    // Foto tirada logo antes do Android encerrar o app
+    final pendente = prefs.getString(TelaEnviarDocumentos.chaveFotoPendente);
+    if (pendente == null || !Platform.isAndroid) return;
+    final perdida = await ImagePicker().retrieveLostData();
+    await prefs.remove(TelaEnviarDocumentos.chaveFotoPendente);
+    if (perdida.file != null) await _definirFoto(pendente, perdida.file!);
+  }
+
+  Future<void> _definirFoto(String chave, XFile foto) async {
+    if (mounted) {
+      setState(() {
+        if (chave == 'documentoFoto') {
+          _documentoFoto = foto;
+        } else {
+          _comprovante = foto;
+        }
+      });
+    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('verif_$chave', foto.path);
+  }
+
+  Future<void> _limparFotosSalvas() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('verif_documentoFoto');
+    await prefs.remove('verif_comprovante');
   }
 
   Future<void> _carregarStatus() async {
@@ -55,7 +108,7 @@ class _TelaEnviarDocumentosState extends State<TelaEnviarDocumentos> {
     }
   }
 
-  Future<XFile?> _escolherFoto() async {
+  Future<XFile?> _escolherFoto(String chave) async {
     final origem = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (context) => SafeArea(
@@ -78,13 +131,18 @@ class _TelaEnviarDocumentosState extends State<TelaEnviarDocumentos> {
     );
     if (origem == null) return null;
 
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(TelaEnviarDocumentos.chaveFotoPendente, chave);
+
     // Comprime no aparelho — o backend aceita até ~600 KB por imagem
-    return ImagePicker().pickImage(
+    final foto = await ImagePicker().pickImage(
       source: origem,
       maxWidth: 1600,
       maxHeight: 1600,
       imageQuality: 70,
     );
+    await prefs.remove(TelaEnviarDocumentos.chaveFotoPendente);
+    return foto;
   }
 
   Future<void> _enviar() async {
@@ -104,9 +162,12 @@ class _TelaEnviarDocumentosState extends State<TelaEnviarDocumentos> {
       } else {
         setState(() {
           _status = 'pendente';
+          _documentoFoto = null;
+          _comprovante = null;
           _motivoRecusa = null;
         });
         _mostrarMensagem(resposta['mensagem'] ?? 'Documentos enviados!');
+        _limparFotosSalvas();
       }
     } catch (_) {
       if (mounted) {
@@ -189,7 +250,7 @@ class _TelaEnviarDocumentosState extends State<TelaEnviarDocumentos> {
                         titulo: 'Documento com foto',
                         subtitulo: 'RG, CNH ou outro documento oficial',
                         arquivo: _documentoFoto,
-                        aoEscolher: (f) => setState(() => _documentoFoto = f),
+                        chave: 'documentoFoto',
                       ),
                       const SizedBox(height: 12),
                       _cartaoDocumento(
@@ -198,7 +259,7 @@ class _TelaEnviarDocumentosState extends State<TelaEnviarDocumentos> {
                         subtitulo:
                             'Certificado, diploma ou registro profissional',
                         arquivo: _comprovante,
-                        aoEscolher: (f) => setState(() => _comprovante = f),
+                        chave: 'comprovante',
                       ),
                       const SizedBox(height: 24),
                       _aviso(
@@ -338,15 +399,15 @@ class _TelaEnviarDocumentosState extends State<TelaEnviarDocumentos> {
     required String titulo,
     required String subtitulo,
     required XFile? arquivo,
-    required ValueChanged<XFile> aoEscolher,
+    required String chave,
   }) {
     final escolhido = arquivo != null;
     return InkWell(
       onTap: _enviando
           ? null
           : () async {
-              final foto = await _escolherFoto();
-              if (foto != null) aoEscolher(foto);
+              final foto = await _escolherFoto(chave);
+              if (foto != null) await _definirFoto(chave, foto);
             },
       borderRadius: BorderRadius.circular(12),
       child: Container(

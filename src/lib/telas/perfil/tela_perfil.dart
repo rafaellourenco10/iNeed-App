@@ -193,13 +193,34 @@ class _TelaPerfilState extends State<TelaPerfil> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        usuario?.nome ?? 'Usuário',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              usuario?.nome ?? 'Usuário',
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          if (usuario != null &&
+                              usuario.isPrestador &&
+                              usuario.verificado) ...[
+                            const SizedBox(width: 6),
+                            const Tooltip(
+                              message: 'Perfil verificado',
+                              child: Icon(
+                                Icons.verified,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       const SizedBox(height: 4),
                       Text(

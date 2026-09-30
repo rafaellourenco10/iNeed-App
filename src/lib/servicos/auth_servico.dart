@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../modelos/usuario.dart';
 import '../navegacao_global.dart';
+import '../telas/autenticacao/tela_enviar_documentos.dart';
 import 'api_servico.dart';
 
 class AuthServico extends ChangeNotifier {
@@ -56,6 +57,7 @@ class AuthServico extends ChangeNotifier {
         especialidade: prefs.getString('usuario_especialidade'),
         valorHora: prefs.getDouble('usuario_valor_hora'),
         biografia: prefs.getString('usuario_biografia'),
+        verificado: prefs.getBool('usuario_verificado') ?? false,
       );
       notifyListeners();
 
@@ -63,6 +65,15 @@ class AuthServico extends ChangeNotifier {
       // prestador num outro momento e este aparelho nunca soube) —
       // revalida com o backend em segundo plano, sem travar a abertura.
       unawaited(sincronizarPerfil());
+
+      // App foi encerrado pelo Android com a câmera aberta na verificação
+      // de documentos — volta pra lá em vez de cair na tela inicial.
+      if (_usuarioAtual!.isPrestador &&
+          prefs.getString(TelaEnviarDocumentos.chaveFotoPendente) != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          chaveNavegadorGlobal.currentState?.pushNamed('/enviar-documentos');
+        });
+      }
     }
   }
 
@@ -220,6 +231,7 @@ class AuthServico extends ChangeNotifier {
       avaliacao: _usuarioAtual!.avaliacao,
       totalServicos: _usuarioAtual!.totalServicos,
       disponivel: _usuarioAtual!.disponivel,
+      verificado: _usuarioAtual!.verificado,
       criadoEm: _usuarioAtual!.criadoEm,
       atualizadoEm: _usuarioAtual!.atualizadoEm,
     );
@@ -484,5 +496,6 @@ class AuthServico extends ChangeNotifier {
     if (_usuarioAtual!.biografia != null) {
       await prefs.setString('usuario_biografia', _usuarioAtual!.biografia!);
     }
+    await prefs.setBool('usuario_verificado', _usuarioAtual!.verificado);
   }
 }

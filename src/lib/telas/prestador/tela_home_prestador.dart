@@ -237,13 +237,31 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
                     ),
                     const SizedBox(height: 16),
                     // Saudação
-                    Text(
-                      'Olá, $nome!',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            'Olá, $nome!',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        if (auth.usuarioAtual?.verificado ?? false) ...[
+                          const SizedBox(width: 6),
+                          const Tooltip(
+                            message: 'Perfil verificado',
+                            child: Icon(
+                              Icons.verified,
+                              color: Colors.white,
+                              size: 22,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -414,8 +432,9 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
                     child: Text(
                       'Propostas Pendentes',
-                      style: Theme.of(context).textTheme.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.w600),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
 
