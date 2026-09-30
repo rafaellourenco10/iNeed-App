@@ -3,238 +3,929 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<title>iNeed — Validação</title>
+<meta name="robots" content="noindex, nofollow">
+<title>Verificações · iNeed</title>
 <style>
-  :root { --primaria: #00288E; --fundo: #f5f6fa; --card: #fff; --texto: #1a1c22; --suave: #5f6270; --borda: #e2e4ec; --ok: #15803d; --erro: #b91c1c; }
+  :root {
+    --azul: #00288E;
+    --azul-hover: #0a36b0;
+    --azul-suave: #e8edfa;
+    --fundo: #f3f4f7;
+    --painel: #ffffff;
+    --painel-2: #f8f9fb;
+    --linha: #e3e5eb;
+    --linha-forte: #cfd3dc;
+    --texto: #151821;
+    --texto-2: #505767;
+    --texto-3: #5f6676;
+    --lona: #1d2027;
+    --lona-2: #2a2e37;
+    --pendente: #b45309;
+    --pendente-bg: #fdf3e2;
+    --ok: #15803d;
+    --ok-bg: #e5f5ea;
+    --erro: #c0262d;
+    --erro-bg: #fbe9ea;
+    --raio: 8px;
+    --sombra: 0 1px 2px rgba(16, 24, 40, .06), 0 4px 12px rgba(16, 24, 40, .06);
+    --fonte: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color-scheme: light;
+  }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, sans-serif; background: var(--fundo); color: var(--texto); }
-  header { background: var(--primaria); color: #fff; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
-  header h1 { font-size: 18px; margin: 0; }
-  main { max-width: 960px; margin: 0 auto; padding: 16px; }
-  button { font: inherit; cursor: pointer; border: 0; border-radius: 8px; padding: 9px 16px; font-weight: 600; }
-  .primario { background: var(--primaria); color: #fff; }
-  .aprovar { background: var(--ok); color: #fff; }
-  .recusar { background: var(--erro); color: #fff; }
-  .fantasma { background: transparent; color: inherit; border: 1px solid currentColor; }
-  button:disabled { opacity: .5; cursor: default; }
-  input { font: inherit; width: 100%; padding: 10px; border: 1px solid var(--borda); border-radius: 8px; margin-bottom: 10px; }
-  .caixa { background: var(--card); border: 1px solid var(--borda); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
-  #login { max-width: 360px; margin: 48px auto; }
-  .abas { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-  .abas button { background: var(--card); border: 1px solid var(--borda); color: var(--texto); }
-  .abas button.ativa { background: var(--primaria); color: #fff; border-color: var(--primaria); }
-  .topo { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: start; }
-  .nome { font-weight: 700; font-size: 16px; }
-  .info { color: var(--suave); font-size: 14px; margin-top: 2px; }
-  .imagens { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
-  .imagens figure { margin: 0; }
-  .imagens figcaption { font-size: 13px; color: var(--suave); margin-bottom: 4px; }
-  .imagens img { width: 100%; border-radius: 8px; border: 1px solid var(--borda); background: #eee; }
-  .acoes { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-  .erro { color: var(--erro); font-size: 14px; }
-  .vazio { color: var(--suave); text-align: center; padding: 32px; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; font: 14px/1.45 var(--fonte); color: var(--texto); background: var(--fundo);
+    -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums;
+  }
+  ::selection { background: var(--azul-suave); color: var(--azul); }
+  * { scrollbar-width: thin; scrollbar-color: var(--linha-forte) transparent; }
+  :focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; }
+  button, input, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  kbd {
+    font: 600 11px/1 var(--fonte); padding: 3px 5px; border-radius: 4px; min-width: 18px; display: inline-block; text-align: center;
+    background: var(--painel); border: 1px solid var(--linha-forte); border-bottom-width: 2px; color: var(--texto-2);
+  }
+  [hidden] { display: none !important; }
+
+  /* ───── Botões ───── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 14px;
+    border-radius: var(--raio); border: 1px solid transparent; font-weight: 600; white-space: nowrap;
+    transition: background-color .15s, border-color .15s, color .15s, opacity .15s;
+  }
+  .btn-primario { background: var(--azul); color: #fff; }
+  .btn-primario:hover:not(:disabled) { background: var(--azul-hover); }
+  .btn-sec { background: var(--painel); border-color: var(--linha-forte); color: var(--texto); }
+  .btn-sec:hover:not(:disabled) { background: var(--painel-2); border-color: #b9bfcb; }
+  .btn-perigo { background: var(--erro); color: #fff; }
+  .btn-perigo:hover:not(:disabled) { background: #a51f25; }
+  .btn-perigo-sec { background: var(--painel); border-color: #eab8bb; color: var(--erro); }
+  .btn-perigo-sec:hover:not(:disabled) { background: var(--erro-bg); }
+  .btn:disabled { opacity: .45; }
+  .btn-bloco { width: 100%; height: 40px; }
+  .btn-icone { width: 32px; height: 32px; padding: 0; border-radius: 6px; background: transparent; border: 0; color: inherit; display: inline-grid; place-items: center; }
+
+  /* ───── Login ───── */
+  #telaLogin { min-height: 100%; display: grid; place-items: center; padding: 24px 16px; }
+  .login { width: 100%; max-width: 380px; }
+  .login-marca { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; justify-content: center; }
+  .login-cartao { background: var(--painel); border: 1px solid var(--linha); border-radius: 12px; box-shadow: var(--sombra); padding: 28px; }
+  .login h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -.01em; }
+  .login p.sub { margin: 0 0 22px; color: var(--texto-2); }
+  .campo { display: block; margin-bottom: 14px; }
+  .campo span { display: block; font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+  .campo input {
+    width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--linha-forte); border-radius: var(--raio); background: var(--painel);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .campo input:focus { outline: none; border-color: var(--azul); box-shadow: 0 0 0 3px var(--azul-suave); }
+  .alerta { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; border-radius: var(--raio); background: var(--erro-bg); color: var(--erro); font-size: 13px; margin-bottom: 14px; }
+  .login-rodape { text-align: center; color: var(--texto-3); font-size: 12px; margin-top: 18px; }
+
+  .marca { width: 28px; height: 28px; border-radius: 7px; background: var(--azul); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 13px; letter-spacing: -.02em; }
+  .marca-nome { font-weight: 700; font-size: 16px; letter-spacing: -.01em; }
+
+  /* ───── App ───── */
+  #telaApp { height: 100%; display: grid; grid-template-rows: 52px 1fr; }
+  .topo { display: flex; align-items: center; gap: 12px; padding: 0 16px; background: var(--painel); border-bottom: 1px solid var(--linha); }
+  .topo .sep { width: 1px; height: 20px; background: var(--linha); }
+  .topo .titulo { font-weight: 600; color: var(--texto-2); }
+  .topo .espaco { flex: 1; }
+  .topo .quem { color: var(--texto-2); font-size: 13px; }
+  .topo .btn { height: 32px; }
+
+  .area { display: grid; grid-template-columns: 340px minmax(0, 1fr) 360px; min-height: 0; }
+
+  /* Fila */
+  .fila { display: flex; flex-direction: column; min-height: 0; background: var(--painel); border-right: 1px solid var(--linha); }
+  .fila-topo { padding: 14px 14px 10px; border-bottom: 1px solid var(--linha); }
+  .abas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 3px; background: var(--fundo); border-radius: var(--raio); margin-bottom: 10px; }
+  .aba {
+    border: 0; background: transparent; height: 30px; padding: 0 4px; border-radius: 6px; font-size: 12.5px; font-weight: 600; color: var(--texto-2);
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-width: 0; white-space: nowrap; transition: background-color .15s, color .15s;
+  }
+  .aba:hover { color: var(--texto); }
+  .aba[aria-selected="true"] { background: var(--painel); color: var(--texto); box-shadow: 0 1px 2px rgba(16, 24, 40, .1); }
+  .aba .n { font-size: 11px; font-weight: 700; min-width: 18px; padding: 1px 5px; border-radius: 99px; background: var(--linha); color: var(--texto-2); }
+  .aba[data-status="pendente"] .n.tem { background: var(--pendente-bg); color: var(--pendente); }
+  .busca { position: relative; }
+  .busca svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--texto-3); }
+  .busca input { width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--linha); border-radius: var(--raio); background: var(--painel-2); }
+  .busca input:focus { outline: none; border-color: var(--azul); background: var(--painel); box-shadow: 0 0 0 3px var(--azul-suave); }
+  .lista { flex: 1; overflow-y: auto; padding: 6px; margin: 0; list-style: none; }
+  .item {
+    width: 100%; display: grid; grid-template-columns: 36px 1fr auto; gap: 10px; align-items: center; text-align: left;
+    padding: 10px; border: 0; border-radius: var(--raio); background: transparent; transition: background-color .12s;
+  }
+  .item:hover { background: var(--painel-2); }
+  .item[aria-current="true"] { background: var(--azul-suave); }
+  .item[aria-current="true"] .item-nome { color: var(--azul); }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 13px; background: #e6e9f0; color: var(--texto-2); }
+  .item[aria-current="true"] .avatar { background: var(--azul); color: #fff; }
+  .item-nome { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item-sub { font-size: 12px; color: var(--texto-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item-tempo { font-size: 12px; color: var(--texto-3); align-self: start; padding-top: 2px; }
+  .fila-rodape { padding: 10px 14px; border-top: 1px solid var(--linha); font-size: 12px; color: var(--texto-3); display: flex; flex-wrap: wrap; gap: 6px 10px; }
+  .fila-rodape span { display: inline-flex; align-items: center; gap: 4px; }
+
+  .esqueleto { display: grid; grid-template-columns: 36px 1fr; gap: 10px; padding: 10px; }
+  .esqueleto i { display: block; border-radius: 6px; background: linear-gradient(90deg, #eef0f4 0%, #f6f7f9 50%, #eef0f4 100%); background-size: 200% 100%; animation: brilho 1.2s ease-in-out infinite; }
+  .esqueleto i:first-child { width: 36px; height: 36px; border-radius: 50%; grid-row: span 2; }
+  .esqueleto i:nth-child(2) { height: 12px; width: 70%; margin-top: 4px; }
+  .esqueleto i:nth-child(3) { height: 10px; width: 45%; }
+  @keyframes brilho { to { background-position: -200% 0; } }
+
+  .vazio-fila { padding: 32px 18px; text-align: center; color: var(--texto-3); font-size: 13px; }
+
+  /* Visualizador */
+  .visor { display: flex; flex-direction: column; min-height: 0; min-width: 0; background: var(--lona); color: #e8eaf0; }
+  .visor-topo { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid #2f333d; }
+  .docs { display: flex; gap: 6px; flex: 1; min-width: 0; }
+  .doc-aba {
+    display: flex; align-items: center; gap: 8px; height: 40px; padding: 4px 12px 4px 4px; border-radius: var(--raio);
+    border: 1px solid #3a3f4a; background: transparent; color: #c5c9d3; font-weight: 600; font-size: 13px; min-width: 0;
+    transition: background-color .15s, border-color .15s, color .15s;
+  }
+  .doc-aba:hover { background: var(--lona-2); color: #fff; }
+  .doc-aba[aria-selected="true"] { background: #fff; border-color: #fff; color: var(--texto); }
+  .doc-aba .mini { width: 44px; height: 30px; border-radius: 5px; background: #3a3f4a center/cover no-repeat; flex: none; display: grid; place-items: center; color: #8d93a0; }
+  .doc-aba .rotulo { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ferramentas { display: flex; align-items: center; gap: 2px; padding: 2px; border-radius: var(--raio); background: var(--lona-2); }
+  .ferramentas .btn-icone { color: #c5c9d3; }
+  .ferramentas .btn-icone:hover:not(:disabled) { background: #3a3f4a; color: #fff; }
+  .ferramentas .btn-icone:disabled { opacity: .35; }
+  .zoom-valor { font-size: 12px; min-width: 58px; text-align: center; color: #9aa0ad; }
+  .palco { flex: 1; position: relative; overflow: hidden; min-height: 0; cursor: grab; touch-action: none; user-select: none; }
+  .palco.arrastando { cursor: grabbing; }
+  .palco img {
+    position: absolute; inset: 0; margin: auto; max-width: calc(100% - 48px); max-height: calc(100% - 48px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, .45); border-radius: 4px; transform-origin: center; will-change: transform;
+    transition: transform .18s cubic-bezier(.2, .8, .2, 1);
+  }
+  .palco.arrastando img { transition: none; }
+  .palco-msg { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: #9aa0ad; padding: 24px; }
+  .palco-msg .anel { width: 28px; height: 28px; border-radius: 50%; border: 3px solid #3a3f4a; border-top-color: #c5c9d3; animation: gira .8s linear infinite; margin: 0 auto 10px; }
+  @keyframes gira { to { transform: rotate(360deg); } }
+  .dica-palco { position: absolute; left: 12px; bottom: 12px; font-size: 12px; color: #8d93a0; pointer-events: none; }
+
+  /* Painel de decisão */
+  .decisao { display: flex; flex-direction: column; min-height: 0; background: var(--painel); border-left: 1px solid var(--linha); }
+  .decisao-corpo { flex: 1; overflow-y: auto; padding: 20px; }
+  .decisao-rodape { padding: 14px 20px 16px; border-top: 1px solid var(--linha); background: var(--painel); display: grid; gap: 8px; }
+  .cabeca { display: flex; gap: 12px; align-items: center; position: sticky; top: -20px; z-index: 1; margin: -20px -20px 16px; padding: 20px 20px 12px; background: var(--painel); }
+  .cabeca .avatar { width: 44px; height: 44px; font-size: 16px; background: var(--azul-suave); color: var(--azul); }
+  .cabeca h2 { font-size: 17px; margin: 0; letter-spacing: -.01em; line-height: 1.25; overflow-wrap: anywhere; }
+  .selo { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 99px; margin-top: 4px; }
+  .selo::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .selo.pendente { background: var(--pendente-bg); color: var(--pendente); }
+  .selo.aprovado { background: var(--ok-bg); color: var(--ok); }
+  .selo.recusado { background: var(--erro-bg); color: var(--erro); }
+  .dados { margin: 0 0 22px; display: grid; grid-template-columns: 96px 1fr; gap: 8px 12px; font-size: 13px; }
+  .dados dt { color: var(--texto-3); }
+  .dados dd { margin: 0; overflow-wrap: anywhere; }
+  .dados .copiar { display: inline-flex; align-items: center; gap: 6px; border: 0; background: none; padding: 0; color: var(--texto-2); font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 12px; }
+  .dados .copiar:hover { color: var(--azul); }
+  .dados .copiar svg { width: 13px; height: 13px; }
+  .secao-titulo { font-size: 13px; font-weight: 700; margin: 0 0 10px; display: flex; justify-content: space-between; align-items: baseline; }
+  .secao-titulo small { font-weight: 600; color: var(--texto-3); font-size: 12px; }
+  .checklist { list-style: none; margin: 0 0 8px; padding: 0; border: 1px solid var(--linha); border-radius: var(--raio); overflow: hidden; }
+  .checklist li + li { border-top: 1px solid var(--linha); }
+  .checklist label { display: flex; gap: 10px; padding: 11px 12px; cursor: pointer; transition: background-color .12s; }
+  .checklist label:hover { background: var(--painel-2); }
+  .checklist input { width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--ok); flex: none; cursor: pointer; }
+  .checklist b { display: block; font-weight: 600; font-size: 13px; }
+  .checklist span { display: block; font-size: 12px; color: var(--texto-3); margin-top: 1px; }
+  .checklist input:checked + div b { color: var(--ok); }
+  .checklist .ref { margin-top: 5px; display: inline-block; padding: 2px 7px; border-radius: 5px; background: var(--fundo); color: var(--texto-2); }
+  .checklist .ref strong { color: var(--texto); font-weight: 600; }
+  .dica-bloqueio { margin: 0; font-size: 12px; color: var(--texto-3); text-align: center; }
+
+  .recusa { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--linha); }
+  .motivos { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .motivo {
+    height: 30px; padding: 0 11px; border-radius: 99px; border: 1px solid var(--linha-forte); background: var(--painel);
+    font-size: 12px; font-weight: 600; color: var(--texto-2); transition: background-color .12s, border-color .12s, color .12s;
+  }
+  .motivo:hover { border-color: #b9bfcb; color: var(--texto); }
+  .motivo[aria-pressed="true"] { background: var(--erro-bg); border-color: #eab8bb; color: var(--erro); }
+  .recusa textarea {
+    width: 100%; min-height: 76px; resize: vertical; padding: 9px 11px; border: 1px solid var(--linha-forte); border-radius: var(--raio);
+    font-size: 13px;
+  }
+  .recusa textarea:focus { outline: none; border-color: var(--azul); box-shadow: 0 0 0 3px var(--azul-suave); }
+  .recusa .nota { font-size: 12px; color: var(--texto-3); margin: 6px 0 0; }
+
+  .resultado { border-radius: var(--raio); padding: 12px 14px; font-size: 13px; margin-bottom: 18px; }
+  .resultado.aprovado { background: var(--ok-bg); color: #14532d; }
+  .resultado.recusado { background: var(--erro-bg); color: #7f1d1d; }
+  .resultado strong { display: block; margin-bottom: 2px; }
+
+  .vazio-grande { grid-column: 2 / 4; display: grid; place-items: center; text-align: center; padding: 32px; background: var(--fundo); }
+  .vazio-grande .icone { width: 56px; height: 56px; border-radius: 14px; background: var(--painel); border: 1px solid var(--linha); display: grid; place-items: center; margin: 0 auto 16px; color: var(--azul); }
+  .vazio-grande .icone svg { width: 24px; height: 24px; }
+  .vazio-grande h2 { font-size: 17px; margin: 0 0 6px; }
+  .vazio-grande p { margin: 0 auto; max-width: 42ch; color: var(--texto-2); }
+
+  .voltar { display: none; }
+
+  /* Toast */
+  .toasts { position: fixed; right: 16px; bottom: 16px; display: grid; gap: 8px; z-index: 10; }
+  .toast {
+    display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: var(--raio); background: var(--texto); color: #fff;
+    box-shadow: 0 8px 24px rgba(16, 24, 40, .25); font-size: 13px; animation: entra .2s cubic-bezier(.2, .8, .2, 1);
+  }
+  .toast .ponto { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  @keyframes entra { from { opacity: 0; transform: translateY(8px); } }
+
+  /* ───── Responsivo ───── */
+  @media (max-width: 1240px) {
+    .area { grid-template-columns: 300px minmax(0, 1fr) 320px; }
+  }
+  @media (max-width: 960px) {
+    #telaApp { height: auto; min-height: 100%; }
+    .area { grid-template-columns: 1fr; }
+    .fila { border-right: 0; min-height: calc(100vh - 52px); }
+    .area.revisando .fila { display: none; }
+    .area:not(.revisando) .visor, .area:not(.revisando) .decisao { display: none; }
+    .visor { height: 45vh; }
+    .decisao { border-left: 0; }
+    .decisao-corpo { overflow: visible; }
+    .decisao-rodape { position: sticky; bottom: 0; }
+    .voltar { display: inline-flex; }
+    .vazio-grande { grid-column: 1; }
+    .area:not(.revisando) .vazio-grande { display: none; }
+    .fila-rodape, .dica-palco, .topo .quem, .topo .sep, .topo .titulo { display: none; }
+    .docs { gap: 4px; }
+    .doc-aba { padding: 4px; flex: none; }
+    .doc-aba .rotulo { display: none; }
+    .zoom-valor { display: none; }
+    .ferramentas { flex: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <h1>iNeed · Validação de prestadores</h1>
-  <button id="sair" class="fantasma" hidden>Sair</button>
-</header>
-<main>
-  <form id="login" class="caixa">
-    <p><strong>Entrar como validador</strong></p>
-    <input id="email" type="email" placeholder="E-mail" autocomplete="username" required>
-    <input id="senha" type="password" placeholder="Senha" autocomplete="current-password" required>
-    <button class="primario" style="width:100%">Entrar</button>
-    <p id="erroLogin" class="erro"></p>
-  </form>
 
-  <section id="painel" hidden>
-    <div class="abas">
-      <button data-status="pendente" class="ativa">Pendentes</button>
-      <button data-status="aprovado">Aprovados</button>
-      <button data-status="recusado">Recusados</button>
-    </div>
-    <div id="lista"></div>
-  </section>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-busca" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-mais" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/></symbol>
+  <symbol id="i-menos" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M8 11h6"/></symbol>
+  <symbol id="i-girar" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></symbol>
+  <symbol id="i-ajustar" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
+  <symbol id="i-abrir" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-sair" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+  <symbol id="i-copiar" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-caixa" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+  <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-voltar" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+  <symbol id="i-alerta" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-imagem" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></symbol>
+</svg>
+
+<!-- ───── Login ───── -->
+<main id="telaLogin" hidden>
+  <div class="login">
+    <div class="login-marca"><div class="marca">iN</div><span class="marca-nome">iNeed</span></div>
+    <form id="formLogin" class="login-cartao" novalidate>
+      <h1>Verificação de prestadores</h1>
+      <p class="sub">Entre com uma conta de validador.</p>
+      <div id="erroLogin" class="alerta" role="alert" hidden><svg class="i"><use href="#i-alerta"/></svg><span></span></div>
+      <label class="campo"><span>E-mail</span><input id="email" type="email" autocomplete="username" required></label>
+      <label class="campo"><span>Senha</span><input id="senha" type="password" autocomplete="current-password" required></label>
+      <button id="btnEntrar" class="btn btn-primario btn-bloco" type="submit">Entrar</button>
+    </form>
+    <p class="login-rodape">Acesso restrito. Os documentos são dados pessoais protegidos pela LGPD.</p>
+  </div>
 </main>
 
+<!-- ───── Painel ───── -->
+<div id="telaApp" hidden>
+  <header class="topo">
+    <div class="marca" aria-hidden="true">iN</div>
+    <span class="marca-nome">iNeed</span>
+    <span class="sep"></span>
+    <span class="titulo">Verificações</span>
+    <span class="espaco"></span>
+    <span class="quem" id="quem"></span>
+    <button class="btn btn-sec" id="btnSair" type="button"><svg class="i"><use href="#i-sair"/></svg>Sair</button>
+  </header>
+
+  <div class="area" id="area">
+    <aside class="fila" aria-label="Fila de verificações">
+      <div class="fila-topo">
+        <div class="abas" role="tablist">
+          <button class="aba" role="tab" data-status="pendente" aria-selected="true">Pendentes <span class="n" data-n="pendente">0</span></button>
+          <button class="aba" role="tab" data-status="aprovado" aria-selected="false">Aprovados <span class="n" data-n="aprovado">0</span></button>
+          <button class="aba" role="tab" data-status="recusado" aria-selected="false">Recusados <span class="n" data-n="recusado">0</span></button>
+        </div>
+        <label class="busca">
+          <svg class="i"><use href="#i-busca"/></svg>
+          <input id="busca" type="search" placeholder="Buscar por nome, e-mail ou área" aria-label="Buscar">
+        </label>
+      </div>
+      <ul class="lista" id="lista"></ul>
+      <div class="fila-rodape" aria-label="Atalhos de teclado">
+        <span><kbd>↑</kbd><kbd>↓</kbd> navegar</span>
+        <span><kbd>1</kbd><kbd>2</kbd> documento</span>
+        <span><kbd>+</kbd><kbd>−</kbd><kbd>0</kbd> zoom</span>
+        <span><kbd>R</kbd> girar</span>
+        <span><kbd>A</kbd> aprovar</span>
+        <span><kbd>X</kbd> recusar</span>
+      </div>
+    </aside>
+
+    <section class="visor" id="visor" aria-label="Documentos" hidden>
+      <div class="visor-topo">
+        <button class="btn-icone voltar" id="btnVoltar" type="button" aria-label="Voltar para a fila" style="color:#c5c9d3"><svg class="i"><use href="#i-voltar"/></svg></button>
+        <div class="docs" role="tablist" id="docs"></div>
+        <div class="ferramentas">
+          <button class="btn-icone" id="zMenos" type="button" aria-label="Diminuir zoom" title="Diminuir zoom (−)"><svg class="i"><use href="#i-menos"/></svg></button>
+          <span class="zoom-valor" id="zValor">Ajustado</span>
+          <button class="btn-icone" id="zMais" type="button" aria-label="Aumentar zoom" title="Aumentar zoom (+)"><svg class="i"><use href="#i-mais"/></svg></button>
+          <button class="btn-icone" id="zAjustar" type="button" aria-label="Ajustar à tela" title="Ajustar à tela (0)"><svg class="i"><use href="#i-ajustar"/></svg></button>
+          <button class="btn-icone" id="zGirar" type="button" aria-label="Girar 90 graus" title="Girar (R)"><svg class="i"><use href="#i-girar"/></svg></button>
+          <button class="btn-icone" id="zAbrir" type="button" aria-label="Abrir em nova aba" title="Abrir em nova aba"><svg class="i"><use href="#i-abrir"/></svg></button>
+        </div>
+      </div>
+      <div class="palco" id="palco">
+        <img id="imagem" alt="" hidden draggable="false">
+        <div class="palco-msg" id="palcoMsg"></div>
+        <span class="dica-palco">Role para dar zoom · arraste para mover</span>
+      </div>
+    </section>
+
+    <section class="decisao" id="decisao" aria-label="Análise" hidden>
+      <div class="decisao-corpo" id="decisaoCorpo"></div>
+      <div class="decisao-rodape" id="decisaoRodape"></div>
+    </section>
+
+    <section class="vazio-grande" id="vazioGrande" hidden></section>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
 <script>
+(() => {
   const $ = (id) => document.getElementById(id);
+
+  // ───── Estado ─────
   let token = sessionStorage.getItem('token');
+  let emailLogado = sessionStorage.getItem('email') || '';
   let statusAtual = 'pendente';
+  const listas = { pendente: [], aprovado: [], recusado: [] };
+  const arquivosCache = new Map();
+  let selecionado = null;      // verificação aberta
+  let docAtual = 'documentoFoto';
+  let checados = new Set();
+  let recusando = false;
+  let motivoEscolhido = null;
+  const vista = { escala: 1, giro: 0, x: 0, y: 0 };
+
+  const DOCS = [
+    { chave: 'documentoFoto', rotulo: 'Documento', titulo: 'Documento com foto' },
+    { chave: 'comprovante', rotulo: 'Comprovante', titulo: 'Comprovante de qualificação' },
+  ];
+  const CHECKLIST = [
+    { id: 'nome', titulo: 'Nome confere com o cadastro', ajuda: 'O nome no RG/CNH é o mesmo do perfil.', ref: (v) => ['Cadastro', v.nome] },
+    { id: 'legivel', titulo: 'Documento legível e válido', ajuda: 'Foto nítida, documento inteiro, sem sinais de edição.' },
+    { id: 'area', titulo: 'Comprovante é da especialidade', ajuda: 'Curso, diploma ou registro da área anunciada.', ref: (v) => ['Área', v.especialidade] },
+    { id: 'titular', titulo: 'Comprovante em nome do prestador', ajuda: 'Mesmo nome do documento com foto.', ref: (v) => ['Cadastro', v.nome] },
+  ];
+  const VAZIOS = {
+    pendente: ['Nenhum envio aguardando', 'Quando um prestador enviar documentos pelo app, ele aparece aqui, do mais antigo para o mais novo.'],
+    aprovado: ['Nenhum prestador aprovado ainda', 'Os prestadores que você aprovar ficam listados aqui, com quem aprovou e quando.'],
+    recusado: ['Nenhuma recusa', 'Envios recusados aparecem aqui com o motivo. O prestador pode reenviar pelo app.'],
+  };
+  const MOTIVOS = [
+    'Foto ilegível ou cortada',
+    'Nome não confere com o cadastro',
+    'Comprovante não é da área',
+    'Comprovante em nome de outra pessoa',
+    'Documento vencido ou inválido',
+  ];
+
+  // ───── Utilidades ─────
+  // Cria elementos só com textContent — nome e e-mail vêm do usuário
+  function h(tag, props = {}, ...filhos) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(props)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') el.className = v;
+      else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    }
+    for (const f of filhos.flat()) if (f != null && f !== false) el.append(f);
+    return el;
+  }
+  function icone(nome) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('class', 'i');
+    svg.setAttribute('aria-hidden', 'true');
+    const use = document.createElementNS(ns, 'use');
+    use.setAttribute('href', '#i-' + nome);
+    svg.append(use);
+    return svg;
+  }
+  function iniciais(nome) {
+    const partes = (nome || '?').trim().split(/\s+/);
+    return ((partes[0]?.[0] || '') + (partes.length > 1 ? partes[partes.length - 1][0] : '')).toUpperCase() || '?';
+  }
+  function tempoRelativo(iso) {
+    if (!iso) return '';
+    const min = Math.round((Date.now() - new Date(iso)) / 60000);
+    if (min < 1) return 'agora';
+    if (min < 60) return `há ${min} min`;
+    const horas = Math.round(min / 60);
+    if (horas < 24) return `há ${horas} h`;
+    const dias = Math.round(horas / 24);
+    if (dias < 7) return `há ${dias} d`;
+    return new Date(iso).toLocaleDateString('pt-BR');
+  }
+  const dataCompleta = (iso) => iso ? new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+
+  function toast(texto, cor = 'var(--ok)') {
+    const t = h('div', { class: 'toast' }, h('span', { class: 'ponto', style: `background:${cor}` }), texto);
+    $('toasts').append(t);
+    setTimeout(() => t.remove(), 3500);
+  }
 
   async function api(caminho, opcoes = {}) {
     const resposta = await fetch('/api' + caminho, {
       ...opcoes,
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
     });
-    const dados = await resposta.json();
-    if (resposta.status === 401) { sair(); throw new Error('Sessão expirada. Entre de novo.'); }
-    if (!resposta.ok) throw new Error(dados.mensagem || 'Erro inesperado');
+    const dados = await resposta.json().catch(() => ({}));
+    if (resposta.status === 401) { sair('Sua sessão expirou. Entre de novo.'); throw new Error('Sessão expirada'); }
+    if (!resposta.ok) throw new Error(dados.mensagem || 'Não foi possível completar a ação.');
     return dados;
   }
 
-  function sair() {
-    token = null;
-    sessionStorage.removeItem('token');
-    mostrar();
+  // ───── Login ─────
+  function mostrarErroLogin(texto) {
+    const caixa = $('erroLogin');
+    caixa.hidden = !texto;
+    caixa.querySelector('span').textContent = texto || '';
   }
 
-  function mostrar() {
-    $('login').hidden = !!token;
-    $('painel').hidden = !token;
-    $('sair').hidden = !token;
-    if (token) carregar();
-  }
-
-  $('login').onsubmit = async (e) => {
+  $('formLogin').addEventListener('submit', async (e) => {
     e.preventDefault();
-    $('erroLogin').textContent = '';
+    const email = $('email').value.trim();
+    const senha = $('senha').value;
+    if (!email || !senha) return mostrarErroLogin('Preencha e-mail e senha.');
+    mostrarErroLogin('');
+    const botao = $('btnEntrar');
+    botao.disabled = true;
+    botao.textContent = 'Entrando…';
     try {
       const resposta = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: $('email').value, senha: $('senha').value }),
+        body: JSON.stringify({ email, senha }),
       });
-      const dados = await resposta.json();
-      if (!resposta.ok) throw new Error(dados.mensagem || 'Falha no login');
+      const dados = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) throw new Error(dados.mensagem || 'E-mail ou senha incorretos.');
       token = dados.token;
-      // Confere a permissão já no login, antes de mostrar o painel
-      await api('/verificacoes?status=pendente');
+      await api('/verificacoes?status=pendente'); // confere a permissão de validador
+      emailLogado = email;
       sessionStorage.setItem('token', token);
-      mostrar();
+      sessionStorage.setItem('email', email);
+      $('senha').value = '';
+      iniciarPainel();
     } catch (erro) {
       token = null;
-      $('erroLogin').textContent = erro.message;
+      mostrarErroLogin(erro.message);
+    } finally {
+      botao.disabled = false;
+      botao.textContent = 'Entrar';
     }
-  };
-
-  $('sair').onclick = sair;
-
-  document.querySelectorAll('.abas button').forEach((botao) => {
-    botao.onclick = () => {
-      document.querySelector('.abas .ativa').classList.remove('ativa');
-      botao.classList.add('ativa');
-      statusAtual = botao.dataset.status;
-      carregar();
-    };
   });
 
-  async function carregar() {
-    const lista = $('lista');
-    lista.innerHTML = '<p class="vazio">Carregando…</p>';
+  function sair(mensagem) {
+    token = null;
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('email');
+    arquivosCache.clear();
+    selecionado = null;
+    $('telaApp').hidden = true;
+    $('telaLogin').hidden = false;
+    mostrarErroLogin(typeof mensagem === 'string' ? mensagem : '');
+    $('email').focus();
+  }
+  $('btnSair').addEventListener('click', () => sair());
+
+  // ───── Fila ─────
+  function iniciarPainel() {
+    $('telaLogin').hidden = true;
+    $('telaApp').hidden = false;
+    $('quem').textContent = emailLogado;
+    carregarTudo();
+  }
+
+  async function carregarTudo(manterUid) {
+    renderEsqueleto();
     try {
-      const { verificacoes } = await api('/verificacoes?status=' + statusAtual);
-      lista.innerHTML = '';
-      if (!verificacoes.length) {
-        lista.innerHTML = '<p class="vazio">Nada por aqui.</p>';
+      const [p, a, r] = await Promise.all(['pendente', 'aprovado', 'recusado'].map((s) => api('/verificacoes?status=' + s)));
+      listas.pendente = p.verificacoes;
+      // Já analisados: mais recentes primeiro
+      const recentes = (x, y) => (y.analisadoEm || '').localeCompare(x.analisadoEm || '');
+      listas.aprovado = a.verificacoes.sort(recentes);
+      listas.recusado = r.verificacoes.sort(recentes);
+      atualizarContagens();
+      renderFila(manterUid);
+    } catch (erro) {
+      if (!token) return;
+      $('lista').replaceChildren(h('li', { class: 'vazio-fila' },
+        h('p', {}, erro.message),
+        h('button', { class: 'btn btn-sec', type: 'button', onclick: () => carregarTudo() }, 'Tentar de novo')));
+      mostrarVazioGrande('Não foi possível carregar a fila', 'Confira a conexão e tente de novo.');
+    }
+  }
+
+  function atualizarContagens() {
+    for (const s of Object.keys(listas)) {
+      const n = document.querySelector(`[data-n="${s}"]`);
+      n.textContent = listas[s].length;
+      n.classList.toggle('tem', listas[s].length > 0);
+    }
+  }
+
+  function renderEsqueleto() {
+    $('lista').replaceChildren(...Array.from({ length: 5 }, () => h('li', { class: 'esqueleto' }, h('i'), h('i'), h('i'))));
+  }
+
+  function filtrados() {
+    const termo = $('busca').value.trim().toLowerCase();
+    const lista = listas[statusAtual];
+    if (!termo) return lista;
+    return lista.filter((v) => [v.nome, v.email, v.especialidade].some((c) => (c || '').toLowerCase().includes(termo)));
+  }
+
+  function renderFila(manterUid) {
+    const itens = filtrados();
+    const lista = $('lista');
+    if (!itens.length) {
+      const termo = $('busca').value.trim();
+      lista.replaceChildren(h('li', { class: 'vazio-fila' },
+        termo ? `Nenhum resultado para “${termo}”.` : VAZIOS[statusAtual][0] + '.'));
+      selecionar(null);
+      return;
+    }
+    lista.replaceChildren(...itens.map((v) => h('li', {},
+      h('button', {
+        class: 'item', type: 'button', 'data-uid': v.uid,
+        'aria-current': selecionado?.uid === v.uid ? 'true' : 'false',
+        onclick: () => { selecionar(v); $('area').classList.add('revisando'); },
+      },
+        h('span', { class: 'avatar', 'aria-hidden': 'true' }, iniciais(v.nome)),
+        h('span', { style: 'min-width:0' },
+          h('span', { class: 'item-nome', style: 'display:block' }, v.nome || '(sem nome)'),
+          h('span', { class: 'item-sub', style: 'display:block' }, v.especialidade || 'Sem especialidade')),
+        h('span', { class: 'item-tempo' }, tempoRelativo(statusAtual === 'pendente' ? v.enviadoEm : v.analisadoEm))))));
+
+    const alvo = itens.find((v) => v.uid === (manterUid || selecionado?.uid)) || itens[0];
+    selecionar(alvo);
+  }
+
+  document.querySelectorAll('.aba').forEach((aba) => aba.addEventListener('click', () => trocarAba(aba.dataset.status)));
+  function trocarAba(status) {
+    statusAtual = status;
+    document.querySelectorAll('.aba').forEach((a) => a.setAttribute('aria-selected', a.dataset.status === status));
+    selecionado = null;
+    renderFila();
+  }
+  $('busca').addEventListener('input', () => renderFila());
+
+  // ───── Seleção ─────
+  function selecionar(v) {
+    const mudou = selecionado?.uid !== v?.uid;
+    selecionado = v;
+    document.querySelectorAll('.item').forEach((el) => el.setAttribute('aria-current', el.dataset.uid === v?.uid));
+
+    if (!v) {
+      $('visor').hidden = $('decisao').hidden = true;
+      $('area').classList.remove('revisando');
+      const termo = $('busca').value.trim();
+      if (termo) mostrarVazioGrande('Nenhum resultado', 'Tente outro nome, e-mail ou área.');
+      else mostrarVazioGrande(...VAZIOS[statusAtual]);
+      return;
+    }
+
+    $('vazioGrande').hidden = true;
+    $('visor').hidden = $('decisao').hidden = false;
+    if (mudou) {
+      docAtual = 'documentoFoto';
+      checados = new Set();
+      recusando = false;
+      motivoEscolhido = null;
+      document.querySelector(`.item[data-uid="${CSS.escape(v.uid)}"]`)?.scrollIntoView({ block: 'nearest' });
+    }
+    renderDecisao();
+    carregarArquivos(v.uid);
+  }
+
+  function mostrarVazioGrande(titulo, texto) {
+    $('vazioGrande').replaceChildren(h('div', {},
+      h('div', { class: 'icone' }, icone(statusAtual === 'pendente' ? 'caixa' : 'escudo')),
+      h('h2', {}, titulo),
+      h('p', {}, texto)));
+    $('vazioGrande').hidden = false;
+  }
+
+  // ───── Visualizador ─────
+  async function carregarArquivos(uid) {
+    renderDocs();
+    if (!arquivosCache.has(uid)) {
+      mostrarNoPalco('carregando');
+      try {
+        const { arquivos } = await api(`/verificacoes/${encodeURIComponent(uid)}/arquivos`);
+        arquivosCache.set(uid, arquivos);
+      } catch (erro) {
+        if (selecionado?.uid === uid) mostrarNoPalco('erro', erro.message);
         return;
       }
-      verificacoes.forEach((v) => lista.appendChild(cartao(v)));
-    } catch (erro) {
-      lista.innerHTML = '';
-      lista.appendChild(elemento('p', 'erro', erro.message));
     }
+    if (selecionado?.uid !== uid) return;
+    renderDocs();
+    mostrarDoc(docAtual);
   }
 
-  // Cria elemento com texto via textContent — nome/e-mail vêm do usuário,
-  // nunca entram como HTML.
-  function elemento(tag, classe, texto) {
-    const el = document.createElement(tag);
-    if (classe) el.className = classe;
-    if (texto != null) el.textContent = texto;
-    return el;
+  const urlDoc = (base64) => 'data:image/jpeg;base64,' + base64;
+
+  function renderDocs() {
+    const arquivos = arquivosCache.get(selecionado?.uid) || {};
+    $('docs').replaceChildren(...DOCS.map((d, i) => {
+      const mini = h('span', { class: 'mini' });
+      if (arquivos[d.chave]) mini.style.backgroundImage = `url("${urlDoc(arquivos[d.chave])}")`;
+      else mini.append(icone('imagem'));
+      return h('button', {
+        class: 'doc-aba', type: 'button', role: 'tab', 'aria-selected': d.chave === docAtual ? 'true' : 'false',
+        title: `${d.titulo} (${i + 1})`, onclick: () => mostrarDoc(d.chave),
+      }, mini, h('span', { class: 'rotulo' }, d.rotulo));
+    }));
   }
 
-  function formatarData(iso) {
-    return iso ? new Date(iso).toLocaleString('pt-BR') : '—';
+  function mostrarNoPalco(tipo, texto) {
+    const img = $('imagem');
+    img.hidden = true;
+    const msg = $('palcoMsg');
+    msg.hidden = false;
+    if (tipo === 'carregando') msg.replaceChildren(h('div', {}, h('div', { class: 'anel' }), 'Carregando documentos…'));
+    else if (tipo === 'erro') msg.replaceChildren(h('div', {}, h('p', {}, texto),
+      h('button', { class: 'btn btn-sec', type: 'button', onclick: () => carregarArquivos(selecionado.uid) }, 'Tentar de novo')));
+    else msg.replaceChildren(h('div', {}, 'Este documento não foi enviado.'));
+    ativarFerramentas(false);
   }
 
-  function cartao(v) {
-    const caixa = elemento('div', 'caixa');
-    const topo = elemento('div', 'topo');
-    const dados = elemento('div');
-    dados.append(
-      elemento('div', 'nome', v.nome || '(sem nome)'),
-      elemento('div', 'info', `${v.especialidade || 'Sem especialidade'} · ${v.email}`),
-      elemento('div', 'info', 'Enviado em ' + formatarData(v.enviadoEm)),
-    );
-    if (v.status !== 'pendente') {
-      dados.appendChild(elemento('div', 'info', `Analisado por ${v.analisadoPor} em ${formatarData(v.analisadoEm)}`));
-    }
-    if (v.motivoRecusa) dados.appendChild(elemento('div', 'info', 'Motivo: ' + v.motivoRecusa));
+  function mostrarDoc(chave) {
+    docAtual = chave;
+    const arquivos = arquivosCache.get(selecionado?.uid);
+    document.querySelectorAll('.doc-aba').forEach((b, i) => b.setAttribute('aria-selected', DOCS[i].chave === chave));
+    if (!arquivos) return;
+    if (!arquivos[chave]) return mostrarNoPalco('vazio');
+    const img = $('imagem');
+    img.src = urlDoc(arquivos[chave]);
+    img.alt = DOCS.find((d) => d.chave === chave).titulo + ' de ' + (selecionado.nome || 'prestador');
+    img.hidden = false;
+    $('palcoMsg').hidden = true;
+    ativarFerramentas(true);
+    ajustar();
+  }
 
-    const verDocs = elemento('button', 'fantasma', 'Ver documentos');
-    topo.append(dados, verDocs);
-    caixa.appendChild(topo);
+  function ativarFerramentas(ativo) {
+    ['zMenos', 'zMais', 'zAjustar', 'zGirar', 'zAbrir'].forEach((id) => { $(id).disabled = !ativo; });
+  }
 
-    const imagens = elemento('div', 'imagens');
-    caixa.appendChild(imagens);
+  function aplicarVista() {
+    $('imagem').style.transform = `translate(${vista.x}px, ${vista.y}px) scale(${vista.escala}) rotate(${vista.giro}deg)`;
+    $('zValor').textContent = vista.escala === 1 ? 'Ajustado' : Math.round(vista.escala * 100) + '%';
+  }
+  function ajustar() { Object.assign(vista, { escala: 1, x: 0, y: 0, giro: 0 }); aplicarVista(); }
+  function zoom(fator) {
+    vista.escala = Math.min(6, Math.max(.5, vista.escala * fator));
+    if (vista.escala <= 1) { vista.x = 0; vista.y = 0; }
+    aplicarVista();
+  }
+  function girar() { vista.giro = (vista.giro + 90) % 360; aplicarVista(); }
 
-    verDocs.onclick = async () => {
-      verDocs.disabled = true;
-      verDocs.textContent = 'Carregando…';
-      try {
-        const { arquivos } = await api(`/verificacoes/${encodeURIComponent(v.uid)}/arquivos`);
-        imagens.innerHTML = '';
-        [['documentoFoto', 'Documento com foto'], ['comprovante', 'Comprovante de qualificação']]
-          .forEach(([chave, legenda]) => {
-            const figura = elemento('figure');
-            figura.appendChild(elemento('figcaption', null, legenda));
-            if (arquivos[chave]) {
-              const img = document.createElement('img');
-              img.src = 'data:image/jpeg;base64,' + arquivos[chave];
-              img.alt = legenda;
-              img.title = 'Clique pra abrir em tamanho real';
-              img.onclick = () => window.open().document.write(`<img src="${img.src}">`);
-              figura.appendChild(img);
-            } else {
-              figura.appendChild(elemento('p', 'info', 'Não enviado'));
-            }
-            imagens.appendChild(figura);
-          });
-        verDocs.remove();
-      } catch (erro) {
-        verDocs.disabled = false;
-        verDocs.textContent = 'Ver documentos';
-        imagens.replaceChildren(elemento('p', 'erro', erro.message));
-      }
-    };
+  $('zMais').addEventListener('click', () => zoom(1.25));
+  $('zMenos').addEventListener('click', () => zoom(1 / 1.25));
+  $('zAjustar').addEventListener('click', ajustar);
+  $('zGirar').addEventListener('click', girar);
+  $('zAbrir').addEventListener('click', () => {
+    const aba = window.open();
+    if (!aba) return toast('Libere pop-ups para abrir em nova aba.', 'var(--pendente)');
+    aba.document.title = $('imagem').alt;
+    const img = aba.document.createElement('img');
+    img.src = $('imagem').src;
+    img.style.maxWidth = '100%';
+    aba.document.body.style.cssText = 'margin:0;background:#1d2027;display:grid;place-items:center;min-height:100vh';
+    aba.document.body.append(img);
+  });
+
+  const palco = $('palco');
+  palco.addEventListener('wheel', (e) => {
+    if ($('imagem').hidden) return;
+    e.preventDefault();
+    zoom(e.deltaY < 0 ? 1.1 : 1 / 1.1);
+  }, { passive: false });
+  let arrasto = null;
+  palco.addEventListener('pointerdown', (e) => {
+    if ($('imagem').hidden || e.button !== 0) return;
+    arrasto = { x: e.clientX - vista.x, y: e.clientY - vista.y };
+    palco.setPointerCapture(e.pointerId);
+    palco.classList.add('arrastando');
+  });
+  palco.addEventListener('pointermove', (e) => {
+    if (!arrasto) return;
+    vista.x = e.clientX - arrasto.x;
+    vista.y = e.clientY - arrasto.y;
+    aplicarVista();
+  });
+  const soltar = () => { arrasto = null; palco.classList.remove('arrastando'); };
+  palco.addEventListener('pointerup', soltar);
+  palco.addEventListener('pointercancel', soltar);
+  palco.addEventListener('dblclick', () => (vista.escala > 1 ? ajustar() : zoom(2)));
+
+  $('btnVoltar').addEventListener('click', () => $('area').classList.remove('revisando'));
+
+  // ───── Painel de decisão ─────
+  function renderDecisao() {
+    const v = selecionado;
+    const rotuloStatus = { pendente: 'Aguardando análise', aprovado: 'Aprovado', recusado: 'Recusado' }[v.status];
+
+    const copiarUid = h('button', {
+      class: 'copiar', type: 'button', title: 'Copiar ID',
+      onclick: async () => { try { await navigator.clipboard.writeText(v.uid); toast('ID copiado', 'var(--azul)'); } catch { /* sem permissão */ } },
+    }, v.uid.slice(0, 10) + '…', icone('copiar'));
+
+    const corpo = [
+      h('div', { class: 'cabeca' },
+        h('span', { class: 'avatar', 'aria-hidden': 'true' }, iniciais(v.nome)),
+        h('div', {}, h('h2', {}, v.nome || '(sem nome)'), h('span', { class: `selo ${v.status}` }, rotuloStatus))),
+      h('dl', { class: 'dados' },
+        h('dt', {}, 'Especialidade'), h('dd', {}, v.especialidade || '—'),
+        h('dt', {}, 'E-mail'), h('dd', {}, v.email || '—'),
+        h('dt', {}, 'Enviado em'), h('dd', {}, dataCompleta(v.enviadoEm)),
+        h('dt', {}, 'ID'), h('dd', {}, copiarUid)),
+    ];
+
+    const rodape = [];
 
     if (v.status === 'pendente') {
-      const acoes = elemento('div', 'acoes');
-      const aprovar = elemento('button', 'aprovar', 'Aprovar');
-      const recusar = elemento('button', 'recusar', 'Recusar');
-      acoes.append(aprovar, recusar);
-      caixa.appendChild(acoes);
+      corpo.push(
+        h('p', { class: 'secao-titulo' }, 'Checklist', h('small', { id: 'progresso' }, `${checados.size} de ${CHECKLIST.length}`)),
+        h('ul', { class: 'checklist' }, CHECKLIST.map((c) => h('li', {},
+          h('label', {},
+            h('input', {
+              type: 'checkbox', checked: checados.has(c.id),
+              onchange: (e) => { e.target.checked ? checados.add(c.id) : checados.delete(c.id); atualizarBotoes(); },
+            }),
+            h('div', {}, h('b', {}, c.titulo), h('span', {}, c.ajuda),
+              c.ref && h('span', { class: 'ref' }, c.ref(v)[0] + ': ', h('strong', {}, c.ref(v)[1] || '—'))))))));
 
-      const analisar = async (corpo) => {
-        aprovar.disabled = recusar.disabled = true;
-        try {
-          await api('/verificacoes/' + encodeURIComponent(v.uid), { method: 'PATCH', body: JSON.stringify(corpo) });
-          caixa.remove();
-          if (!$('lista').children.length) carregar();
-        } catch (erro) {
-          alert(erro.message);
-          aprovar.disabled = recusar.disabled = false;
-        }
-      };
+      if (recusando) corpo.push(blocoRecusa());
 
-      aprovar.onclick = () => {
-        if (confirm(`Aprovar ${v.nome}? O perfil vai ganhar o selo de verificado.`)) analisar({ acao: 'aprovar' });
-      };
-      recusar.onclick = () => {
-        const motivo = prompt('Motivo da recusa (o prestador vai ver):');
-        if (motivo && motivo.trim()) analisar({ acao: 'recusar', motivo });
-      };
+      if (recusando) {
+        rodape.push(
+          h('button', { class: 'btn btn-perigo btn-bloco', id: 'btnConfirmarRecusa', type: 'button', onclick: confirmarRecusa },
+            icone('x'), 'Confirmar recusa'),
+          h('p', { class: 'dica-bloqueio', id: 'dicaBloqueio' }),
+          h('button', { class: 'btn btn-sec btn-bloco', type: 'button', onclick: () => { recusando = false; renderDecisao(); } }, 'Cancelar'));
+      } else {
+        rodape.push(
+          h('button', { class: 'btn btn-primario btn-bloco', id: 'btnAprovar', type: 'button', onclick: aprovar },
+            icone('ok'), 'Aprovar e dar selo'),
+          h('p', { class: 'dica-bloqueio', id: 'dicaBloqueio' }),
+          h('button', { class: 'btn btn-perigo-sec btn-bloco', type: 'button', onclick: abrirRecusa }, 'Recusar'));
+      }
+    } else {
+      corpo.push(h('div', { class: `resultado ${v.status}` },
+        h('strong', {}, v.status === 'aprovado' ? 'Selo de verificado ativo' : 'Motivo da recusa'),
+        v.status === 'recusado' ? v.motivoRecusa : 'O prestador aparece com o selo nos cards e no perfil.'));
+      corpo.push(h('dl', { class: 'dados' },
+        h('dt', {}, 'Analisado por'), h('dd', {}, v.analisadoPor || '—'),
+        h('dt', {}, 'Em'), h('dd', {}, dataCompleta(v.analisadoEm))));
     }
 
-    return caixa;
+    $('decisaoCorpo').replaceChildren(...corpo);
+    $('decisaoRodape').replaceChildren(...rodape);
+    $('decisaoRodape').hidden = !rodape.length;
+    atualizarBotoes();
   }
 
-  mostrar();
+  function blocoRecusa() {
+    return h('div', { class: 'recusa' },
+      h('p', { class: 'secao-titulo' }, 'Motivo da recusa'),
+      h('div', { class: 'motivos', role: 'group', 'aria-label': 'Motivos comuns' }, MOTIVOS.map((m) => h('button', {
+        class: 'motivo', type: 'button', 'aria-pressed': motivoEscolhido === m ? 'true' : 'false',
+        onclick: () => { motivoEscolhido = motivoEscolhido === m ? null : m; renderDecisao(); $('detalhe')?.focus(); },
+      }, m))),
+      h('textarea', { id: 'detalhe', placeholder: motivoEscolhido ? 'Detalhe (opcional)' : 'Descreva o motivo', 'aria-label': 'Detalhe do motivo', oninput: atualizarBotoes }),
+      h('p', { class: 'nota' }, 'O prestador vê esse texto no app e pode enviar de novo.'));
+  }
+
+  function atualizarBotoes() {
+    const p = $('progresso');
+    if (p) p.textContent = `${checados.size} de ${CHECKLIST.length}`;
+    const aprovar = $('btnAprovar');
+    if (aprovar) {
+      aprovar.disabled = checados.size < CHECKLIST.length;
+      aprovar.title = aprovar.disabled ? 'Marque todos os itens do checklist para aprovar' : 'Aprovar (A)';
+    }
+    const confirmar = $('btnConfirmarRecusa');
+    if (confirmar) confirmar.disabled = !textoMotivo();
+    const dica = $('dicaBloqueio');
+    if (dica) {
+      const faltam = CHECKLIST.length - checados.size;
+      dica.textContent = confirmar
+        ? (confirmar.disabled ? 'Escolha um motivo ou descreva a recusa' : '')
+        : (faltam ? `Marque ${faltam === 1 ? 'o item que falta' : `os ${faltam} itens`} do checklist para aprovar` : '');
+      dica.hidden = !dica.textContent;
+    }
+  }
+
+  function textoMotivo() {
+    const detalhe = ($('detalhe')?.value || '').trim();
+    if (motivoEscolhido && detalhe) return `${motivoEscolhido}. ${detalhe}`;
+    return motivoEscolhido || detalhe;
+  }
+
+  function abrirRecusa() {
+    recusando = true;
+    renderDecisao();
+    document.querySelector('.recusa')?.scrollIntoView({ block: 'nearest' });
+  }
+
+  async function aprovar() {
+    if (checados.size < CHECKLIST.length) return;
+    await analisar({ acao: 'aprovar' }, `${selecionado.nome} aprovado. Selo ativo.`, 'var(--ok)');
+  }
+  async function confirmarRecusa() {
+    const motivo = textoMotivo();
+    if (!motivo) return;
+    await analisar({ acao: 'recusar', motivo }, `Envio de ${selecionado.nome} recusado.`, 'var(--erro)');
+  }
+
+  async function analisar(corpo, mensagem, cor) {
+    const v = selecionado;
+    const botoes = $('decisaoRodape').querySelectorAll('button');
+    botoes.forEach((b) => { b.disabled = true; });
+    try {
+      await api('/verificacoes/' + encodeURIComponent(v.uid), { method: 'PATCH', body: JSON.stringify(corpo) });
+      toast(mensagem, cor);
+      // Vai para o próximo da fila
+      const itens = filtrados();
+      const proximo = itens[itens.indexOf(v) + 1] || itens[itens.indexOf(v) - 1];
+      arquivosCache.delete(v.uid);
+      selecionado = null;
+      await carregarTudo(proximo?.uid);
+    } catch (erro) {
+      toast(erro.message, 'var(--erro)');
+      botoes.forEach((b) => { b.disabled = false; });
+      atualizarBotoes();
+    }
+  }
+
+  // ───── Atalhos ─────
+  document.addEventListener('keydown', (e) => {
+    if ($('telaApp').hidden || e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.target.closest('input, textarea')) {
+      if (e.key === 'Escape') e.target.blur();
+      return;
+    }
+    const itens = filtrados();
+    const i = itens.indexOf(selecionado);
+    const tecla = e.key.toLowerCase();
+    const acoes = {
+      arrowdown: () => itens[i + 1] && selecionar(itens[i + 1]),
+      j: () => itens[i + 1] && selecionar(itens[i + 1]),
+      arrowup: () => itens[i - 1] && selecionar(itens[i - 1]),
+      k: () => itens[i - 1] && selecionar(itens[i - 1]),
+      1: () => selecionado && mostrarDoc('documentoFoto'),
+      2: () => selecionado && mostrarDoc('comprovante'),
+      '+': () => zoom(1.25), '=': () => zoom(1.25), '-': () => zoom(1 / 1.25), 0: ajustar,
+      r: () => !$('imagem').hidden && girar(),
+      a: () => selecionado?.status === 'pendente' && !recusando && aprovar(),
+      x: () => selecionado?.status === 'pendente' && !recusando && abrirRecusa(),
+      escape: () => recusando && ((recusando = false), renderDecisao()),
+      '/': () => $('busca').focus(),
+    };
+    if (acoes[tecla]) { e.preventDefault(); acoes[tecla](); }
+  });
+
+  // ───── Início ─────
+  if (token) iniciarPainel();
+  else { $('telaLogin').hidden = false; $('email').focus(); }
+})();
 </script>
 </body>
 </html>
