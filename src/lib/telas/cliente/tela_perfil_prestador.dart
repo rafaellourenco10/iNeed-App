@@ -8,10 +8,38 @@ import '../../tema/cores.dart';
 import '../../modelos/usuario.dart';
 import '../../servicos/api_servico.dart';
 
-class TelaPerfilPrestador extends StatelessWidget {
+class TelaPerfilPrestador extends StatefulWidget {
   final Usuario prestador;
 
   const TelaPerfilPrestador({super.key, required this.prestador});
+
+  @override
+  State<TelaPerfilPrestador> createState() => _TelaPerfilPrestadorState();
+}
+
+class _TelaPerfilPrestadorState extends State<TelaPerfilPrestador> {
+  // Começa com os dados vindos da lista; puxar pra atualizar busca de novo
+  late Usuario prestador = widget.prestador;
+  late Future<Map<String, dynamic>> _avaliacoes =
+      ApiServico.listarAvaliacoesPrestador(prestador.uid);
+
+  Future<void> _atualizar() async {
+    final avaliacoes = ApiServico.listarAvaliacoesPrestador(prestador.uid);
+    setState(() => _avaliacoes = avaliacoes);
+    try {
+      final resposta = await ApiServico.obterPrestador(prestador.uid);
+      if (mounted && resposta['prestador'] != null) {
+        setState(() {
+          prestador = Usuario.fromJson(
+            resposta['prestador'] as Map<String, dynamic>,
+          );
+        });
+      }
+      await avaliacoes;
+    } catch (_) {
+      // Sem conexão — mantém o que já está na tela
+    }
+  }
 
   Future<void> _abrirWhatsApp(BuildContext context) async {
     final telefone = prestador.telefone;
@@ -39,234 +67,251 @@ class TelaPerfilPrestador extends StatelessWidget {
     return Scaffold(
       backgroundColor: CoresApp.surface,
       appBar: AppBar(title: const Text('Perfil do Prestador')),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
+      body: RefreshIndicator(
+        onRefresh: _atualizar,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
 
-            // ───── Avatar e Info Principal ─────
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: CoresApp.surfaceContainerHigh,
-              child: Text(
-                prestador.nome.isNotEmpty
-                    ? prestador.nome[0].toUpperCase()
-                    : 'P',
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.w700,
-                  color: CoresApp.primary,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  prestador.nome,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
+              // ───── Avatar e Info Principal ─────
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: CoresApp.surfaceContainerHigh,
+                child: Text(
+                  prestador.nome.isNotEmpty
+                      ? prestador.nome[0].toUpperCase()
+                      : 'P',
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w700,
+                    color: CoresApp.primary,
                   ),
                 ),
-                if (prestador.verificado) ...[
-                  const SizedBox(width: 6),
-                  Icon(Icons.verified, color: CoresApp.primary, size: 20),
-                ],
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              prestador.especialidade ?? 'Profissional',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: CoresApp.onSurfaceVariant,
               ),
-            ),
-            const SizedBox(height: 12),
-
-            // ───── Avaliação e Serviços ─────
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.star, color: CoresApp.secondaryContainer, size: 18),
-                const SizedBox(width: 4),
-                Text(
-                  (prestador.avaliacao ?? 0).toStringAsFixed(1),
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  '${prestador.totalServicos ?? 0}+ serviços',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: CoresApp.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // ───── Stats Cards ─────
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildStatCard(context, Icons.access_time, '1h', 'Resposta'),
-                  const SizedBox(width: 12),
-                  _buildStatCard(context, Icons.work_outline, '5', 'Anos Exp.'),
-                  const SizedBox(width: 12),
-                  _buildStatCard(
-                    context,
-                    Icons.location_on_outlined,
-                    '2km',
-                    'Distância',
+                  Text(
+                    prestador.nome,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (prestador.verificado) ...[
+                    const SizedBox(width: 6),
+                    Icon(Icons.verified, color: CoresApp.primary, size: 20),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                prestador.especialidade ?? 'Profissional',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: CoresApp.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // ───── Avaliação e Serviços ─────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.star,
+                    color: CoresApp.secondaryContainer,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    (prestador.avaliacao ?? 0).toStringAsFixed(1),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Text(
+                    '${prestador.totalServicos ?? 0}+ serviços',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: CoresApp.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
-            ),
 
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // ───── Sobre ─────
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: CoresApp.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(16),
+              // ───── Stats Cards ─────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    _buildStatCard(
+                      context,
+                      Icons.access_time,
+                      '1h',
+                      'Resposta',
+                    ),
+                    const SizedBox(width: 12),
+                    _buildStatCard(
+                      context,
+                      Icons.work_outline,
+                      '5',
+                      'Anos Exp.',
+                    ),
+                    const SizedBox(width: 12),
+                    _buildStatCard(
+                      context,
+                      Icons.location_on_outlined,
+                      '2km',
+                      'Distância',
+                    ),
+                  ],
                 ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // ───── Sobre ─────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: CoresApp.surfaceContainerLow,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Sobre',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        prestador.biografia ??
+                            'Profissional dedicado com ampla experiência na área de ${prestador.especialidade ?? "serviços"}. Comprometido em entregar trabalhos de qualidade com pontualidade e eficiência.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: CoresApp.onSurfaceVariant,
+                          height: 1.6,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // ───── Especialidades (chips) ─────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Sobre',
+                      'Especialidades',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Text(
-                      prestador.biografia ??
-                          'Profissional dedicado com ampla experiência na área de ${prestador.especialidade ?? "serviços"}. Comprometido em entregar trabalhos de qualidade com pontualidade e eficiência.',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: CoresApp.onSurfaceVariant,
-                        height: 1.6,
-                      ),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        if (prestador.especialidade != null)
+                          _buildChip(prestador.especialidade!),
+                        _buildChip('Residencial'),
+                        _buildChip('Pós-obra'),
+                      ],
                     ),
                   ],
                 ),
               ),
-            ),
 
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // ───── Especialidades (chips) ─────
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Especialidades',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+              // ───── Avaliações ─────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Avaliações',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      if (prestador.especialidade != null)
-                        _buildChip(prestador.especialidade!),
-                      _buildChip('Residencial'),
-                      _buildChip('Pós-obra'),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+                    const SizedBox(height: 16),
+                    FutureBuilder<Map<String, dynamic>>(
+                      future: _avaliacoes,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState != ConnectionState.done) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
 
-            const SizedBox(height: 24),
-
-            // ───── Avaliações ─────
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Avaliações',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  FutureBuilder<Map<String, dynamic>>(
-                    future: ApiServico.listarAvaliacoesPrestador(prestador.uid),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState != ConnectionState.done) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          child: Center(child: CircularProgressIndicator()),
+                        final avaliacoes = List<Map<String, dynamic>>.from(
+                          snapshot.data?['avaliacoes'] as List? ?? [],
                         );
-                      }
 
-                      final avaliacoes = List<Map<String, dynamic>>.from(
-                        snapshot.data?['avaliacoes'] as List? ?? [],
-                      );
+                        if (avaliacoes.isEmpty) {
+                          return Text(
+                            'Ainda não há avaliações para este prestador.',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: CoresApp.onSurfaceVariant),
+                          );
+                        }
 
-                      if (avaliacoes.isEmpty) {
-                        return Text(
-                          'Ainda não há avaliações para este prestador.',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: CoresApp.onSurfaceVariant),
-                        );
-                      }
-
-                      return Column(
-                        children: avaliacoes
-                            .map(
-                              (a) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: _buildAvaliacaoItem(
-                                  context,
-                                  nome:
-                                      (a['nomeCliente'] as String?) ??
-                                      'Cliente',
-                                  criadaEm: a['criadaEm'] as String?,
-                                  estrelas: (a['estrelas'] as num).toInt(),
-                                  comentario: a['comentario'] as String?,
+                        return Column(
+                          children: avaliacoes
+                              .map(
+                                (a) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: _buildAvaliacaoItem(
+                                    context,
+                                    nome:
+                                        (a['nomeCliente'] as String?) ??
+                                        'Cliente',
+                                    criadaEm: a['criadaEm'] as String?,
+                                    estrelas: (a['estrelas'] as num).toInt(),
+                                    comentario: a['comentario'] as String?,
+                                  ),
                                 ),
-                              ),
-                            )
-                            .toList(),
-                      );
-                    },
-                  ),
-                ],
+                              )
+                              .toList(),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
 
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // ───── Logo footer ─────
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                'assets/images/logo_ineed.jpeg',
-                width: 60,
-                height: 60,
-                fit: BoxFit.contain,
+              // ───── Logo footer ─────
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  'assets/images/logo_ineed.jpeg',
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.contain,
+                ),
               ),
-            ),
 
-            const SizedBox(height: 100),
-          ],
+              const SizedBox(height: 100),
+            ],
+          ),
         ),
       ),
 

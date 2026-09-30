@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../widgets/area_atualizavel.dart';
 import '../../tema/cores.dart';
 import '../../widgets/card_proposta.dart';
 import '../../modelos/proposta.dart';
@@ -42,7 +43,6 @@ class _TelaPropostasState extends State<TelaPropostas>
     final auth = Provider.of<AuthServico>(context, listen: false);
     if (auth.usuarioAtual == null) return;
 
-    setState(() => _carregando = true);
     try {
       final resposta = await ApiServico.listarPropostas(
         token: auth.token ?? '',
@@ -56,6 +56,8 @@ class _TelaPropostasState extends State<TelaPropostas>
           _propostas = lista;
           _carregando = false;
         });
+      } else {
+        setState(() => _carregando = false);
       }
     } catch (_) {
       setState(() => _carregando = false);
@@ -212,23 +214,26 @@ class _TelaPropostasState extends State<TelaPropostas>
 
   Widget _buildListaPropostas(List<Proposta> propostas) {
     if (propostas.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.inbox_outlined,
-              size: 64,
-              color: CoresApp.outline.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Nenhuma proposta encontrada.',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge?.copyWith(color: CoresApp.onSurfaceVariant),
-            ),
-          ],
+      return AreaAtualizavel(
+        aoAtualizar: _carregarPropostas,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.inbox_outlined,
+                size: 64,
+                color: CoresApp.outline.withValues(alpha: 0.5),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Nenhuma proposta encontrada.',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: CoresApp.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -236,6 +241,7 @@ class _TelaPropostasState extends State<TelaPropostas>
     return RefreshIndicator(
       onRefresh: _carregarPropostas,
       child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.only(top: 12, bottom: 100),
         itemCount: propostas.length,
         itemBuilder: (context, index) {

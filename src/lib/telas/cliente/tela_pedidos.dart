@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../widgets/area_atualizavel.dart';
 import '../../tema/cores.dart';
 import '../../modelos/proposta.dart';
 import '../../servicos/api_servico.dart';
@@ -39,7 +40,6 @@ class _TelaPedidosState extends State<TelaPedidos>
 
   Future<void> _carregar() async {
     final auth = Provider.of<AuthServico>(context, listen: false);
-    setState(() => _carregando = true);
     try {
       final resposta = await ApiServico.listarPropostasCliente(
         token: auth.token ?? '',
@@ -190,23 +190,26 @@ class _TelaPedidosState extends State<TelaPedidos>
     void Function(Map<String, dynamic> pedido)? aoAvaliar,
   }) {
     if (lista.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.inbox_outlined,
-              size: 64,
-              color: CoresApp.outline.withValues(alpha: 0.4),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Nenhum pedido aqui.',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge?.copyWith(color: CoresApp.onSurfaceVariant),
-            ),
-          ],
+      return AreaAtualizavel(
+        aoAtualizar: _carregar,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.inbox_outlined,
+                size: 64,
+                color: CoresApp.outline.withValues(alpha: 0.4),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Nenhum pedido aqui.',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: CoresApp.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -214,6 +217,7 @@ class _TelaPedidosState extends State<TelaPedidos>
     return RefreshIndicator(
       onRefresh: _carregar,
       child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.only(top: 12, bottom: 100),
         itemCount: lista.length,
         itemBuilder: (context, index) => _CardPedido(

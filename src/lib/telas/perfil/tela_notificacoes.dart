@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../widgets/area_atualizavel.dart';
 import '../../tema/cores.dart';
 import '../../modelos/notificacao.dart';
 import '../../servicos/api_servico.dart';
@@ -33,7 +34,6 @@ class _TelaNotificacoesState extends State<TelaNotificacoes> {
       return;
     }
 
-    setState(() => _carregando = true);
     try {
       final resposta = await ApiServico.listarNotificacoes(token: auth.token!);
       if (!mounted) return;
@@ -159,28 +159,32 @@ class _TelaNotificacoesState extends State<TelaNotificacoes> {
       body: _carregando
           ? const Center(child: CircularProgressIndicator())
           : _notificacoes.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.notifications_none_outlined,
-                    size: 64,
-                    color: CoresApp.outline.withValues(alpha: 0.4),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Nenhuma notificação ainda.',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: CoresApp.onSurfaceVariant,
+          ? AreaAtualizavel(
+              aoAtualizar: _carregar,
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.notifications_none_outlined,
+                      size: 64,
+                      color: CoresApp.outline.withValues(alpha: 0.4),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    Text(
+                      'Nenhuma notificação ainda.',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: CoresApp.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             )
           : RefreshIndicator(
               onRefresh: _carregar,
               child: ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 itemCount: _notificacoes.length,
                 itemBuilder: (context, index) {

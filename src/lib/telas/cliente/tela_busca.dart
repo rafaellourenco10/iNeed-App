@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../widgets/area_atualizavel.dart';
 import '../../tema/cores.dart';
 import '../../modelos/usuario.dart';
 import '../../servicos/api_servico.dart';
@@ -38,7 +39,6 @@ class _TelaBuscaState extends State<TelaBusca> {
   }
 
   Future<void> _carregarTodos() async {
-    setState(() => _carregando = true);
     try {
       final auth = Provider.of<AuthServico>(context, listen: false);
       final resposta = await ApiServico.listarPrestadores(
@@ -50,9 +50,11 @@ class _TelaBuscaState extends State<TelaBusca> {
             .toList();
         setState(() {
           _todos = lista;
-          _resultado = lista;
           _carregando = false;
         });
+        _filtrar(); // mantém o texto e a categoria da busca
+      } else {
+        setState(() => _carregando = false);
       }
     } catch (_) {
       setState(() => _carregando = false);
@@ -201,44 +203,51 @@ class _TelaBuscaState extends State<TelaBusca> {
               child: _carregando
                   ? const Center(child: CircularProgressIndicator())
                   : _resultado.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.search_off,
-                            size: 64,
-                            color: CoresApp.outline.withValues(alpha: 0.4),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Nenhum profissional encontrado.',
-                            style: Theme.of(context).textTheme.bodyLarge
-                                ?.copyWith(color: CoresApp.onSurfaceVariant),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Tente outro nome ou categoria.',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
+                  ? AreaAtualizavel(
+                      aoAtualizar: _carregarTodos,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off,
+                              size: 64,
+                              color: CoresApp.outline.withValues(alpha: 0.4),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Nenhum profissional encontrado.',
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(color: CoresApp.onSurfaceVariant),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Tente outro nome ou categoria.',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ],
+                        ),
                       ),
                     )
-                  : ListView.builder(
-                      padding: const EdgeInsets.only(top: 4, bottom: 100),
-                      itemCount: _resultado.length,
-                      itemBuilder: (context, index) {
-                        return CardPrestador(
-                          prestador: _resultado[index],
-                          aoVerPerfil: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/perfil-prestador',
-                              arguments: _resultado[index],
-                            );
-                          },
-                        );
-                      },
+                  : RefreshIndicator(
+                      onRefresh: _carregarTodos,
+                      child: ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.only(top: 4, bottom: 100),
+                        itemCount: _resultado.length,
+                        itemBuilder: (context, index) {
+                          return CardPrestador(
+                            prestador: _resultado[index],
+                            aoVerPerfil: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/perfil-prestador',
+                                arguments: _resultado[index],
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
             ),
           ],

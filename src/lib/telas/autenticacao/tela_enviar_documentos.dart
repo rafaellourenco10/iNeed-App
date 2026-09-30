@@ -196,134 +196,138 @@ class _TelaEnviarDocumentosState extends State<TelaEnviarDocumentos> {
       body: SafeArea(
         child: _carregando
             ? const Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 24),
-
-                    Container(
-                      width: 72,
-                      height: 72,
-                      decoration: BoxDecoration(
-                        color: CoresApp.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Icon(
-                        _status == 'aprovado'
-                            ? Icons.verified
-                            : Icons.verified_outlined,
-                        color: CoresApp.primary,
-                        size: 36,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    Text(
-                      _titulo,
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      _subtitulo,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: CoresApp.onSurfaceVariant,
-                        height: 1.5,
-                      ),
-                    ),
-
-                    if (_status == 'recusado' && _motivoRecusa != null) ...[
-                      const SizedBox(height: 20),
-                      _aviso(
-                        icone: Icons.error_outline,
-                        cor: CoresApp.error,
-                        texto: 'Motivo da recusa: $_motivoRecusa',
-                      ),
-                    ],
-
-                    if (_podeEnviar) ...[
-                      const SizedBox(height: 32),
-                      _cartaoDocumento(
-                        icone: Icons.badge_outlined,
-                        titulo: 'Documento com foto',
-                        subtitulo: 'RG, CNH ou outro documento oficial',
-                        arquivo: _documentoFoto,
-                        chave: 'documentoFoto',
-                      ),
-                      const SizedBox(height: 12),
-                      _cartaoDocumento(
-                        icone: Icons.workspace_premium_outlined,
-                        titulo: 'Comprovante de qualificação',
-                        subtitulo:
-                            'Certificado, diploma ou registro profissional',
-                        arquivo: _comprovante,
-                        chave: 'comprovante',
-                      ),
+            : RefreshIndicator(
+                onRefresh: _carregarStatus,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       const SizedBox(height: 24),
-                      _aviso(
-                        icone: Icons.info_outline,
-                        cor: CoresApp.primary,
-                        texto:
-                            'Depois de enviados, nossa equipe analisa os documentos. '
-                            'Se aprovado, seu perfil ganha um selo de verificado, '
-                            'visível pros clientes.',
+
+                      Container(
+                        width: 72,
+                        height: 72,
+                        decoration: BoxDecoration(
+                          color: CoresApp.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(
+                          _status == 'aprovado'
+                              ? Icons.verified
+                              : Icons.verified_outlined,
+                          color: CoresApp.primary,
+                          size: 36,
+                        ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 20),
+
+                      Text(
+                        _titulo,
+                        style: Theme.of(context).textTheme.headlineMedium
+                            ?.copyWith(fontWeight: FontWeight.w700),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _subtitulo,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: CoresApp.onSurfaceVariant,
+                          height: 1.5,
+                        ),
+                      ),
+
+                      if (_status == 'recusado' && _motivoRecusa != null) ...[
+                        const SizedBox(height: 20),
+                        _aviso(
+                          icone: Icons.error_outline,
+                          cor: CoresApp.error,
+                          texto: 'Motivo da recusa: $_motivoRecusa',
+                        ),
+                      ],
+
+                      if (_podeEnviar) ...[
+                        const SizedBox(height: 32),
+                        _cartaoDocumento(
+                          icone: Icons.badge_outlined,
+                          titulo: 'Documento com foto',
+                          subtitulo: 'RG, CNH ou outro documento oficial',
+                          arquivo: _documentoFoto,
+                          chave: 'documentoFoto',
+                        ),
+                        const SizedBox(height: 12),
+                        _cartaoDocumento(
+                          icone: Icons.workspace_premium_outlined,
+                          titulo: 'Comprovante de qualificação',
+                          subtitulo:
+                              'Certificado, diploma ou registro profissional',
+                          arquivo: _comprovante,
+                          chave: 'comprovante',
+                        ),
+                        const SizedBox(height: 24),
+                        _aviso(
+                          icone: Icons.info_outline,
+                          cor: CoresApp.primary,
+                          texto:
+                              'Depois de enviados, nossa equipe analisa os documentos. '
+                              'Se aprovado, seu perfil ganha um selo de verificado, '
+                              'visível pros clientes.',
+                        ),
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed:
+                                _documentoFoto != null &&
+                                    _comprovante != null &&
+                                    !_enviando
+                                ? _enviar
+                                : null,
+                            style: _estiloBotao,
+                            child: _enviando
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Enviar para análise',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      ],
+
+                      const SizedBox(height: 12),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed:
-                              _documentoFoto != null &&
-                                  _comprovante != null &&
-                                  !_enviando
-                              ? _enviar
-                              : null,
-                          style: _estiloBotao,
-                          child: _enviando
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text(
-                                  'Enviar para análise',
+                        child: _podeEnviar
+                            ? TextButton(
+                                onPressed: _irParaHome,
+                                child: const Text('Fazer depois'),
+                              )
+                            : ElevatedButton(
+                                onPressed: _irParaHome,
+                                style: _estiloBotao,
+                                child: const Text(
+                                  'Continuar',
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                        ),
-                      ),
-                    ],
-
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: _podeEnviar
-                          ? TextButton(
-                              onPressed: _irParaHome,
-                              child: const Text('Fazer depois'),
-                            )
-                          : ElevatedButton(
-                              onPressed: _irParaHome,
-                              style: _estiloBotao,
-                              child: const Text(
-                                'Continuar',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
                               ),
-                            ),
-                    ),
+                      ),
 
-                    const SizedBox(height: 40),
-                  ],
+                      const SizedBox(height: 40),
+                    ],
+                  ),
                 ),
               ),
       ),

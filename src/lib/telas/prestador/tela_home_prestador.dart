@@ -40,7 +40,6 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
     final auth = Provider.of<AuthServico>(context, listen: false);
     if (auth.usuarioAtual == null) return;
 
-    setState(() => _carregando = true);
     try {
       final resp = await ApiServico.listarPropostas(
         token: auth.token ?? '',
@@ -54,9 +53,9 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
             .toList();
         setState(() {
           _todas = lista;
-          _solicitacoes = lista;
           _carregando = false;
         });
+        _filtrar(); // mantém a busca digitada
       } else {
         setState(() => _carregando = false);
       }
@@ -323,6 +322,7 @@ class _TelaHomePrestadorState extends State<TelaHomePrestador> {
             child: RefreshIndicator(
               onRefresh: _carregar,
               child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(bottom: 100),
                 children: [
                   // ── Stats ────────────────────────────────────────

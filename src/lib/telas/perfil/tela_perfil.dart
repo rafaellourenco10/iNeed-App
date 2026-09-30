@@ -58,7 +58,6 @@ class _TelaPerfilState extends State<TelaPerfil> {
       return;
     }
 
-    setState(() => _carregando = true);
     try {
       final resposta = usuario.isPrestador
           ? await ApiServico.listarPropostas(
@@ -85,6 +84,17 @@ class _TelaPerfilState extends State<TelaPerfil> {
     } catch (_) {
       if (mounted) setState(() => _carregando = false);
     }
+  }
+
+  // Puxar pra atualizar: histórico, contador de notificações e o próprio
+  // perfil (ex: selo de verificado aprovado enquanto o app estava aberto)
+  Future<void> _atualizar() async {
+    final auth = Provider.of<AuthServico>(context, listen: false);
+    await Future.wait([
+      _carregarHistorico(),
+      _carregarNotificacoes(),
+      auth.sincronizarPerfil(),
+    ]);
   }
 
   Color _corStatus(String status) {
@@ -145,144 +155,110 @@ class _TelaPerfilState extends State<TelaPerfil> {
 
     return Scaffold(
       backgroundColor: CoresApp.surface,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // ───── Hero Header com gradiente ─────
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF00288E), Color(0xFF1565C0)],
+      body: RefreshIndicator(
+        onRefresh: _atualizar,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              // ───── Hero Header com gradiente ─────
+              Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF00288E), Color(0xFF1565C0)],
+                  ),
                 ),
-              ),
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
-                  child: Column(
-                    children: [
-                      // Linha superior com botão de configurações
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            onPressed: () =>
-                                Navigator.pushNamed(context, '/configuracoes'),
-                            icon: const Icon(
-                              Icons.settings_outlined,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      // Avatar
-                      CircleAvatar(
-                        radius: 44,
-                        backgroundColor: Colors.white,
-                        child: Text(
-                          (usuario?.nome ?? 'U')[0].toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF00288E),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              usuario?.nome ?? 'Usuário',
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                child: SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+                    child: Column(
+                      children: [
+                        // Linha superior com botão de configurações
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed: () => Navigator.pushNamed(
+                                context,
+                                '/configuracoes',
                               ),
-                            ),
-                          ),
-                          if (usuario != null &&
-                              usuario.isPrestador &&
-                              usuario.verificado) ...[
-                            const SizedBox(width: 6),
-                            const Tooltip(
-                              message: 'Perfil verificado',
-                              child: Icon(
-                                Icons.verified,
+                              icon: const Icon(
+                                Icons.settings_outlined,
                                 color: Colors.white,
-                                size: 20,
                               ),
                             ),
                           ],
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        usuario?.email ?? '',
-                        style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 13,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        // Avatar
+                        CircleAvatar(
+                          radius: 44,
+                          backgroundColor: Colors.white,
+                          child: Text(
+                            (usuario?.nome ?? 'U')[0].toUpperCase(),
+                            style: const TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF00288E),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                usuario?.nome ?? 'Usuário',
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            if (usuario != null &&
+                                usuario.isPrestador &&
+                                usuario.verificado) ...[
+                              const SizedBox(width: 6),
+                              const Tooltip(
+                                message: 'Perfil verificado',
+                                child: Icon(
+                                  Icons.verified,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          usuario?.email ?? '',
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // ───── Conteúdo abaixo do hero ─────
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  // ───── Stats ─────
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          decoration: BoxDecoration(
-                            color: CoresApp.surfaceContainerLowest,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: CoresApp.outlineVariant,
-                              width: 0.5,
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Icon(Icons.work_outline, color: CoresApp.primary),
-                              const SizedBox(height: 8),
-                              Text(
-                                '${usuario != null && usuario.isPrestador ? (usuario.totalServicos ?? 0) : _totalContratados}',
-                                style: Theme.of(context).textTheme.titleLarge
-                                    ?.copyWith(fontWeight: FontWeight.w700),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                usuario != null && usuario.isPrestador
-                                    ? 'SERVIÇOS'
-                                    : 'CONTRATADOS',
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: CoresApp.onSurfaceVariant,
-                                      letterSpacing: 1,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      // Avaliação só faz sentido pra quem presta serviço —
-                      // um cliente não é avaliado por ninguém.
-                      if (usuario != null && usuario.isPrestador) ...[
-                        const SizedBox(width: 12),
+              // ───── Conteúdo abaixo do hero ─────
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // ───── Stats ─────
+                    Row(
+                      children: [
                         Expanded(
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 20),
@@ -297,18 +273,20 @@ class _TelaPerfilState extends State<TelaPerfil> {
                             child: Column(
                               children: [
                                 Icon(
-                                  Icons.star_outline,
-                                  color: CoresApp.secondaryContainer,
+                                  Icons.work_outline,
+                                  color: CoresApp.primary,
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  (usuario.avaliacao ?? 0).toStringAsFixed(1),
+                                  '${usuario != null && usuario.isPrestador ? (usuario.totalServicos ?? 0) : _totalContratados}',
                                   style: Theme.of(context).textTheme.titleLarge
                                       ?.copyWith(fontWeight: FontWeight.w700),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  'AVALIAÇÃO',
+                                  usuario != null && usuario.isPrestador
+                                      ? 'SERVIÇOS'
+                                      : 'CONTRATADOS',
                                   style: Theme.of(context).textTheme.labelSmall
                                       ?.copyWith(
                                         color: CoresApp.onSurfaceVariant,
@@ -319,172 +297,218 @@ class _TelaPerfilState extends State<TelaPerfil> {
                             ),
                           ),
                         ),
-                      ],
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // ───── Menu de Opções ─────
-                  _buildMenuItem(
-                    context,
-                    Icons.person_outline,
-                    'Dados Pessoais',
-                    aoTocar: () =>
-                        Navigator.pushNamed(context, '/dados-pessoais'),
-                  ),
-                  if (usuario != null && usuario.isPrestador) ...[
-                    _buildMenuItem(
-                      context,
-                      Icons.payment_outlined,
-                      'Métodos de Pagamento',
-                      aoTocar: () =>
-                          Navigator.pushNamed(context, '/metodos-pagamento'),
-                    ),
-                    _buildMenuItem(
-                      context,
-                      Icons.verified_outlined,
-                      'Verificação de Perfil',
-                      aoTocar: () =>
-                          Navigator.pushNamed(context, '/enviar-documentos'),
-                    ),
-                    _buildMenuItem(
-                      context,
-                      Icons.rocket_launch_outlined,
-                      'Impulsionar Anúncio',
-                      aoTocar: () =>
-                          Navigator.pushNamed(context, '/impulsionar-anuncio'),
-                    ),
-                  ],
-                  _buildMenuItem(
-                    context,
-                    Icons.notifications_outlined,
-                    'Notificações',
-                    contador: _notificacoesNaoLidas,
-                    aoTocar: () async {
-                      await Navigator.pushNamed(context, '/notificacoes');
-                      _carregarNotificacoes();
-                    },
-                  ),
-                  _buildMenuItem(
-                    context,
-                    Icons.shield_outlined,
-                    'Segurança',
-                    aoTocar: () => Navigator.pushNamed(context, '/seguranca'),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // ───── Histórico de Serviços ─────
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        usuario != null && usuario.isPrestador
-                            ? 'Últimos Serviços Prestados'
-                            : 'Últimos Serviços Contratados',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          usuario != null && usuario.isPrestador
-                              ? '/home-prestador'
-                              : '/home',
-                          (r) => false,
-                          arguments: 1,
-                        ),
-                        child: Text(
-                          'Ver todos',
-                          style: TextStyle(color: CoresApp.primary),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  if (_carregando)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                  else if (_historico.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text(
-                        'Nenhum serviço ainda.',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: CoresApp.onSurfaceVariant,
-                        ),
-                      ),
-                    )
-                  else
-                    ..._historico.map(
-                      (p) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: _buildServicoHistorico(
-                          context,
-                          icone: Icons.build_outlined,
-                          titulo: p.titulo,
-                          subtitulo: _subtitulo(
-                            p,
-                            usuario != null && usuario.isPrestador,
+                        // Avaliação só faz sentido pra quem presta serviço —
+                        // um cliente não é avaliado por ninguém.
+                        if (usuario != null && usuario.isPrestador) ...[
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              decoration: BoxDecoration(
+                                color: CoresApp.surfaceContainerLowest,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: CoresApp.outlineVariant,
+                                  width: 0.5,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.star_outline,
+                                    color: CoresApp.secondaryContainer,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    (usuario.avaliacao ?? 0).toStringAsFixed(1),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge
+                                        ?.copyWith(fontWeight: FontWeight.w700),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'AVALIAÇÃO',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall
+                                        ?.copyWith(
+                                          color: CoresApp.onSurfaceVariant,
+                                          letterSpacing: 1,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                          status: _textoStatus(p.status),
-                          corStatus: _corStatus(p.status),
+                        ],
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // ───── Menu de Opções ─────
+                    _buildMenuItem(
+                      context,
+                      Icons.person_outline,
+                      'Dados Pessoais',
+                      aoTocar: () =>
+                          Navigator.pushNamed(context, '/dados-pessoais'),
+                    ),
+                    if (usuario != null && usuario.isPrestador) ...[
+                      _buildMenuItem(
+                        context,
+                        Icons.payment_outlined,
+                        'Métodos de Pagamento',
+                        aoTocar: () =>
+                            Navigator.pushNamed(context, '/metodos-pagamento'),
+                      ),
+                      _buildMenuItem(
+                        context,
+                        Icons.verified_outlined,
+                        'Verificação de Perfil',
+                        aoTocar: () =>
+                            Navigator.pushNamed(context, '/enviar-documentos'),
+                      ),
+                      _buildMenuItem(
+                        context,
+                        Icons.rocket_launch_outlined,
+                        'Impulsionar Anúncio',
+                        aoTocar: () => Navigator.pushNamed(
+                          context,
+                          '/impulsionar-anuncio',
                         ),
+                      ),
+                    ],
+                    _buildMenuItem(
+                      context,
+                      Icons.notifications_outlined,
+                      'Notificações',
+                      contador: _notificacoesNaoLidas,
+                      aoTocar: () async {
+                        await Navigator.pushNamed(context, '/notificacoes');
+                        _carregarNotificacoes();
+                      },
+                    ),
+                    _buildMenuItem(
+                      context,
+                      Icons.shield_outlined,
+                      'Segurança',
+                      aoTocar: () => Navigator.pushNamed(context, '/seguranca'),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // ───── Histórico de Serviços ─────
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          usuario != null && usuario.isPrestador
+                              ? 'Últimos Serviços Prestados'
+                              : 'Últimos Serviços Contratados',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            usuario != null && usuario.isPrestador
+                                ? '/home-prestador'
+                                : '/home',
+                            (r) => false,
+                            arguments: 1,
+                          ),
+                          child: Text(
+                            'Ver todos',
+                            style: TextStyle(color: CoresApp.primary),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    if (_carregando)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    else if (_historico.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Text(
+                          'Nenhum serviço ainda.',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(color: CoresApp.onSurfaceVariant),
+                        ),
+                      )
+                    else
+                      ..._historico.map(
+                        (p) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: _buildServicoHistorico(
+                            context,
+                            icone: Icons.build_outlined,
+                            titulo: p.titulo,
+                            subtitulo: _subtitulo(
+                              p,
+                              usuario != null && usuario.isPrestador,
+                            ),
+                            status: _textoStatus(p.status),
+                            corStatus: _corStatus(p.status),
+                          ),
+                        ),
+                      ),
+
+                    const SizedBox(height: 32),
+
+                    // ───── Trocar de Perfil (sem deslogar) ─────
+                    BotaoPrimario(
+                      texto: 'Trocar de Perfil',
+                      tipo: TipoBotao.contorno,
+                      icone: Icons.swap_horiz,
+                      aoPresionar: () =>
+                          Navigator.pushNamed(context, '/onboarding'),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // ───── Sair ─────
+                    BotaoPrimario(
+                      texto: 'Sair da Conta',
+                      tipo: TipoBotao.perigo,
+                      icone: Icons.logout,
+                      aoPresionar: () async {
+                        await auth.logout();
+                        if (context.mounted) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/login',
+                            (r) => false,
+                          );
+                        }
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // ───── Logo footer ─────
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        'assets/images/logo_ineed.jpeg',
+                        width: 48,
+                        height: 48,
+                        fit: BoxFit.contain,
                       ),
                     ),
 
-                  const SizedBox(height: 32),
-
-                  // ───── Trocar de Perfil (sem deslogar) ─────
-                  BotaoPrimario(
-                    texto: 'Trocar de Perfil',
-                    tipo: TipoBotao.contorno,
-                    icone: Icons.swap_horiz,
-                    aoPresionar: () =>
-                        Navigator.pushNamed(context, '/onboarding'),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // ───── Sair ─────
-                  BotaoPrimario(
-                    texto: 'Sair da Conta',
-                    tipo: TipoBotao.perigo,
-                    icone: Icons.logout,
-                    aoPresionar: () async {
-                      await auth.logout();
-                      if (context.mounted) {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          '/login',
-                          (r) => false,
-                        );
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // ───── Logo footer ─────
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      'assets/images/logo_ineed.jpeg',
-                      width: 48,
-                      height: 48,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-
-                  const SizedBox(height: 80),
-                ],
+                    const SizedBox(height: 80),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
