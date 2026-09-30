@@ -25,6 +25,10 @@ O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais 
 * Receber e gerenciar propostas recebidas dos clientes, com autonomia para aceitar ou recusar.
 * Definir chave Pix e formas de pagamento aceitas (Dinheiro/Pix/Cartão/Todas as formas).
 * Acompanhar avaliações reais no perfil público, com média recalculada automaticamente.
+* Enviar documento com foto e comprovante de qualificação para ganhar o **selo de verificado**, visível para os clientes.
+
+**Para a Equipe iNeed:**
+* Painel web de validação para analisar os documentos enviados pelos prestadores e aprovar ou recusar (com motivo) cada verificação.
 
 ## ✅ Estado Atual
 
@@ -36,18 +40,30 @@ O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais 
 - Quem é cliente e prestador na mesma conta troca de perfil pelo menu sem precisar deslogar
 - Categoria "Faz tudo" para prestador com mais de uma especialidade
 - Card "Impulsione seu anúncio" na home do prestador (destaque pago futuro — ver "Em andamento")
+- **Verificação de perfil:** o prestador fotografa (câmera ou galeria) um documento com foto e um comprovante de qualificação e envia para análise; a tela mostra o status (em análise, aprovado ou recusado com o motivo) e permite reenviar após recusa. Fotos são comprimidas no aparelho e sobrevivem ao Android encerrar o app com a câmera aberta
+- **Selo de verificado** ao lado do nome no card da busca/home do cliente, no perfil público do prestador, na home do prestador e na tela de perfil — só para quem foi aprovado
+- **Puxar para atualizar** em todas as telas que buscam dados do servidor (home, busca, pedidos, propostas, notificações, perfil, perfil do prestador e verificação), inclusive com a lista vazia
 - Sessão salva no aparelho se revalida sozinha com o backend ao abrir o app, e desloga automaticamente se o token expirar
 - Design system Material 3 com identidade visual própria, navegação por abas
 
 **Backend (Node.js + Express)** — publicado em produção:
-- API REST completa: autenticação, prestadores, propostas, avaliações e notificações
+- API REST completa: autenticação, prestadores, propostas, avaliações, notificações e verificações de perfil
 - Login e cadastro validam de verdade contra o Firebase (não é mock), com telefone e CPF únicos entre contas
 - Middleware de autenticação por token JWT, permissões por papel (transições de status de proposta validadas, IDOR fechado)
 - Deploy automático no [Render](https://render.com) a cada push na `main`: `https://ineed-app-9lzp.onrender.com`
 
+**Painel de validação (web)** — servido pelo próprio backend em [`/admin`](https://ineed-app-9lzp.onrender.com/admin):
+- Página única (`backend/public/admin.html`), sem build, no padrão de ferramentas de revisão KYC: fila de envios à esquerda, documento grande no centro (zoom, arrastar, girar) e painel de decisão à direita
+- Checklist obrigatório antes de aprovar: nome do documento confere com o cadastro, documento legível e válido, comprovante é da especialidade e está em nome do prestador
+- Recusa com motivos prontos + detalhe; o prestador recebe notificação e vê o motivo no app
+- Registra quem analisou e quando; atalhos de teclado; funciona também no celular
+- **Acesso:** qualquer pessoa com o link vê só a tela de login. Os documentos só aparecem para contas do iNeed cujo e-mail esteja na variável `ADMIN_EMAILS` do Render (separados por vírgula) — a checagem é feita no backend. Para dar acesso a um membro, basta acrescentar o e-mail dele nessa variável
+- No plano gratuito do Render o servidor "dorme" após ~15 min sem uso; o primeiro acesso depois disso leva cerca de 50 segundos
+
 **Firebase** — projeto configurado e conectado:
 - Authentication (Email/Senha) e Cloud Firestore ativos
 - Todo o ciclo cliente↔prestador (cadastro, login, propostas, avaliações) grava e lê dados reais
+- Verificações ficam em `verificacoes/{uid}` (status, motivo, quem analisou) e as imagens em `verificacoes/{uid}/arquivos/{tipo}` como base64 (limite de ~600 KB por imagem, validado no backend) — sem Firebase Storage, que exige o plano Blaze. Aprovar grava `verificado: true` em `usuarios/{uid}`. Excluir a conta apaga também os documentos
 
 **Build Android:**
 - APKs de teste gerados sob demanda para instalação direta em aparelhos físicos, fora do Play Store — assinados com chave debug por enquanto
@@ -55,11 +71,13 @@ O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais 
 **Em andamento para a v1.0.0:**
 - Testes automatizados (backend e Flutter)
 - Build de produção assinado para publicação nas lojas
-- Verificação de perfil (envio de documentos) e impulsionar anúncio (destaque pago na busca) — telas já existem no app, funcionalidade real (upload, validação por admin, pagamento) ainda não implementada
+- Impulsionar anúncio (destaque pago na busca) — tela já existe no app, pagamento ainda não implementado
+- Migrar as imagens de verificação para o Firebase Storage caso o projeto passe para o plano Blaze
 
 ## 💻 Tecnologias
 
-* **Frontend Mobile:** Flutter, Dart, Provider (state management)
+* **Frontend Mobile:** Flutter, Dart, Provider (state management), image_picker (câmera/galeria)
+* **Painel de validação:** HTML, CSS e JavaScript puros, servidos pelo backend
 * **Backend:** Node.js, Express, Firebase Admin SDK
 * **Banco de Dados / Auth:** Firebase Authentication + Cloud Firestore
 * **Hospedagem do Backend:** Render
@@ -79,6 +97,10 @@ O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais 
 
 **Processos (POPs)**
 * [docs/pops/](docs/pops/)
+
+**Produto e Design**
+* [PRODUCT.md](PRODUCT.md) — contexto do produto, usuários e princípios
+* [backend/DESIGN.md](backend/DESIGN.md) — sistema visual do painel de validação
 
 ## 🚀 Como rodar o projeto
 
@@ -107,4 +129,6 @@ cd backend
 npm install
 npm run dev
 ```
-Requer um `.env` com `PORTA`, `FIREBASE_WEB_API_KEY` e a credencial do Firebase (`serviceAccountKey.json` local ou `FIREBASE_SERVICE_ACCOUNT`) — ver [docs/development-environment.md](docs/development-environment.md).
+Requer um `.env` com `PORTA`, `FIREBASE_WEB_API_KEY`, `ADMIN_EMAILS` (e-mails com acesso ao painel, separados por vírgula) e a credencial do Firebase (`serviceAccountKey.json` local ou `FIREBASE_SERVICE_ACCOUNT`) — ver [docs/development-environment.md](docs/development-environment.md).
+
+Com o backend rodando, o painel de validação abre em `http://localhost:3000/admin` (usa o mesmo Firebase de produção).
