@@ -314,6 +314,15 @@ async function listarPropostasCliente(req, res) {
 
     propostas.sort((a, b) => (b.criadaEm || '').localeCompare(a.criadaEm || ''));
 
+    // A proposta guarda só o nome do prestador (cópia do momento do pedido).
+    // O selo de verificado vem do cadastro atual — uma leitura pra todos.
+    const idsPrestadores = [...new Set(propostas.map(p => p.idPrestador).filter(Boolean))];
+    if (idsPrestadores.length) {
+      const docs = await db.getAll(...idsPrestadores.map(id => db.collection('usuarios').doc(id)));
+      const verificados = new Set(docs.filter(d => d.exists && d.data().verificado === true).map(d => d.id));
+      propostas.forEach(p => { p.prestadorVerificado = verificados.has(p.idPrestador); });
+    }
+
     res.status(200).json({
       mensagem: `${propostas.length} proposta(s) encontrada(s).`,
       propostas: propostas

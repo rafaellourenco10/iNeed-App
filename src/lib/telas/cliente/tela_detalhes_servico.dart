@@ -199,10 +199,28 @@ class TelaDetalhesServico extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          proposta.nomePrestador ?? 'Prestador',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.w600),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                proposta.nomePrestador ?? 'Prestador',
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.titleMedium
+                                    ?.copyWith(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                            if (proposta.prestadorVerificado) ...[
+                              const SizedBox(width: 4),
+                              Tooltip(
+                                message: 'Perfil verificado',
+                                child: Icon(
+                                  Icons.verified,
+                                  size: 18,
+                                  color: CoresApp.primary,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                         Text(
                           'Profissional',

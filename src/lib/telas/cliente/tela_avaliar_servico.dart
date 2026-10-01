@@ -129,11 +129,29 @@ class _TelaAvaliarServicoState extends State<TelaAvaliarServico> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(
-                    widget.proposta.nomePrestador ?? 'Prestador',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          widget.proposta.nomePrestador ?? 'Prestador',
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      if (widget.proposta.prestadorVerificado) ...[
+                        const SizedBox(width: 4),
+                        Tooltip(
+                          message: 'Perfil verificado',
+                          child: Icon(
+                            Icons.verified,
+                            size: 20,
+                            color: CoresApp.primary,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: 4),
                   Text(

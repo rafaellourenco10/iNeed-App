@@ -413,11 +413,26 @@ class _CardPedido extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      (pedido['nomePrestador'] as String?) ?? 'Prestador',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          (pedido['nomePrestador'] as String?) ?? 'Prestador',
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        if (pedido['prestadorVerificado'] == true) ...[
+                          const SizedBox(width: 4),
+                          Tooltip(
+                            message: 'Perfil verificado',
+                            child: Icon(
+                              Icons.verified,
+                              size: 15,
+                              color: CoresApp.primary,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     Text(
                       (pedido['especialidadePrestador'] as String?) ??

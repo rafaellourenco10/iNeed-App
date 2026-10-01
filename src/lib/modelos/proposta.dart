@@ -10,6 +10,7 @@ class Proposta {
   final String? telefoneCliente;
   final String idPrestador;
   final String? nomePrestador;
+  final bool prestadorVerificado; // vem do cadastro atual, não da proposta
   final String titulo;
   final String? descricao;
   final double valor;
@@ -29,6 +30,7 @@ class Proposta {
     this.telefoneCliente,
     required this.idPrestador,
     this.nomePrestador,
+    this.prestadorVerificado = false,
     required this.titulo,
     this.descricao,
     required this.valor,
@@ -56,6 +58,7 @@ class Proposta {
       telefoneCliente: json['telefoneCliente'],
       idPrestador: json['idPrestador'] ?? '',
       nomePrestador: json['nomePrestador'],
+      prestadorVerificado: json['prestadorVerificado'] == true,
       titulo: json['titulo'] ?? '',
       descricao: json['descricao'],
       valor: json['valor'] != null ? (json['valor'] as num).toDouble() : 0.0,
