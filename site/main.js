@@ -3,7 +3,7 @@ const DOWNLOAD = {
   url: 'https://github.com/rafaellourenco10/iNeed-App/releases/latest/download/ineed.apk',
   versao: 'v0.5.0',
   beta: true,
-  tamanho: '~95 MB',
+  tamanho: '~91 MB',
 };
 
 document.querySelectorAll('[data-apk]').forEach((a) => { a.href = DOWNLOAD.url; });
