@@ -1,15 +1,26 @@
 # iNeed
 
 <p align="center">
-  <img src="site/img/icone-160.webp" alt="Ícone do iNeed" width="96">
+  <a href="https://ineed-app.netlify.app">
+    <img src="site/og.jpg" alt="iNeed: contrate com confiança quem vai entrar na sua casa. Clique para acessar o site" width="720">
+  </a>
 </p>
 
-<h3 align="center">Contrate com confiança quem vai entrar na sua casa.</h3>
+<p align="center">
+  <a href="https://ineed-app.netlify.app"><img src="https://img.shields.io/badge/%F0%9F%8C%90%20ACESSAR%20O%20SITE-ineed--app.netlify.app-00288E?style=for-the-badge" alt="Acessar o site: ineed-app.netlify.app" height="40"></a>
+  &nbsp;
+  <a href="https://github.com/rafaellourenco10/iNeed-App/releases/latest/download/ineed.apk"><img src="https://img.shields.io/badge/%F0%9F%93%B2%20BAIXAR%20O%20APK-Android%20%C2%B7%20v0.5.0%20Beta-FD761A?style=for-the-badge" alt="Baixar o APK para Android, v0.5.0 Beta" height="40"></a>
+</p>
+
+<h3 align="center">🌐 <a href="https://ineed-app.netlify.app">ineed-app.netlify.app</a></h3>
 
 <p align="center">
-  <a href="https://ineed-app.netlify.app"><b>🌐 Acesse o site: ineed-app.netlify.app</b></a>
-  &nbsp;·&nbsp;
-  <a href="https://github.com/rafaellourenco10/iNeed-App/releases/latest/download/ineed.apk"><b>📲 Baixar o APK (Android)</b></a>
+  <img src="https://img.shields.io/badge/vers%C3%A3o-0.5.0%20Beta-00288E?style=flat-square" alt="Versão 0.5.0 Beta">
+  <img src="https://img.shields.io/badge/Flutter-02569B?style=flat-square&logo=flutter&logoColor=white" alt="Flutter">
+  <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black" alt="Firebase">
+  <img src="https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=white" alt="Render">
+  <img src="https://img.shields.io/badge/Netlify-00C7B7?style=flat-square&logo=netlify&logoColor=white" alt="Netlify">
 </p>
 
 Marketplace mobile que conecta clientes a prestadores de serviços pontuais (eletricista, encanador, pintor, faxina e outros), com backend próprio integrado ao Firebase.
@@ -22,15 +33,18 @@ Marketplace mobile que conecta clientes a prestadores de serviços pontuais (ele
 
 ## 🌐 Site oficial
 
-O site **[ineed-app.netlify.app](https://ineed-app.netlify.app)** é a porta de entrada do projeto. Lá o usuário encontra:
+> ### 👉 [ineed-app.netlify.app](https://ineed-app.netlify.app)
+
+O site é a porta de entrada do projeto. Lá o usuário encontra:
 
 - como o app funciona para quem contrata e para quem presta serviço;
-- as categorias de serviço;
-- como funciona o selo de verificado;
-- prints das telas;
-- o botão de download do APK e o passo a passo de instalação no Android.
+- as categorias de serviço, com vídeos curtos dos profissionais trabalhando;
+- como funciona o selo de verificado (o checklist que a equipe confere);
+- prints reais das telas do app;
+- o botão de download do APK e o passo a passo de instalação no Android;
+- perguntas frequentes (é grátis? é seguro instalar fora da Play Store? tem iPhone? como viro prestador?).
 
-O site fica na pasta [`site/`](site/) (HTML, CSS e JS puros, sem build) e é publicado na Netlify, com a configuração no [`netlify.toml`](netlify.toml).
+O site fica na pasta [`site/`](site/) (HTML, CSS e JS puros, sem build), é publicado na Netlify com a configuração do [`netlify.toml`](netlify.toml) e se atualiza sozinho a cada push na `main`.
 
 ## 📲 Instalação no celular
 
@@ -81,7 +95,7 @@ O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais 
 - Categoria "Faz tudo" para prestador com mais de uma especialidade
 - Card "Impulsione seu anúncio" na home do prestador (destaque pago futuro — ver "Em andamento")
 - **Verificação de perfil:** o prestador fotografa (câmera ou galeria) um documento com foto e um comprovante de qualificação e envia para análise; a tela mostra o status (em análise, aprovado ou recusado com o motivo) e permite reenviar após recusa. Fotos são comprimidas no aparelho e sobrevivem ao Android encerrar o app com a câmera aberta
-- **Selo de verificado** ao lado do nome no card da busca/home do cliente, no perfil público do prestador, na home do prestador e na tela de perfil — só para quem foi aprovado
+- **Selo de verificado** ao lado do nome no card da busca/home do cliente, no perfil público do prestador, nos pedidos do cliente, nos detalhes do serviço, na tela de avaliação, na home do prestador e na tela de perfil — só para quem foi aprovado
 - **Puxar para atualizar** em todas as telas que buscam dados do servidor (home, busca, pedidos, propostas, notificações, perfil, perfil do prestador e verificação), inclusive com a lista vazia
 - Sessão salva no aparelho se revalida sozinha com o backend ao abrir o app, e desloga automaticamente se o token expirar
 - Design system Material 3 com identidade visual própria, navegação por abas
@@ -105,8 +119,16 @@ O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais 
 - Todo o ciclo cliente↔prestador (cadastro, login, propostas, avaliações) grava e lê dados reais
 - Verificações ficam em `verificacoes/{uid}` (status, motivo, quem analisou) e as imagens em `verificacoes/{uid}/arquivos/{tipo}` como base64 (limite de ~600 KB por imagem, validado no backend) — sem Firebase Storage, que exige o plano Blaze. Aprovar grava `verificado: true` em `usuarios/{uid}`. Excluir a conta apaga também os documentos
 
+**Site de apresentação (web)** — publicado em [ineed-app.netlify.app](https://ineed-app.netlify.app):
+- Landing page estática na pasta `site/` (HTML, CSS e JS puros, sem build), feita primeiro para o celular e ajustada para telas grandes
+- Seções: como funciona (abas cliente/prestador), categorias com vídeos, selo de verificado, download e instalação do APK, perguntas frequentes e equipe
+- Prints reais do app, animações de entrada que respeitam a opção "reduzir movimento" do sistema e modo claro/escuro automático
+- Botões de download apontam para o link fixo do GitHub Releases; a versão e o tamanho exibidos ficam num único lugar (`site/main.js`)
+- Deploy automático na Netlify a cada push na `main`, configurado pelo `netlify.toml` da raiz
+
 **Build Android:**
-- APKs de teste gerados sob demanda para instalação direta em aparelhos físicos, fora do Play Store — assinados com chave debug por enquanto
+- APK da **v0.5.0 Beta** publicado no [GitHub Releases](https://github.com/rafaellourenco10/iNeed-App/releases/latest) como `ineed.apk` (~91 MB), com o link fixo `releases/latest/download/ineed.apk` usado pelo site e por este README
+- Instalação direta em aparelhos Android, fora da Play Store — assinado com chave debug por enquanto, então as próximas versões precisam ser geradas na mesma máquina para instalar por cima
 
 **Em andamento para a v1.0.0:**
 - Testes automatizados (backend e Flutter)
@@ -118,9 +140,11 @@ O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais 
 
 * **Frontend Mobile:** Flutter, Dart, Provider (state management), image_picker (câmera/galeria)
 * **Painel de validação:** HTML, CSS e JavaScript puros, servidos pelo backend
+* **Site de apresentação:** HTML, CSS e JavaScript puros, publicado na Netlify
 * **Backend:** Node.js, Express, Firebase Admin SDK
 * **Banco de Dados / Auth:** Firebase Authentication + Cloud Firestore
-* **Hospedagem do Backend:** Render
+* **Hospedagem:** Render (backend) e Netlify (site)
+* **Distribuição do APK:** GitHub Releases
 * **Controle de Versão:** Git e GitHub
 
 ## 📂 Documentação
@@ -174,3 +198,9 @@ npm run dev
 Requer um `.env` com `PORTA`, `FIREBASE_WEB_API_KEY`, `ADMIN_EMAILS` (e-mails com acesso ao painel, separados por vírgula) e a credencial do Firebase (`serviceAccountKey.json` local ou `FIREBASE_SERVICE_ACCOUNT`) — ver [docs/development-environment.md](docs/development-environment.md).
 
 Com o backend rodando, o painel de validação abre em `http://localhost:3000/admin` (usa o mesmo Firebase de produção).
+
+**Site** (pasta `site/`) — não tem build; para ver localmente antes de publicar:
+```bash
+npx serve site
+```
+Abre em `http://localhost:3000`. Qualquer push na `main` publica a versão nova em [ineed-app.netlify.app](https://ineed-app.netlify.app).
