@@ -1,6 +1,46 @@
 # iNeed
 
+<p align="center">
+  <img src="site/img/icone-160.webp" alt="Ícone do iNeed" width="96">
+</p>
+
+<h3 align="center">Contrate com confiança quem vai entrar na sua casa.</h3>
+
+<p align="center">
+  <a href="https://ineed-app.netlify.app"><b>🌐 Acesse o site: ineed-app.netlify.app</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/rafaellourenco10/iNeed-App/releases/latest/download/ineed.apk"><b>📲 Baixar o APK (Android)</b></a>
+</p>
+
 Marketplace mobile que conecta clientes a prestadores de serviços pontuais (eletricista, encanador, pintor, faxina e outros), com backend próprio integrado ao Firebase.
+
+<p align="center">
+  <img src="site/img/telas/home-cliente.webp" alt="Tela inicial do cliente" height="500">
+  &nbsp;&nbsp;
+  <img src="site/img/telas/perfil-prestador.webp" alt="Perfil do prestador com selo de verificado" height="500">
+</p>
+
+## 🌐 Site oficial
+
+O site **[ineed-app.netlify.app](https://ineed-app.netlify.app)** é a porta de entrada do projeto. Lá o usuário encontra:
+
+- como o app funciona para quem contrata e para quem presta serviço;
+- as categorias de serviço;
+- como funciona o selo de verificado;
+- prints das telas;
+- o botão de download do APK e o passo a passo de instalação no Android.
+
+O site fica na pasta [`site/`](site/) (HTML, CSS e JS puros, sem build) e é publicado na Netlify, com a configuração no [`netlify.toml`](netlify.toml).
+
+## 📲 Instalação no celular
+
+O app ainda não está na Play Store. A instalação é feita pelo APK:
+
+1. Baixe o [`ineed.apk`](https://github.com/rafaellourenco10/iNeed-App/releases/latest/download/ineed.apk) (ou pelo botão do site).
+2. Abra o arquivo no celular e permita a instalação de fontes desconhecidas para o navegador, se o Android pedir.
+3. Toque em **Instalar**. Se o Play Protect avisar que não reconhece o app, toque em **Mais detalhes → Instalar mesmo assim**.
+
+> O servidor da API usa o plano gratuito do Render. Se ninguém usou o app nos últimos minutos, o primeiro acesso pode levar cerca de 50 segundos.
 
 ## 👥 Membros da Equipe
 
@@ -116,12 +156,14 @@ flutter pub get
 flutter run
 ```
 
-Gerar um APK para instalar em outro aparelho (fora do Play Store):
+### Gerar o APK e publicar uma nova versão
+
 ```bash
 cd src
 flutter build apk --release
 ```
-O arquivo sai em `src/build/app/outputs/flutter-apk/app-release.apk`.
+
+O arquivo sai em `src/build/app/outputs/flutter-apk/app-release.apk`. Para publicar uma nova versão, atualize o `version` no `pubspec.yaml`, gere o APK e crie uma release no GitHub (marcada como **Latest**, não como pre-release) com o arquivo renomeado para exatamente `ineed.apk`. O botão do site sempre baixa a release mais recente, então o site não precisa ser alterado (só o tamanho exibido, em `site/main.js`, se mudar muito).
 
 **Backend** (pasta `backend/`) — só necessário para rodar localmente, já que o backend em produção está publicado no Render:
 ```bash

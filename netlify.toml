@@ -1,5 +1,7 @@
-# No painel do Netlify: Base directory = site. Sem etapa de build.
+# Netlify publica só a landing page (pasta site/); o resto do repositório
+# (app Flutter e backend) é ignorado. Nada precisa ser preenchido no painel.
 [build]
+  base = "site"
   publish = "."
   command = ""
 
