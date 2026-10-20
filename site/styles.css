@@ -428,8 +428,9 @@ a:hover { text-decoration-thickness: 2px; }
 .checklist li:nth-child(2) .ck-marca, .checklist li:nth-child(2) .ck-marca svg { transition-delay: 380ms; }
 .checklist li:nth-child(3) .ck-marca, .checklist li:nth-child(3) .ck-marca svg { transition-delay: 760ms; }
 .checklist li:nth-child(4) .ck-marca, .checklist li:nth-child(4) .ck-marca svg { transition-delay: 1140ms; }
-.checklist .ck-status { transition: opacity 300ms ease-out 1600ms, transform 420ms cubic-bezier(0.16, 1, 0.3, 1) 1600ms; }
-.checklist .ck-status svg { transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1) 1650ms; }
+.checklist li:nth-child(5) .ck-marca, .checklist li:nth-child(5) .ck-marca svg { transition-delay: 1520ms; }
+.checklist .ck-status { transition: opacity 300ms ease-out 1980ms, transform 420ms cubic-bezier(0.16, 1, 0.3, 1) 1980ms; }
+.checklist .ck-status svg { transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1) 2030ms; }
 
 /* Instalar */
 .instalar-grade { display: grid; gap: 48px; }

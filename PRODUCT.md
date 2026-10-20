@@ -19,7 +19,7 @@ Marketplace brasileiro de serviços sob demanda (v0.5.0 Beta). Conecta clientes 
 - Prestador envia duas fotos: documento com foto (RG/CNH) e comprovante de qualificação (certificado, diploma, registro).
 
 ## Capabilities and Constraints
-- Checklist obrigatório do validador: nome do documento = nome do cadastro; foto legível e documento válido; comprovante bate com a especialidade; comprovante em nome do prestador.
+- Checklist obrigatório do validador: nome do documento = nome do cadastro; CPF do documento = CPF do cadastro; foto legível e documento válido; comprovante bate com a especialidade; comprovante em nome do prestador.
 - Recusa exige motivo, que o prestador vê no app e numa notificação. Pode reenviar após recusa.
 - Documentos pessoais (LGPD): exibir só para validadores autenticados; nada de cache público.
 - Idioma: português do Brasil.

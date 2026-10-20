@@ -236,7 +236,7 @@ Raio de 8px em botões, campos, linhas da fila, checklist e alertas; 6px em cont
 
 ### Buttons
 - **Shape:** 8px, altura 36px (40px em bloco, 32px na barra superior), peso 600, ícone + texto com gap de 8px.
-- **Primary:** azul com texto branco; hover azul aceso; desabilitado com opacidade .45 (Aprovar fica desabilitado até os quatro itens do checklist serem marcados).
+- **Primary:** azul com texto branco; hover azul aceso; desabilitado com opacidade .45 (Aprovar fica desabilitado até todos os itens do checklist serem marcados).
 - **Secondary:** branco com filete firme; hover branco enevoado.
 - **Danger / Danger-secondary:** vermelho cheio (confirmar recusa) e contorno vermelho sobre branco (abrir recusa).
 - **Ícone:** 32px quadrado, sem fundo em repouso.

@@ -141,6 +141,13 @@ async function listarVerificacoes(req, res) {
       .map(doc => doc.data())
       .sort((a, b) => (a.enviadoEm || '').localeCompare(b.enviadoEm || ''));
 
+    // CPF vem do cadastro atual (não é copiado na verificação) e só vai junto
+    // nos pendentes, que é onde o validador confere com o documento
+    if (status === 'pendente' && verificacoes.length) {
+      const usuarios = await db.getAll(...verificacoes.map(v => db.collection('usuarios').doc(v.uid)));
+      usuarios.forEach((u, i) => { verificacoes[i].cpf = (u.exists && u.data().cpf) || null; });
+    }
+
     res.status(200).json({ verificacoes });
 
   } catch (erro) {

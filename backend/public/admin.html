@@ -395,6 +395,7 @@
   ];
   const CHECKLIST = [
     { id: 'nome', titulo: 'Nome confere com o cadastro', ajuda: 'O nome no RG/CNH é o mesmo do perfil.', ref: (v) => ['Cadastro', v.nome] },
+    { id: 'cpf', titulo: 'CPF confere com o cadastro', ajuda: 'O CPF impresso no RG/CNH é o mesmo do perfil.', ref: (v) => ['Cadastro', formatarCpf(v.cpf)] },
     { id: 'legivel', titulo: 'Documento legível e válido', ajuda: 'Foto nítida, documento inteiro, sem sinais de edição.' },
     { id: 'area', titulo: 'Comprovante é da especialidade', ajuda: 'Curso, diploma ou registro da área anunciada.', ref: (v) => ['Área', v.especialidade] },
     { id: 'titular', titulo: 'Comprovante em nome do prestador', ajuda: 'Mesmo nome do documento com foto.', ref: (v) => ['Cadastro', v.nome] },
@@ -407,6 +408,7 @@
   const MOTIVOS = [
     'Foto ilegível ou cortada',
     'Nome não confere com o cadastro',
+    'CPF não confere ou não aparece no documento',
     'Comprovante não é da área',
     'Comprovante em nome de outra pessoa',
     'Documento vencido ou inválido',
@@ -438,6 +440,11 @@
   function iniciais(nome) {
     const partes = (nome || '?').trim().split(/\s+/);
     return ((partes[0]?.[0] || '') + (partes.length > 1 ? partes[partes.length - 1][0] : '')).toUpperCase() || '?';
+  }
+  function formatarCpf(cpf) {
+    const d = (cpf || '').replace(/\D/g, '');
+    if (!d) return 'não informado';
+    return d.length === 11 ? d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : d;
   }
   function tempoRelativo(iso) {
     if (!iso) return '';

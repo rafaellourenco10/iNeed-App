@@ -108,7 +108,7 @@ O **iNeed** conecta pessoas que precisam de um serviço pontual a profissionais 
 
 **Painel de validação (web)** — servido pelo próprio backend em [`/admin`](https://ineed-app-9lzp.onrender.com/admin):
 - Página única (`backend/public/admin.html`), sem build, no padrão de ferramentas de revisão KYC: fila de envios à esquerda, documento grande no centro (zoom, arrastar, girar) e painel de decisão à direita
-- Checklist obrigatório antes de aprovar: nome do documento confere com o cadastro, documento legível e válido, comprovante é da especialidade e está em nome do prestador
+- Checklist obrigatório antes de aprovar: nome e CPF do documento conferem com o cadastro (o CPF vem do perfil do prestador e só aparece para validadores, nos envios pendentes), documento legível e válido, comprovante é da especialidade e está em nome do prestador
 - Recusa com motivos prontos + detalhe; o prestador recebe notificação e vê o motivo no app
 - Registra quem analisou e quando; atalhos de teclado; funciona também no celular
 - **Acesso:** qualquer pessoa com o link vê só a tela de login. Os documentos só aparecem para contas do iNeed cujo e-mail esteja na variável `ADMIN_EMAILS` do Render (separados por vírgula) — a checagem é feita no backend. Para dar acesso a um membro, basta acrescentar o e-mail dele nessa variável
