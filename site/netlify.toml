@@ -1,0 +1,32 @@
+# No painel do Netlify: Base directory = site. Sem etapa de build.
+[build]
+  publish = "."
+  command = ""
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+
+# Imagens e ícones mudam pouco: 7 dias. HTML/CSS/JS ficam no padrão do
+# Netlify (revalida a cada visita), então uma edição aparece na hora.
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/og.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# O APK fica no GitHub Releases, não aqui. Se algum dia for servido pelo
+# site, sai com o tipo certo e como download.
+[[headers]]
+  for = "/ineed.apk"
+  [headers.values]
+    Content-Type = "application/vnd.android.package-archive"
+    Content-Disposition = "attachment"
+    Cache-Control = "public, max-age=0, must-revalidate"

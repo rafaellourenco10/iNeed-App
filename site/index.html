@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>iNeed: contrate prestadores de serviço com selo de verificado</title>
+  <meta name="description" content="App para encontrar eletricista, encanador, pintor, diarista e outros prestadores, enviar proposta, acompanhar o serviço e avaliar. Prestadores verificados pela equipe iNeed. Beta para Android.">
+  <meta name="theme-color" content="#00288E">
+  <meta name="color-scheme" content="light dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="iNeed">
+  <meta property="og:title" content="iNeed: contrate com confiança">
+  <meta property="og:description" content="Encontre prestadores de serviço, envie proposta pelo app e veja quem tem o selo de verificado. Beta para Android.">
+  <meta property="og:url" content="https://ineed-app.netlify.app/">
+  <meta property="og:image" content="https://ineed-app.netlify.app/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Ícone do iNeed e o texto: contrate com confiança quem vai entrar na sua casa">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script src="main.js" defer></script>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <svg width="0" height="0" class="sr-only" aria-hidden="true">
+    <symbol id="i-verificado" viewBox="0 0 24 24"><path fill="currentColor" d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72l-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></symbol>
+    <symbol id="i-baixar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M6 12.5l4 4 8-9"/></symbol>
+  </svg>
+
+  <header class="topo">
+    <div class="topo-barra">
+      <a class="marca" href="#" aria-label="iNeed, início">
+        <img src="img/icone-160.webp" width="36" height="36" alt="">
+        <span>iNeed</span>
+      </a>
+      <a class="topo-baixar" href="https://github.com/rafaellourenco10/iNeed-App/releases/latest" data-apk>
+        <svg aria-hidden="true"><use href="#i-baixar"/></svg>Baixar
+      </a>
+    </div>
+
+    <div class="hero">
+      <div class="hero-texto">
+        <h1>Contrate com confiança quem vai entrar na sua casa.</h1>
+        <p class="hero-sub">Encontre eletricista, encanador, pintor, diarista e outros prestadores, envie a proposta pelo app e veja quem teve documento e qualificação conferidos pela equipe iNeed.</p>
+        <div class="acao">
+          <a class="botao-baixar" href="https://github.com/rafaellourenco10/iNeed-App/releases/latest" data-apk>
+            <svg aria-hidden="true"><use href="#i-baixar"/></svg>
+            Baixar para Android
+          </a>
+          <p class="acao-info"><span class="selo-beta" data-apk-beta>Beta</span> <span data-apk-info></span></p>
+          <p class="acao-nota">Instalação direta pelo APK, fora da Play Store. <a href="#instalar">Veja como instalar</a>.</p>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <figure class="celular">
+          <img src="img/telas/home-cliente.webp" alt="Tela inicial do cliente no iNeed, com busca, categorias e lista de prestadores" onerror="this.remove()">
+          <figcaption class="tela-vazia">Print da tela<br><strong>Home do cliente</strong><code>img/telas/home-cliente.webp</code></figcaption>
+        </figure>
+
+        <div class="card-prestador" aria-label="Exemplo de card de prestador com selo de verificado">
+          <div class="cp-topo">
+            <span class="cp-avatar" aria-hidden="true">M</span>
+            <div>
+              <p class="cp-nome">Marcos Almeida <svg class="cp-selo" role="img" aria-label="Verificado"><use href="#i-verificado"/></svg></p>
+              <span class="chip">Eletricista</span>
+            </div>
+          </div>
+          <div class="cp-base">
+            <p><span class="cp-rotulo">A partir de</span><span class="cp-preco">R$ 90/h</span></p>
+            <span class="cp-botao" aria-hidden="true">Ver perfil</span>
+          </div>
+          <p class="cp-exemplo">Exemplo ilustrativo</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="secao" id="como-funciona" aria-labelledby="t-como">
+      <div class="largura">
+        <h2 id="t-como">Uma conta, os dois lados do serviço</h2>
+        <p class="intro">Quem contrata e quem trabalha usam o mesmo app. Se você faz os dois, troca de perfil pelo menu sem sair da conta.</p>
+
+        <div class="abas" role="tablist" aria-label="Como funciona para cada perfil">
+          <button role="tab" id="aba-cliente" aria-controls="painel-cliente" aria-selected="true">Sou cliente</button>
+          <button role="tab" id="aba-prestador" aria-controls="painel-prestador" aria-selected="false" tabindex="-1">Sou prestador</button>
+        </div>
+
+        <div class="painel" id="painel-cliente" role="tabpanel" aria-labelledby="aba-cliente">
+          <ol class="passos">
+            <li>
+              <h3>Encontre o profissional</h3>
+              <p>Filtre por especialidade e preço. Cada card mostra o valor por hora, a nota das avaliações e o selo de quem é verificado.</p>
+            </li>
+            <li>
+              <h3>Envie a proposta</h3>
+              <p>Título, descrição, data, horário e endereço. O valor é o valor por hora que o prestador cadastrou, sem surpresa.</p>
+            </li>
+            <li>
+              <h3>Acompanhe cada etapa</h3>
+              <p>O app avisa quando o pedido muda de status, e o WhatsApp do prestador fica a um toque, com mensagem pronta.</p>
+              <ul class="trilho" aria-label="Status de um pedido">
+                <li class="st st-pendente">Pendente</li>
+                <li class="st st-andamento">Em andamento</li>
+                <li class="st st-concluida">Concluída</li>
+              </ul>
+            </li>
+            <li>
+              <h3>Avalie o serviço</h3>
+              <p>Estrelas, elogios rápidos e um comentário. A avaliação vai para o perfil público e ajuda o próximo cliente a decidir.</p>
+            </li>
+          </ol>
+          <figure class="celular celular-lateral">
+            <img src="img/telas/nova-proposta.webp" alt="Tela de nova proposta, com título, descrição, data, horário e endereço" loading="lazy" onerror="this.remove()">
+            <figcaption class="tela-vazia">Print da tela<br><strong>Nova proposta</strong><code>img/telas/nova-proposta.webp</code></figcaption>
+          </figure>
+        </div>
+
+        <div class="painel" id="painel-prestador" role="tabpanel" aria-labelledby="aba-prestador">
+          <ol class="passos">
+            <li>
+              <h3>Monte seu anúncio</h3>
+              <p>Especialidade, valor por hora e uma bio curta. Trabalha com mais de uma coisa? Use a categoria Faz tudo.</p>
+            </li>
+            <li>
+              <h3>Aceite ou recuse propostas</h3>
+              <p>Você vê título, descrição, data, horário e endereço antes de decidir. Ninguém agenda nada sem o seu aceite.</p>
+            </li>
+            <li>
+              <h3>Defina como quer receber</h3>
+              <p>Cadastre sua chave Pix e as formas que aceita: dinheiro, Pix, cartão ou todas. O pagamento é combinado direto com o cliente.</p>
+            </li>
+            <li>
+              <h3>Ganhe avaliações e o selo</h3>
+              <p>Cada serviço concluído pode virar uma avaliação real no seu perfil. Envie seus documentos e mostre o selo de verificado ao lado do nome.</p>
+            </li>
+          </ol>
+          <figure class="celular celular-lateral">
+            <img src="img/telas/propostas-prestador.webp" alt="Tela de propostas recebidas pelo prestador, com botões de aceitar e recusar" loading="lazy" onerror="this.remove()">
+            <figcaption class="tela-vazia">Print da tela<br><strong>Propostas do prestador</strong><code>img/telas/propostas-prestador.webp</code></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao secao-categorias" aria-labelledby="t-cat">
+      <div class="largura">
+        <h2 id="t-cat">Para o serviço que não dá para adiar</h2>
+        <ul class="fotos">
+          <li>
+            <img src="img/eletricista-640.webp" srcset="img/eletricista-640.webp 640w, img/eletricista-1280.webp 1280w" sizes="(min-width: 960px) 25vw, 50vw" width="640" height="358" loading="lazy" alt="Eletricista medindo a tensão de um quadro de disjuntores">
+            <span>Eletricista</span>
+          </li>
+          <li>
+            <img src="img/encanador-640.webp" srcset="img/encanador-640.webp 640w, img/encanador-1280.webp 1280w" sizes="(min-width: 960px) 25vw, 50vw" width="640" height="358" loading="lazy" alt="Encanador apertando a tubulação embaixo de uma pia">
+            <span>Encanador</span>
+          </li>
+          <li>
+            <img src="img/pintor-640.webp" srcset="img/pintor-640.webp 640w, img/pintor-1280.webp 1280w" sizes="(min-width: 960px) 25vw, 50vw" width="640" height="358" loading="lazy" alt="Pintor passando rolo em uma parede">
+            <span>Pintura</span>
+          </li>
+          <li>
+            <img src="img/faxina-640.webp" srcset="img/faxina-640.webp 640w, img/faxina-1280.webp 1280w" sizes="(min-width: 960px) 25vw, 50vw" width="640" height="358" loading="lazy" alt="Diarista limpando uma bancada de cozinha">
+            <span>Faxina</span>
+          </li>
+        </ul>
+        <p class="tambem">Também tem
+          <span class="chip">Beleza</span>
+          <span class="chip">Jardinagem</span>
+          <span class="chip">Montagem</span>
+          <span class="chip">Mudança</span>
+          <span class="chip">Faz tudo</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="secao secao-selo" id="selo" aria-labelledby="t-selo">
+      <div class="largura selo-grade">
+        <div class="selo-texto">
+          <h2 id="t-selo">O selo de verificado não é automático</h2>
+          <p class="intro">Uma pessoa da equipe iNeed confere os documentos de cada prestador antes de aprovar. Na dúvida, a resposta é não, sempre com o motivo.</p>
+
+          <dl class="etapas">
+            <div>
+              <dt>O prestador envia</dt>
+              <dd>Foto de um documento com foto (RG ou CNH) e de um comprovante de qualificação, como certificado, diploma ou registro profissional.</dd>
+            </div>
+            <div>
+              <dt>A equipe confere</dt>
+              <dd>Item por item, no painel de validação. Sem os quatro itens conferidos, não tem aprovação.</dd>
+            </div>
+            <div>
+              <dt>O selo aparece</dt>
+              <dd>Ao lado do nome na busca, na home e no perfil público. Se o envio for recusado, o prestador vê o motivo no app e pode mandar de novo.</dd>
+            </div>
+          </dl>
+
+          <p class="selo-limite">O selo confirma identidade e qualificação. Ele não substitui combinar bem o serviço e avaliar no final. Os documentos só são vistos pela equipe de validação e são apagados se a conta for excluída.</p>
+        </div>
+
+        <div class="selo-visual">
+          <figure class="celular">
+            <img src="img/telas/perfil-prestador.webp" alt="Perfil público de um prestador com o selo de verificado ao lado do nome" loading="lazy" onerror="this.remove()">
+            <figcaption class="tela-vazia">Print da tela<br><strong>Perfil do prestador com selo</strong><code>img/telas/perfil-prestador.webp</code></figcaption>
+          </figure>
+
+          <div class="checklist" data-checklist>
+            <p class="ck-titulo">Checklist da análise</p>
+            <ul>
+              <li><span class="ck-marca" aria-hidden="true"><svg><use href="#i-check"/></svg></span>O nome do documento confere com o cadastro</li>
+              <li><span class="ck-marca" aria-hidden="true"><svg><use href="#i-check"/></svg></span>O documento está legível e é válido</li>
+              <li><span class="ck-marca" aria-hidden="true"><svg><use href="#i-check"/></svg></span>O comprovante é da especialidade anunciada</li>
+              <li><span class="ck-marca" aria-hidden="true"><svg><use href="#i-check"/></svg></span>O comprovante está no nome do prestador</li>
+            </ul>
+            <p class="ck-status"><svg aria-hidden="true"><use href="#i-verificado"/></svg>Aprovado: selo liberado</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao" id="instalar" aria-labelledby="t-instalar">
+      <div class="largura instalar-grade">
+        <div class="download">
+          <img src="img/icone-160.webp" width="72" height="72" alt="">
+          <h2 id="t-instalar">Baixe e instale no Android</h2>
+          <p class="download-info"><span class="selo-beta" data-apk-beta>Beta</span> <span data-apk-info></span></p>
+          <a class="botao-baixar" href="https://github.com/rafaellourenco10/iNeed-App/releases/latest" data-apk>
+            <svg aria-hidden="true"><use href="#i-baixar"/></svg>
+            Baixar o APK
+          </a>
+          <p class="download-nota">O arquivo fica no GitHub Releases do projeto. Ele é grande, então prefira baixar no Wi-Fi. Por enquanto não há versão para iPhone.</p>
+        </div>
+
+        <div class="instalar">
+          <p class="porque">O Android pede uma permissão extra para qualquer app que não vem da Play Store. É uma proteção do sistema, não um sinal de vírus. Por isso, baixe o iNeed só por este site.</p>
+          <ol class="passos passos-instalar">
+            <li>
+              <h3>Baixe o arquivo</h3>
+              <p>Toque em <strong>Baixar o APK</strong>. O <code>ineed.apk</code> vai para a pasta Downloads. Se o navegador perguntar, confirme o download.</p>
+            </li>
+            <li>
+              <h3>Permita a instalação pelo navegador</h3>
+              <p>Ao abrir o arquivo, o Android avisa que a instalação está bloqueada. Toque em <strong>Configurações</strong> e ative <strong>Permitir desta fonte</strong> para o navegador que você usou, como o Chrome. Depois volte.</p>
+            </li>
+            <li>
+              <h3>Abra o APK</h3>
+              <p>Pela notificação do download ou pelo app <strong>Arquivos</strong>, na pasta Downloads, toque em <code>ineed.apk</code>.</p>
+            </li>
+            <li>
+              <h3>Instale</h3>
+              <p>Toque em <strong>Instalar</strong> e depois em <strong>Abrir</strong>. Se o Play Protect disser que não reconhece o app, toque em <strong>Mais detalhes</strong> e em <strong>Instalar mesmo assim</strong>.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao secao-faq" aria-labelledby="t-faq">
+      <div class="largura faq">
+        <h2 id="t-faq">Perguntas frequentes</h2>
+        <details>
+          <summary>O iNeed é grátis?</summary>
+          <p>Sim. Baixar, criar conta, contratar e anunciar não custa nada. O iNeed não cobra taxa e não passa o pagamento pelo app: você paga direto ao prestador, pela forma que ele aceita (dinheiro, Pix ou cartão). No futuro, o prestador vai poder pagar, se quiser, para destacar o anúncio na busca.</p>
+        </details>
+        <details>
+          <summary>É seguro instalar fora da Play Store?</summary>
+          <p>O aviso do Android aparece para qualquer app instalado por APK. O código do iNeed é público no GitHub, e o arquivo é publicado pela própria equipe no GitHub Releases. Baixe só pelo botão deste site e não instale cópias enviadas por outras pessoas.</p>
+        </details>
+        <details>
+          <summary>Tem para iPhone?</summary>
+          <p>Ainda não. Nesta fase Beta o iNeed existe só para Android. A versão para as lojas, incluindo iOS, está no planejamento, sem data definida.</p>
+        </details>
+        <details>
+          <summary>Como viro prestador?</summary>
+          <p>No cadastro, escolha ser prestador e informe especialidade, valor por hora e uma bio. Se você já usa o app como cliente, vá em <strong>Perfil &gt; Trocar de Perfil</strong>, escolha prestador e complete os dados. Para ganhar o selo, abra <strong>Perfil &gt; Verificação de Perfil</strong> e envie a foto de um documento com foto e de um comprovante de qualificação.</p>
+        </details>
+        <details>
+          <summary>Como atualizo para uma versão nova?</summary>
+          <p>Baixe o APK de novo por este site e instale por cima. Se o Android mostrar "App não instalado", desinstale a versão anterior e instale a nova. Sua conta e seus pedidos ficam no servidor, então basta entrar de novo.</p>
+        </details>
+        <details>
+          <summary>Por que o app demorou para abrir?</summary>
+          <p>Nesta fase o servidor do iNeed roda num plano gratuito que "dorme" depois de uns 15 minutos sem uso. O primeiro acesso depois disso pode levar perto de um minuto. Depois fica normal.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <div class="largura rodape-grade">
+      <div>
+        <a class="marca" href="#" aria-label="iNeed, voltar ao topo">
+          <img src="img/icone-160.webp" width="32" height="32" alt="">
+          <span>iNeed</span>
+        </a>
+        <p class="rodape-beta">Versão Beta, só para Android. Pode ter falhas, e o que você contar sobre elas ajuda a melhorar o app.</p>
+        <p><a href="https://github.com/rafaellourenco10/iNeed-App">Código no GitHub</a></p>
+      </div>
+      <div>
+        <h2 class="rodape-titulo">Equipe</h2>
+        <ul class="equipe">
+          <li><strong>Rafael R. Lourenço</strong> Concepção e desenvolvimento do app, do backend e do deploy</li>
+          <li><strong>João Wilson Cunha Silva Pereira</strong> Documentação inicial e requisitos das interfaces</li>
+          <li><strong>Victor Hugo Vicente</strong> Modelagem inicial do banco de dados</li>
+          <li><strong>Nikolas Eduardo da Silva</strong> Documentação de testes e dos ambientes</li>
+          <li><strong>Savio Santos</strong> POPs de gestão de Sprint e de requisitos</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
