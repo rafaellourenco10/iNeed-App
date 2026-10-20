@@ -63,3 +63,19 @@ if (videos.length && 'IntersectionObserver' in window && !semMovimento) {
   }, { threshold: 0.4 });
   videos.forEach((v) => obsVideo.observe(v));
 }
+
+// ─── Revelação ao rolar: [data-revela] sobe; [data-revela="grupo"] sobe em cascata ───
+if (document.documentElement.classList.contains('anima')) {
+  window.iNeedAnima = true;
+  const obsRevela = new IntersectionObserver((entradas) => {
+    entradas.forEach(({ target, isIntersecting }) => {
+      if (!isIntersecting) return;
+      if (target.dataset.revela === 'grupo') {
+        [...target.children].forEach((filho, i) => filho.style.setProperty('--atraso', `${Math.min(i, 6) * 90}ms`));
+      }
+      target.classList.add('visivel');
+      obsRevela.unobserve(target);
+    });
+  }, { rootMargin: '0px 0px -12% 0px' });
+  document.querySelectorAll('[data-revela]').forEach((el) => obsRevela.observe(el));
+}

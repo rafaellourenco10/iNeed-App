@@ -28,6 +28,14 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&display=swap">
   <link rel="stylesheet" href="styles.css">
   <script src="main.js" defer></script>
+  <script>
+    if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('anima');
+      addEventListener('load', () => setTimeout(() => {
+        if (!window.iNeedAnima) document.documentElement.classList.remove('anima');
+      }, 1000));
+    }
+  </script>
 </head>
 <body>
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -51,7 +59,7 @@
 
     <div class="hero">
       <div class="hero-texto">
-        <h1>Contrate com confiança quem vai entrar na sua casa.</h1>
+        <h1><span class="palavra"><span style="--i:0">Contrate</span></span> <span class="palavra"><span style="--i:1">com</span></span> <span class="palavra"><span style="--i:2">confiança</span></span> <span class="palavra"><span style="--i:3">quem</span></span> <span class="palavra"><span style="--i:4">vai</span></span> <span class="palavra"><span style="--i:5">entrar</span></span> <span class="palavra"><span style="--i:6">na</span></span> <span class="palavra"><span style="--i:7">sua</span></span> <span class="palavra"><span style="--i:8">casa.</span></span></h1>
         <p class="hero-sub">Encontre eletricista, encanador, pintor, diarista e outros prestadores, envie a proposta pelo app e veja quem teve documento e qualificação conferidos pela equipe iNeed.</p>
         <div class="acao">
           <a class="botao-baixar" href="https://github.com/rafaellourenco10/iNeed-App/releases/latest" data-apk>
@@ -90,16 +98,16 @@
   <main id="conteudo">
     <section class="secao" id="como-funciona" aria-labelledby="t-como">
       <div class="largura">
-        <h2 id="t-como">Uma conta, os dois lados do serviço</h2>
-        <p class="intro">Quem contrata e quem trabalha usam o mesmo app. Se você faz os dois, troca de perfil pelo menu sem sair da conta.</p>
+        <h2 id="t-como" data-revela>Uma conta, os dois lados do serviço</h2>
+        <p class="intro" data-revela>Quem contrata e quem trabalha usam o mesmo app. Se você faz os dois, troca de perfil pelo menu sem sair da conta.</p>
 
-        <div class="abas" role="tablist" aria-label="Como funciona para cada perfil">
+        <div class="abas" role="tablist" data-revela aria-label="Como funciona para cada perfil">
           <button role="tab" id="aba-cliente" aria-controls="painel-cliente" aria-selected="true">Sou cliente</button>
           <button role="tab" id="aba-prestador" aria-controls="painel-prestador" aria-selected="false" tabindex="-1">Sou prestador</button>
         </div>
 
         <div class="painel" id="painel-cliente" role="tabpanel" aria-labelledby="aba-cliente">
-          <ol class="passos">
+          <ol class="passos" data-revela="grupo">
             <li>
               <h3>Encontre o profissional</h3>
               <p>Filtre por especialidade e preço. Cada card mostra o valor por hora, a nota das avaliações e o selo de quem é verificado.</p>
@@ -122,14 +130,14 @@
               <p>Estrelas, elogios rápidos e um comentário. A avaliação vai para o perfil público e ajuda o próximo cliente a decidir.</p>
             </li>
           </ol>
-          <figure class="celular celular-lateral">
+          <figure class="celular celular-lateral" data-revela>
             <img src="img/telas/nova-proposta.webp" alt="Tela de nova proposta, com título, descrição, data, horário e endereço" loading="lazy" onerror="this.remove()">
             <figcaption class="tela-vazia">Print da tela<br><strong>Nova proposta</strong><code>img/telas/nova-proposta.webp</code></figcaption>
           </figure>
         </div>
 
         <div class="painel" id="painel-prestador" role="tabpanel" aria-labelledby="aba-prestador">
-          <ol class="passos">
+          <ol class="passos" data-revela="grupo">
             <li>
               <h3>Monte seu anúncio</h3>
               <p>Especialidade, valor por hora e uma bio curta. Trabalha com mais de uma coisa? Use a categoria Faz tudo.</p>
@@ -147,7 +155,7 @@
               <p>Cada serviço concluído pode virar uma avaliação real no seu perfil. Envie seus documentos e mostre o selo de verificado ao lado do nome.</p>
             </li>
           </ol>
-          <figure class="celular celular-lateral">
+          <figure class="celular celular-lateral" data-revela>
             <img src="img/telas/propostas-prestador.webp" alt="Tela de propostas recebidas pelo prestador, com botões de aceitar e recusar" loading="lazy" onerror="this.remove()">
             <figcaption class="tela-vazia">Print da tela<br><strong>Propostas do prestador</strong><code>img/telas/propostas-prestador.webp</code></figcaption>
           </figure>
@@ -157,8 +165,8 @@
 
     <section class="secao secao-categorias" aria-labelledby="t-cat">
       <div class="largura">
-        <h2 id="t-cat">Para o serviço que não dá para adiar</h2>
-        <ul class="fotos">
+        <h2 id="t-cat" data-revela>Para o serviço que não dá para adiar</h2>
+        <ul class="fotos" data-revela="grupo">
           <li>
             <video src="video/eletricista.mp4" poster="video/eletricista-poster.webp" width="960" height="540" muted loop playsinline preload="none" aria-label="Eletricista medindo a tensão de um quadro de disjuntores"></video>
             <span>Eletricista</span>
@@ -176,7 +184,7 @@
             <span>Faxina</span>
           </li>
         </ul>
-        <p class="tambem">Também tem
+        <p class="tambem" data-revela>Também tem
           <span class="chip">Beleza</span>
           <span class="chip">Jardinagem</span>
           <span class="chip">Montagem</span>
@@ -189,10 +197,10 @@
     <section class="secao secao-selo" id="selo" aria-labelledby="t-selo">
       <div class="largura selo-grade">
         <div class="selo-texto">
-          <h2 id="t-selo">O selo de verificado não é automático</h2>
-          <p class="intro">Uma pessoa da equipe iNeed confere os documentos de cada prestador antes de aprovar. Na dúvida, a resposta é não, sempre com o motivo.</p>
+          <h2 id="t-selo" data-revela>O selo de verificado não é automático</h2>
+          <p class="intro" data-revela>Uma pessoa da equipe iNeed confere os documentos de cada prestador antes de aprovar. Na dúvida, a resposta é não, sempre com o motivo.</p>
 
-          <dl class="etapas">
+          <dl class="etapas" data-revela="grupo">
             <div>
               <dt>O prestador envia</dt>
               <dd>Foto de um documento com foto (RG ou CNH) e de um comprovante de qualificação, como certificado, diploma ou registro profissional.</dd>
@@ -207,10 +215,10 @@
             </div>
           </dl>
 
-          <p class="selo-limite">O selo confirma identidade e qualificação. Ele não substitui combinar bem o serviço e avaliar no final. Os documentos só são vistos pela equipe de validação e são apagados se a conta for excluída.</p>
+          <p class="selo-limite" data-revela>O selo confirma identidade e qualificação. Ele não substitui combinar bem o serviço e avaliar no final. Os documentos só são vistos pela equipe de validação e são apagados se a conta for excluída.</p>
         </div>
 
-        <div class="selo-visual">
+        <div class="selo-visual" data-revela>
           <figure class="celular">
             <img src="img/telas/perfil-prestador.webp" alt="Perfil público de um prestador com o selo de verificado ao lado do nome" loading="lazy" onerror="this.remove()">
             <figcaption class="tela-vazia">Print da tela<br><strong>Perfil do prestador com selo</strong><code>img/telas/perfil-prestador.webp</code></figcaption>
@@ -232,7 +240,7 @@
 
     <section class="secao" id="instalar" aria-labelledby="t-instalar">
       <div class="largura instalar-grade">
-        <div class="download">
+        <div class="download" data-revela>
           <img src="img/icone-160.webp" width="72" height="72" alt="">
           <h2 id="t-instalar">Baixe e instale no Android</h2>
           <p class="download-info"><span class="selo-beta" data-apk-beta>Beta</span> <span data-apk-info></span></p>
@@ -244,8 +252,8 @@
         </div>
 
         <div class="instalar">
-          <p class="porque">O Android pede uma permissão extra para qualquer app que não vem da Play Store. É uma proteção do sistema, não um sinal de vírus. Por isso, baixe o iNeed só por este site.</p>
-          <ol class="passos passos-instalar">
+          <p class="porque" data-revela>O Android pede uma permissão extra para qualquer app que não vem da Play Store. É uma proteção do sistema, não um sinal de vírus. Por isso, baixe o iNeed só por este site.</p>
+          <ol class="passos passos-instalar" data-revela="grupo">
             <li>
               <h3>Baixe o arquivo</h3>
               <p>Toque em <strong>Baixar o APK</strong>. O <code>ineed.apk</code> vai para a pasta Downloads. Se o navegador perguntar, confirme o download.</p>
@@ -268,7 +276,7 @@
     </section>
 
     <section class="secao secao-faq" aria-labelledby="t-faq">
-      <div class="largura faq">
+      <div class="largura faq" data-revela="grupo">
         <h2 id="t-faq">Perguntas frequentes</h2>
         <details>
           <summary>O iNeed é grátis?</summary>

@@ -558,7 +558,38 @@ a:hover { text-decoration-thickness: 2px; }
   .equipe { grid-template-columns: 1fr 1fr; column-gap: 32px; }
 }
 
+/* ───────── Entrada e revelação ─────────
+   Só valem com a classe .anima (posta no <head> quando há IntersectionObserver
+   e o usuário não pediu movimento reduzido). Sem ela, tudo aparece parado. */
+
+:root { --sair: cubic-bezier(0.16, 1, 0.3, 1); }
+
+@keyframes subir { from { opacity: 0; translate: 0 28px; } }
+@keyframes surgir { from { opacity: 0; } }
+@keyframes palavra { from { translate: 0 105%; } }
+@keyframes card { from { opacity: 0; translate: 0 32px; scale: 0.94; } }
+@keyframes cutucar { 0%, 100% { translate: 0 0; } 30% { translate: 0 4px; } 60% { translate: 0 -1px; } }
+
+.palavra { display: inline-block; overflow: clip; padding-bottom: 0.12em; margin-bottom: -0.12em; vertical-align: top; }
+.palavra > span { display: inline-block; }
+
+.anima .topo-barra { animation: surgir 600ms ease-out both; }
+.anima .palavra > span { animation: palavra 900ms var(--sair) both; animation-delay: calc(80ms + var(--i) * 55ms); }
+.anima .hero-sub { animation: subir 800ms var(--sair) 520ms both; }
+.anima .acao { animation: subir 800ms var(--sair) 640ms both; }
+.anima .hero-visual .celular { animation: subir 1100ms var(--sair) 380ms both; }
+.anima .card-prestador { animation: card 900ms var(--sair) 1000ms both; }
+.anima .hero .botao-baixar svg { animation: cutucar 700ms ease-in-out 1700ms 2; }
+
+.anima [data-revela]:not([data-revela="grupo"]),
+.anima [data-revela="grupo"] > * {
+  transition: opacity 700ms ease-out, translate 900ms var(--sair);
+  transition-delay: var(--atraso, 0ms);
+}
+.anima [data-revela]:not([data-revela="grupo"]):not(.visivel),
+.anima [data-revela="grupo"]:not(.visivel) > * { opacity: 0; translate: 0 32px; }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { transition-duration: 0.01ms !important; transition-delay: 0ms !important; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; transition-delay: 0ms !important; animation: none !important; }
 }
