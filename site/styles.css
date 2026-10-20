@@ -550,8 +550,8 @@ a:hover { text-decoration-thickness: 2px; }
   .card-prestador { left: 0; bottom: 96px; transform: none; }
   .secao { padding: 104px 0; }
 
-  .painel { grid-template-columns: 1fr 1fr; align-items: start; gap: 64px; }
-  .celular-lateral { width: clamp(270px, 18vw, 360px); position: sticky; top: 32px; }
+  .painel { grid-template-columns: 1fr 1fr; align-items: center; gap: 64px; }
+  .celular-lateral { width: clamp(270px, 18vw, 360px); }
 
   .fotos { gap: 16px; }
 
