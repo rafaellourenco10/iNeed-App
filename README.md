@@ -1,12 +1,6 @@
 # iNeed
 
 <p align="center">
-  <a href="https://ineed-app.netlify.app">
-    <img src="site/og.jpg" alt="iNeed: contrate com confiança quem vai entrar na sua casa. Clique para acessar o site" width="720">
-  </a>
-</p>
-
-<p align="center">
   <a href="https://ineed-app.netlify.app"><img src="https://img.shields.io/badge/%F0%9F%8C%90%20ACESSAR%20O%20SITE-ineed--app.netlify.app-00288E?style=for-the-badge" alt="Acessar o site: ineed-app.netlify.app" height="40"></a>
   &nbsp;
   <a href="https://github.com/rafaellourenco10/iNeed-App/releases/latest/download/ineed.apk"><img src="https://img.shields.io/badge/%F0%9F%93%B2%20BAIXAR%20O%20APK-Android%20%C2%B7%20v0.5.0%20Beta-FD761A?style=for-the-badge" alt="Baixar o APK para Android, v0.5.0 Beta" height="40"></a>
