@@ -147,6 +147,7 @@ a:hover { text-decoration-thickness: 2px; }
   width: 100%; max-width: 1160px; margin-inline: auto;
   padding: 20px var(--gutter) 0;
   display: grid; gap: 40px;
+  align-content: center; /* sobra de altura vai para fora, não entre texto e celular */
 }
 
 .hero h1 {
@@ -206,7 +207,6 @@ a:hover { text-decoration-thickness: 2px; }
 .celular {
   position: relative;
   width: min(280px, 72vw);
-  aspect-ratio: 9 / 19.5;
   border-radius: 40px;
   padding: 9px;
   background: #0B1C30;
@@ -220,7 +220,7 @@ a:hover { text-decoration-thickness: 2px; }
   z-index: 1;
 }
 .tela-vazia {
-  height: 100%;
+  aspect-ratio: 738 / 1440;
   border-radius: 31px;
   display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px;
   padding: 34% 24px 24px; text-align: center;
@@ -236,7 +236,7 @@ a:hover { text-decoration-thickness: 2px; }
 .hero-visual {
   position: relative;
   display: flex; justify-content: center; align-items: flex-start;
-  height: 470px; /* o celular é cortado pela base do campo azul */
+  padding-bottom: 40px;
 }
 
 .card-prestador {
@@ -414,11 +414,11 @@ a:hover { text-decoration-thickness: 2px; }
   max-width: 60ch;
 }
 
-.selo-visual { position: relative; display: flex; justify-content: center; padding-bottom: 8px; }
+.selo-visual { position: relative; display: flex; justify-content: center; padding-bottom: 150px; } /* checklist cobre só a base do print */
 
 .checklist {
   position: absolute;
-  left: 50%; bottom: 40px;
+  left: 50%; bottom: 0;
   transform: translateX(-50%);
   width: min(320px, calc(100vw - 2 * var(--gutter)));
   z-index: 2;
@@ -542,7 +542,7 @@ a:hover { text-decoration-thickness: 2px; }
     padding-top: 24px;
   }
   .hero-texto { padding-bottom: 64px; }
-  .hero-visual { height: 600px; align-self: end; }
+  .hero-visual { padding-block: 24px 48px; }
   .celular { width: 300px; }
   .card-prestador { left: 0; bottom: 96px; transform: none; }
   .secao { padding: 104px 0; }
@@ -553,7 +553,7 @@ a:hover { text-decoration-thickness: 2px; }
   .fotos { gap: 16px; }
 
   .selo-grade { grid-template-columns: 1fr auto; align-items: center; gap: 72px; }
-  .selo-visual { padding-right: 120px; }
+  .selo-visual { padding: 0 120px 8px 0; }
   .checklist { left: auto; right: 0; bottom: 64px; transform: none; }
 
   .instalar-grade { grid-template-columns: 380px 1fr; align-items: start; gap: 72px; }
