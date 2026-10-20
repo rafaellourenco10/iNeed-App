@@ -49,3 +49,17 @@ if (checklist && 'IntersectionObserver' in window && !semMovimento) {
   }, { threshold: 0.6 });
   obs.observe(checklist);
 }
+
+// ─── Vídeos das categorias: tocam só quando aparecem na tela ───
+// Com movimento reduzido ficam no poster; sem JS também.
+const videos = document.querySelectorAll('.fotos video');
+
+if (videos.length && 'IntersectionObserver' in window && !semMovimento) {
+  const obsVideo = new IntersectionObserver((entradas) => {
+    entradas.forEach(({ target, isIntersecting }) => {
+      if (isIntersecting) target.play().catch(() => {});
+      else target.pause();
+    });
+  }, { threshold: 0.4 });
+  videos.forEach((v) => obsVideo.observe(v));
+}
