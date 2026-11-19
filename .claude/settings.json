@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pkill -f \"node src/servidor.js\")",
+      "Bash(curl -s -m 2 http://localhost:3000/api/saude)",
+      "PowerShell($conn = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($conn\\) { $conn | ForEach-Object { Write-Output \"Killing PID $\\($_.OwningProcess\\)\"; Stop-Process -Id $_.OwningProcess -Force } } else { Write-Output \"Nada escutando na porta 3000\" })",
+      "Bash(curl -s -m 3 http://localhost:3000/api/saude)",
+      "Bash(git commit -m ' *)",
+      "Bash(node -e \"const fs=require\\('fs'\\); const t=fs.readFileSync\\('c:/Projetos/iNeed-App/src/lib/telas/autenticacao/tela_cadastro.dart','utf8'\\); console.log\\('CRLF count:', \\(t.match\\(/\\\\r\\\\n/g\\)||[]\\).length\\); console.log\\('LF count:', \\(t.match\\(/\\\\n/g\\)||[]\\).length\\);\")",
+      "Bash(node remover_const.js /tmp/erros_const.txt)",
+      "Bash(grep -i \"^web$\\\\|^windows$\")",
+      "Bash(NODE_PATH=\"/c/Projetos/iNeed-App/backend/node_modules\" node checar_contas.js)",
+      "PowerShell($conn = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($conn\\) { $conn | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }; Write-Output \"Encerrado.\" } else { Write-Output \"Nada rodando na 3000.\" })",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://ineed-app-9lzp.onrender.com/api/auth/meu-perfil)",
+      "Bash(curl -s https://ineed-app-9lzp.onrender.com/api/auth/meu-perfil -H \"Authorization: Bearer token.invalido.de.propósito\")",
+      "Bash(NODE_PATH=\"/c/Projetos/iNeed-App/backend/node_modules\" node checar_contas2.js)",
+      "Bash(NODE_PATH=\"/c/Projetos/iNeed-App/backend/node_modules\" node investigar_vinicius2.js)",
+      "Bash(NODE_PATH=\"/c/Projetos/iNeed-App/backend/node_modules\" node excluir_vinicius2.js)",
+      "Bash(adb version *)",
+      "PowerShell(Get-PnpDevice | Where-Object { $_.Class -eq 'USB' -or $_.FriendlyName -match 'Android|ADB|Phone|Composite' } | Select-Object FriendlyName, Status, Class | Format-Table -AutoSize)"
+    ],
+    "additionalDirectories": [
+      "C:\\Projetos\\ineed_obsidian"
+    ]
+  }
+}

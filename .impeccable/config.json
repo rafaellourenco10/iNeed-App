@@ -1,0 +1,71 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "backend/public/admin.html"
+        ],
+        "createdAt": "2026-10-20T14:19:39.579Z",
+        "reason": "Claude: #imagem é o visualizador de documentos; fica hidden e recebe src (data URL) via JS ao abrir um envio"
+      },
+      {
+        "rule": "overused-font",
+        "value": "primary font: inter",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-10-20T14:20:45.327Z",
+        "reason": "user confirmed: o briefing do usuário fixou Inter, a mesma fonte do app"
+      },
+      {
+        "rule": "dark-glow",
+        "value": "*",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-10-20T14:21:01.185Z",
+        "reason": "Claude: casos revisados nesta sessão (sombras de elevação com offset, recuo no .largura, listras só no espaço do print, h2 pequeno é o rótulo do rodapé)"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-10-20T14:21:01.446Z",
+        "reason": "Claude: casos revisados nesta sessão (sombras de elevação com offset, recuo no .largura, listras só no espaço do print, h2 pequeno é o rótulo do rodapé)"
+      },
+      {
+        "rule": "repeating-stripes-gradient",
+        "value": "*",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-10-20T14:21:01.706Z",
+        "reason": "Claude: casos revisados nesta sessão (sombras de elevação com offset, recuo no .largura, listras só no espaço do print, h2 pequeno é o rótulo do rodapé)"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-10-20T14:21:01.964Z",
+        "reason": "Claude: casos revisados nesta sessão (sombras de elevação com offset, recuo no .largura, listras só no espaço do print, h2 pequeno é o rótulo do rodapé)"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-10-20T14:24:15.696Z",
+        "reason": "user confirmed: o briefing do usuário fixou Inter, a mesma fonte do app"
+      }
+    ]
+  }
+}

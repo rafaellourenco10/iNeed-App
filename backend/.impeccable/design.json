@@ -1,0 +1,527 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-30T18:38:57.039Z",
+  "title": "Design System: iNeed Verificações",
+  "extensions": {
+    "colorMeta": {
+      "azul": {
+        "role": "primary",
+        "displayName": "Azul iNeed Profundo",
+        "canonical": "#00288E",
+        "tonalRamp": [
+          "oklch(15% 0.140 263.1)",
+          "oklch(26% 0.140 263.1)",
+          "oklch(37% 0.140 263.1)",
+          "oklch(48% 0.140 263.1)",
+          "oklch(59% 0.140 263.1)",
+          "oklch(70% 0.140 263.1)",
+          "oklch(82% 0.140 263.1)",
+          "oklch(95% 0.030 263.1)"
+        ]
+      },
+      "azul-hover": {
+        "role": "primary",
+        "displayName": "Azul Aceso",
+        "canonical": "#0a36b0",
+        "tonalRamp": [
+          "oklch(15% 0.140 263.9)",
+          "oklch(26% 0.140 263.9)",
+          "oklch(37% 0.140 263.9)",
+          "oklch(48% 0.140 263.9)",
+          "oklch(59% 0.140 263.9)",
+          "oklch(70% 0.140 263.9)",
+          "oklch(82% 0.140 263.9)",
+          "oklch(95% 0.030 263.9)"
+        ]
+      },
+      "azul-suave": {
+        "role": "primary",
+        "displayName": "Névoa Azul",
+        "canonical": "#e8edfa",
+        "tonalRamp": [
+          "oklch(15% 0.018 269.1)",
+          "oklch(26% 0.018 269.1)",
+          "oklch(37% 0.018 269.1)",
+          "oklch(48% 0.018 269.1)",
+          "oklch(59% 0.018 269.1)",
+          "oklch(70% 0.018 269.1)",
+          "oklch(82% 0.018 269.1)",
+          "oklch(95% 0.018 269.1)"
+        ]
+      },
+      "fundo": {
+        "role": "neutral",
+        "displayName": "Cinza Gelo",
+        "canonical": "#f3f4f7",
+        "tonalRamp": [
+          "oklch(15% 0.004 271.4)",
+          "oklch(26% 0.004 271.4)",
+          "oklch(37% 0.004 271.4)",
+          "oklch(48% 0.004 271.4)",
+          "oklch(59% 0.004 271.4)",
+          "oklch(70% 0.004 271.4)",
+          "oklch(82% 0.004 271.4)",
+          "oklch(95% 0.004 271.4)"
+        ]
+      },
+      "painel": {
+        "role": "neutral",
+        "displayName": "Branco de Trabalho",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(59% 0.000 89.9)",
+          "oklch(70% 0.000 89.9)",
+          "oklch(82% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "painel-2": {
+        "role": "neutral",
+        "displayName": "Branco Enevoado",
+        "canonical": "#f8f9fb",
+        "tonalRamp": [
+          "oklch(15% 0.003 264.5)",
+          "oklch(26% 0.003 264.5)",
+          "oklch(37% 0.003 264.5)",
+          "oklch(48% 0.003 264.5)",
+          "oklch(59% 0.003 264.5)",
+          "oklch(70% 0.003 264.5)",
+          "oklch(82% 0.003 264.5)",
+          "oklch(95% 0.003 264.5)"
+        ]
+      },
+      "linha": {
+        "role": "neutral",
+        "displayName": "Filete",
+        "canonical": "#e3e5eb",
+        "tonalRamp": [
+          "oklch(15% 0.008 271.3)",
+          "oklch(26% 0.008 271.3)",
+          "oklch(37% 0.008 271.3)",
+          "oklch(48% 0.008 271.3)",
+          "oklch(59% 0.008 271.3)",
+          "oklch(70% 0.008 271.3)",
+          "oklch(82% 0.008 271.3)",
+          "oklch(95% 0.008 271.3)"
+        ]
+      },
+      "linha-forte": {
+        "role": "neutral",
+        "displayName": "Filete Firme",
+        "canonical": "#cfd3dc",
+        "tonalRamp": [
+          "oklch(15% 0.013 266.7)",
+          "oklch(26% 0.013 266.7)",
+          "oklch(37% 0.013 266.7)",
+          "oklch(48% 0.013 266.7)",
+          "oklch(59% 0.013 266.7)",
+          "oklch(70% 0.013 266.7)",
+          "oklch(82% 0.013 266.7)",
+          "oklch(95% 0.013 266.7)"
+        ]
+      },
+      "texto": {
+        "role": "neutral",
+        "displayName": "Tinta Grafite",
+        "canonical": "#151821",
+        "tonalRamp": [
+          "oklch(15% 0.018 270.4)",
+          "oklch(26% 0.018 270.4)",
+          "oklch(37% 0.018 270.4)",
+          "oklch(48% 0.018 270.4)",
+          "oklch(59% 0.018 270.4)",
+          "oklch(70% 0.018 270.4)",
+          "oklch(82% 0.018 270.4)",
+          "oklch(95% 0.018 270.4)"
+        ]
+      },
+      "texto-2": {
+        "role": "neutral",
+        "displayName": "Ardósia",
+        "canonical": "#505767",
+        "tonalRamp": [
+          "oklch(15% 0.028 266.6)",
+          "oklch(26% 0.028 266.6)",
+          "oklch(37% 0.028 266.6)",
+          "oklch(48% 0.028 266.6)",
+          "oklch(59% 0.028 266.6)",
+          "oklch(70% 0.028 266.6)",
+          "oklch(82% 0.028 266.6)",
+          "oklch(95% 0.028 266.6)"
+        ]
+      },
+      "texto-3": {
+        "role": "neutral",
+        "displayName": "Ardósia Clara",
+        "canonical": "#5f6676",
+        "tonalRamp": [
+          "oklch(15% 0.027 266.7)",
+          "oklch(26% 0.027 266.7)",
+          "oklch(37% 0.027 266.7)",
+          "oklch(48% 0.027 266.7)",
+          "oklch(59% 0.027 266.7)",
+          "oklch(70% 0.027 266.7)",
+          "oklch(82% 0.027 266.7)",
+          "oklch(95% 0.027 266.7)"
+        ]
+      },
+      "lona": {
+        "role": "neutral",
+        "displayName": "Lona Grafite",
+        "canonical": "#1d2027",
+        "tonalRamp": [
+          "oklch(15% 0.014 267.0)",
+          "oklch(26% 0.014 267.0)",
+          "oklch(37% 0.014 267.0)",
+          "oklch(48% 0.014 267.0)",
+          "oklch(59% 0.014 267.0)",
+          "oklch(70% 0.014 267.0)",
+          "oklch(82% 0.014 267.0)",
+          "oklch(95% 0.014 267.0)"
+        ]
+      },
+      "lona-2": {
+        "role": "neutral",
+        "displayName": "Lona Elevada",
+        "canonical": "#2a2e37",
+        "tonalRamp": [
+          "oklch(15% 0.017 266.4)",
+          "oklch(26% 0.017 266.4)",
+          "oklch(37% 0.017 266.4)",
+          "oklch(48% 0.017 266.4)",
+          "oklch(59% 0.017 266.4)",
+          "oklch(70% 0.017 266.4)",
+          "oklch(82% 0.017 266.4)",
+          "oklch(95% 0.017 266.4)"
+        ]
+      },
+      "lona-linha": {
+        "role": "neutral",
+        "displayName": "Borda de Lona",
+        "canonical": "#3a3f4a",
+        "tonalRamp": [
+          "oklch(15% 0.020 266.0)",
+          "oklch(26% 0.020 266.0)",
+          "oklch(37% 0.020 266.0)",
+          "oklch(48% 0.020 266.0)",
+          "oklch(59% 0.020 266.0)",
+          "oklch(70% 0.020 266.0)",
+          "oklch(82% 0.020 266.0)",
+          "oklch(95% 0.020 266.0)"
+        ]
+      },
+      "lona-texto": {
+        "role": "neutral",
+        "displayName": "Giz",
+        "canonical": "#c5c9d3",
+        "tonalRamp": [
+          "oklch(15% 0.015 268.5)",
+          "oklch(26% 0.015 268.5)",
+          "oklch(37% 0.015 268.5)",
+          "oklch(48% 0.015 268.5)",
+          "oklch(59% 0.015 268.5)",
+          "oklch(70% 0.015 268.5)",
+          "oklch(82% 0.015 268.5)",
+          "oklch(95% 0.015 268.5)"
+        ]
+      },
+      "pendente": {
+        "role": "semantic",
+        "displayName": "Âmbar Pendente",
+        "canonical": "#b45309",
+        "tonalRamp": [
+          "oklch(15% 0.140 49.0)",
+          "oklch(26% 0.140 49.0)",
+          "oklch(37% 0.140 49.0)",
+          "oklch(48% 0.140 49.0)",
+          "oklch(59% 0.140 49.0)",
+          "oklch(70% 0.140 49.0)",
+          "oklch(82% 0.140 49.0)",
+          "oklch(95% 0.030 49.0)"
+        ]
+      },
+      "pendente-bg": {
+        "role": "semantic",
+        "displayName": "Âmbar Lavado",
+        "canonical": "#fdf3e2",
+        "tonalRamp": [
+          "oklch(15% 0.025 81.1)",
+          "oklch(26% 0.025 81.1)",
+          "oklch(37% 0.025 81.1)",
+          "oklch(48% 0.025 81.1)",
+          "oklch(59% 0.025 81.1)",
+          "oklch(70% 0.025 81.1)",
+          "oklch(82% 0.025 81.1)",
+          "oklch(95% 0.025 81.1)"
+        ]
+      },
+      "ok": {
+        "role": "semantic",
+        "displayName": "Verde Aprovado",
+        "canonical": "#15803d",
+        "tonalRamp": [
+          "oklch(15% 0.137 150.1)",
+          "oklch(26% 0.137 150.1)",
+          "oklch(37% 0.137 150.1)",
+          "oklch(48% 0.137 150.1)",
+          "oklch(59% 0.137 150.1)",
+          "oklch(70% 0.137 150.1)",
+          "oklch(82% 0.137 150.1)",
+          "oklch(95% 0.030 150.1)"
+        ]
+      },
+      "ok-bg": {
+        "role": "semantic",
+        "displayName": "Verde Lavado",
+        "canonical": "#e5f5ea",
+        "tonalRamp": [
+          "oklch(15% 0.022 155.9)",
+          "oklch(26% 0.022 155.9)",
+          "oklch(37% 0.022 155.9)",
+          "oklch(48% 0.022 155.9)",
+          "oklch(59% 0.022 155.9)",
+          "oklch(70% 0.022 155.9)",
+          "oklch(82% 0.022 155.9)",
+          "oklch(95% 0.022 155.9)"
+        ]
+      },
+      "erro": {
+        "role": "semantic",
+        "displayName": "Vermelho Recusado",
+        "canonical": "#c0262d",
+        "tonalRamp": [
+          "oklch(15% 0.140 24.7)",
+          "oklch(26% 0.140 24.7)",
+          "oklch(37% 0.140 24.7)",
+          "oklch(48% 0.140 24.7)",
+          "oklch(59% 0.140 24.7)",
+          "oklch(70% 0.140 24.7)",
+          "oklch(82% 0.140 24.7)",
+          "oklch(95% 0.030 24.7)"
+        ]
+      },
+      "erro-bg": {
+        "role": "semantic",
+        "displayName": "Vermelho Lavado",
+        "canonical": "#fbe9ea",
+        "tonalRamp": [
+          "oklch(15% 0.020 13.6)",
+          "oklch(26% 0.020 13.6)",
+          "oklch(37% 0.020 13.6)",
+          "oklch(48% 0.020 13.6)",
+          "oklch(59% 0.020 13.6)",
+          "oklch(70% 0.020 13.6)",
+          "oklch(82% 0.020 13.6)",
+          "oklch(95% 0.020 13.6)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Título do login."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Nome do prestador no painel de decisão; título de estado vazio."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto base, numerais tabulares."
+      },
+      "body-sm": {
+        "displayName": "Body pequeno",
+        "purpose": "Dados do cadastro, checklist, toasts, alertas."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Selos, chips, metadados e dicas."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "E-mail/ID copiável."
+      }
+    },
+    "shadows": [
+      {
+        "name": "cartao",
+        "value": "0 1px 2px rgba(16,24,40,.06), 0 4px 12px rgba(16,24,40,.06)",
+        "purpose": "Cartão de login."
+      },
+      {
+        "name": "aba-ativa",
+        "value": "0 1px 2px rgba(16,24,40,.1)",
+        "purpose": "Aba selecionada no trilho segmentado."
+      },
+      {
+        "name": "documento-na-lona",
+        "value": "0 12px 40px rgba(0,0,0,.45)",
+        "purpose": "Imagem do documento sobre o visor grafite."
+      },
+      {
+        "name": "toast",
+        "value": "0 8px 24px rgba(16,24,40,.25)",
+        "purpose": "Notificação flutuante."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ui",
+        "value": "150ms",
+        "purpose": "Hover e troca de cor de controles (120ms em linhas e chips)."
+      },
+      {
+        "name": "ease-visor",
+        "value": "cubic-bezier(.2, .8, .2, 1)",
+        "purpose": "Zoom/rotação da imagem (180ms) e entrada do toast (200ms)."
+      },
+      {
+        "name": "reduced-motion",
+        "value": ".01ms",
+        "purpose": "Sob prefers-reduced-motion, animações e transições são zeradas."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compacto",
+        "value": "1240px"
+      },
+      {
+        "name": "coluna-unica",
+        "value": "960px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão primário",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Aprovar/Entrar; desabilitado até o checklist completo.",
+      "html": "<button class=\"ds-btn ds-btn-primario\">Aprovar</button> <button class=\"ds-btn ds-btn-primario\" disabled>Aprovar</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:8px;border:1px solid transparent;font:600 14px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s}.ds-btn:focus-visible{outline:2px solid #00288E;outline-offset:2px}.ds-btn:disabled{opacity:.45;cursor:not-allowed}.ds-btn-primario{background:#00288E;color:#fff}.ds-btn-primario:hover:not(:disabled){background:#0a36b0}"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ações neutras (Sair, Cancelar).",
+      "html": "<button class=\"ds-btn ds-btn-sec\">Sair</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:8px;border:1px solid transparent;font:600 14px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s}.ds-btn:focus-visible{outline:2px solid #00288E;outline-offset:2px}.ds-btn:disabled{opacity:.45;cursor:not-allowed}.ds-btn-sec{background:#fff;border-color:#cfd3dc;color:#151821}.ds-btn-sec:hover:not(:disabled){background:#f8f9fb;border-color:#b9bfcb}"
+    },
+    {
+      "name": "Botões de recusa",
+      "kind": "button",
+      "refersTo": "button-danger-secondary",
+      "description": "Contorno vermelho abre a recusa; cheio confirma.",
+      "html": "<button class=\"ds-btn ds-btn-perigo-sec\">Recusar</button> <button class=\"ds-btn ds-btn-perigo\">Confirmar recusa</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:36px;padding:0 14px;border-radius:8px;border:1px solid transparent;font:600 14px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s}.ds-btn:focus-visible{outline:2px solid #00288E;outline-offset:2px}.ds-btn:disabled{opacity:.45;cursor:not-allowed}.ds-btn-perigo-sec{background:#fff;border-color:#eab8bb;color:#c0262d}.ds-btn-perigo-sec:hover{background:#fbe9ea}.ds-btn-perigo{background:#c0262d;color:#fff}.ds-btn-perigo:hover{background:#a51f25}"
+    },
+    {
+      "name": "Campo de texto",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Borda firme e halo azul no foco.",
+      "html": "<label class=\"ds-campo\"><span>E-mail</span><input type=\"email\" placeholder=\"validador@ineed.com\"></label>",
+      "css": ".ds-campo{display:block;width:320px;font:14px/1.45 ui-sans-serif,system-ui,sans-serif;color:#151821}.ds-campo span{display:block;font-weight:600;font-size:13px;margin-bottom:6px}.ds-campo input{width:100%;box-sizing:border-box;height:40px;padding:0 12px;border:1px solid #cfd3dc;border-radius:8px;background:#fff;font:inherit;transition:border-color .15s,box-shadow .15s}.ds-campo input:focus{outline:none;border-color:#00288E;box-shadow:0 0 0 3px #e8edfa}"
+    },
+    {
+      "name": "Abas da fila",
+      "kind": "nav",
+      "refersTo": "queue-tab-selected",
+      "description": "Trilho segmentado com contadores; pendentes em âmbar.",
+      "html": "<div class=\"ds-abas\"><button class=\"ds-aba\" aria-selected=\"true\">Pendentes <span class=\"ds-n ds-tem\">3</span></button><button class=\"ds-aba\">Aprovados <span class=\"ds-n\">12</span></button><button class=\"ds-aba\">Recusados <span class=\"ds-n\">2</span></button></div>",
+      "css": ".ds-abas{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:3px;background:#f3f4f7;border-radius:8px;width:320px;font:600 12.5px ui-sans-serif,system-ui,sans-serif;font-variant-numeric:tabular-nums}.ds-aba{border:0;background:transparent;height:30px;border-radius:6px;font:inherit;color:#505767;display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:background-color .15s,color .15s}.ds-aba:hover{color:#151821}.ds-aba:focus-visible{outline:2px solid #00288E;outline-offset:2px}.ds-aba[aria-selected=\"true\"]{background:#fff;color:#151821;box-shadow:0 1px 2px rgba(16,24,40,.1)}.ds-n{font-size:11px;font-weight:700;padding:1px 5px;border-radius:99px;background:#e3e5eb;color:#505767}.ds-tem{background:#fdf3e2;color:#b45309}"
+    },
+    {
+      "name": "Item da fila",
+      "kind": "custom",
+      "refersTo": "queue-item-selected",
+      "description": "Linha com avatar de iniciais; selecionada em névoa azul.",
+      "html": "<button class=\"ds-item\" aria-current=\"true\"><span class=\"ds-av\">MS</span><span><b>Maria Souza</b><small>Eletricista</small></span><time>2 h</time></button><button class=\"ds-item\"><span class=\"ds-av\">JP</span><span><b>João Pereira</b><small>Encanador</small></span><time>1 d</time></button>",
+      "css": ".ds-item{width:320px;display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;text-align:left;padding:10px;border:0;border-radius:8px;background:transparent;font:14px/1.45 ui-sans-serif,system-ui,sans-serif;color:#151821;cursor:pointer;transition:background-color .12s}.ds-item:hover{background:#f8f9fb}.ds-item:focus-visible{outline:2px solid #00288E;outline-offset:2px}.ds-item b{display:block;font-weight:600}.ds-item small,.ds-item time{display:block;font-size:12px;color:#5f6676}.ds-item time{align-self:start}.ds-av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:#e6e9f0;color:#505767}.ds-item[aria-current=\"true\"]{background:#e8edfa}.ds-item[aria-current=\"true\"] b{color:#00288E}.ds-item[aria-current=\"true\"] .ds-av{background:#00288E;color:#fff}"
+    },
+    {
+      "name": "Selos de status",
+      "kind": "chip",
+      "refersTo": "status-badge-pendente",
+      "description": "Par semântico com ponto.",
+      "html": "<span class=\"ds-selo ds-pend\">Pendente</span> <span class=\"ds-selo ds-apr\">Aprovado</span> <span class=\"ds-selo ds-rec\">Recusado</span>",
+      "css": ".ds-selo{display:inline-flex;align-items:center;gap:5px;font:600 12px ui-sans-serif,system-ui,sans-serif;padding:2px 8px;border-radius:99px}.ds-selo::before{content:\"\";width:6px;height:6px;border-radius:50%;background:currentColor}.ds-pend{background:#fdf3e2;color:#b45309}.ds-apr{background:#e5f5ea;color:#15803d}.ds-rec{background:#fbe9ea;color:#c0262d}"
+    },
+    {
+      "name": "Chip de motivo",
+      "kind": "chip",
+      "refersTo": "reason-chip",
+      "description": "Motivo de recusa; selecionado vira par vermelho.",
+      "html": "<button class=\"ds-motivo\" aria-pressed=\"true\">Foto ilegível ou cortada</button> <button class=\"ds-motivo\">Nome não confere</button>",
+      "css": ".ds-motivo{height:30px;padding:0 11px;border-radius:99px;border:1px solid #cfd3dc;background:#fff;font:600 12px ui-sans-serif,system-ui,sans-serif;color:#505767;cursor:pointer;transition:background-color .12s,border-color .12s,color .12s}.ds-motivo:hover{border-color:#b9bfcb;color:#151821}.ds-motivo:focus-visible{outline:2px solid #00288E;outline-offset:2px}.ds-motivo[aria-pressed=\"true\"]{background:#fbe9ea;border-color:#eab8bb;color:#c0262d}"
+    },
+    {
+      "name": "Checklist",
+      "kind": "card",
+      "refersTo": "checklist",
+      "description": "Verificações obrigatórias; item marcado fica verde.",
+      "html": "<ul class=\"ds-check\"><li><label><input type=\"checkbox\" checked><div><b>Nome confere com o cadastro</b><span>O nome no RG/CNH é o mesmo do perfil.</span></div></label></li><li><label><input type=\"checkbox\"><div><b>Documento legível e válido</b><span>Foto nítida, documento inteiro.</span></div></label></li></ul>",
+      "css": ".ds-check{list-style:none;margin:0;padding:0;width:320px;border:1px solid #e3e5eb;border-radius:8px;overflow:hidden;font:13px/1.45 ui-sans-serif,system-ui,sans-serif;color:#151821}.ds-check li+li{border-top:1px solid #e3e5eb}.ds-check label{display:flex;gap:10px;padding:11px 12px;cursor:pointer;transition:background-color .12s}.ds-check label:hover{background:#f8f9fb}.ds-check input{width:16px;height:16px;margin:2px 0 0;accent-color:#15803d}.ds-check input:focus-visible{outline:2px solid #00288E;outline-offset:2px}.ds-check b{display:block;font-weight:600}.ds-check span{display:block;font-size:12px;color:#5f6676}.ds-check input:checked+div b{color:#15803d}"
+    },
+    {
+      "name": "Visor",
+      "kind": "custom",
+      "refersTo": "doc-tab-selected",
+      "description": "Lona grafite com abas de documento, barra de ferramentas e o documento em destaque.",
+      "html": "<div class=\"ds-visor\"><div class=\"ds-vtopo\"><button class=\"ds-doc\" aria-selected=\"true\">Documento</button><button class=\"ds-doc\">Comprovante</button><span class=\"ds-f\"><button aria-label=\"Diminuir zoom\"><svg viewBox=\"0 0 24 24\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m20 20-3.5-3.5M8 11h6\"/></svg></button><button aria-label=\"Aumentar zoom\"><svg viewBox=\"0 0 24 24\"><circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m20 20-3.5-3.5M11 8v6M8 11h6\"/></svg></button><button aria-label=\"Girar\"><svg viewBox=\"0 0 24 24\"><path d=\"M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/></svg></button></span></div><div class=\"ds-palco\"><div class=\"ds-folha\"></div></div></div>",
+      "css": ".ds-visor{width:480px;background:#1d2027;border-radius:8px;overflow:hidden;font:600 13px ui-sans-serif,system-ui,sans-serif}.ds-vtopo{display:flex;align-items:center;gap:6px;padding:10px 12px;border-bottom:1px solid #2f333d}.ds-doc{height:32px;padding:0 12px;border-radius:8px;border:1px solid #3a3f4a;background:transparent;color:#c5c9d3;font:inherit;cursor:pointer;transition:background-color .15s,border-color .15s,color .15s}.ds-doc:hover{background:#2a2e37;color:#fff}.ds-doc[aria-selected=\"true\"]{background:#fff;border-color:#fff;color:#151821}.ds-doc:focus-visible,.ds-f button:focus-visible{outline:2px solid #00288E;outline-offset:2px}.ds-f{margin-left:auto;display:flex;gap:2px;padding:2px;border-radius:8px;background:#2a2e37}.ds-f button{width:32px;height:32px;border:0;border-radius:6px;background:transparent;color:#c5c9d3;display:grid;place-items:center;cursor:pointer}.ds-f button:hover{background:#3a3f4a;color:#fff}.ds-f svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ds-palco{height:200px;display:grid;place-items:center}.ds-folha{width:220px;height:140px;background:#e8eaf0;border-radius:4px;box-shadow:0 12px 40px rgba(0,0,0,.45)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Mesa de Luz",
+    "overview": "Uma bancada de conferência: moldura clara e silenciosa em cinza frio, e no centro uma lona grafite onde o documento repousa como num negatoscópio. O documento é o protagonista; a decisão fica ao lado, nunca em cima. Segue o cânone das ferramentas de revisão KYC (Sumsub / Onfido), sem reinvenção.\n\nA densidade é de ferramenta de trabalho: texto base de 14px, controles de 30 a 40px, filetes de 1px no lugar de sombras, números tabulares em tudo. O azul iNeed aparece só onde há ação primária ou seleção; o resto da cor é semântico (âmbar pendente, verde aprovado, vermelho recusado).",
+    "keyCharacteristics": [
+      "Três colunas fixas: fila, visor, decisão.",
+      "Moldura clara, visor escuro.",
+      "Azul restrito a ação primária e seleção.",
+      "Filetes de 1px e raio de 8px como gramática de forma.",
+      "Fonte do sistema, numerais tabulares, ícones SVG de traço."
+    ],
+    "rules": [
+      {
+        "name": "The Azul-Só-Para-Agir Rule",
+        "body": "O azul marca ação primária, foco e seleção. Nunca decoração, nunca fundo de seção.",
+        "section": "colors"
+      },
+      {
+        "name": "The Par Semântico Rule",
+        "body": "Status sempre como par: texto no tom forte sobre o fundo lavado da mesma família. Nunca o tom forte como fundo cheio, exceto o botão de recusa confirmada.",
+        "section": "colors"
+      },
+      {
+        "name": "The Peso-Antes-de-Tamanho Rule",
+        "body": "Nenhum tamanho acima de 20px. Para destacar, suba o peso para 600/700.",
+        "section": "typography"
+      },
+      {
+        "name": "The Filete-Não-Sombra Rule",
+        "body": "Colunas e seções se separam com filete de 1px, nunca com sombra.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** manter o documento no centro e a decisão ao lado; nunca em modal sobre a imagem.",
+      "**Do** usar o azul só em ação primária, foco e seleção.",
+      "**Do** expressar status sempre como par tom forte + fundo lavado.",
+      "**Do** separar áreas com filetes de 1px (linha / linha-forte).",
+      "**Do** usar numerais tabulares e ícones SVG de traço inline.",
+      "**Do** respeitar `prefers-reduced-motion` (transições reduzidas a ~0)."
+    ],
+    "donts": [
+      "**Don't** montar o painel como grade de cards de admin.",
+      "**Don't** usar sombra para separar colunas ou seções.",
+      "**Don't** passar de 20px em texto nem usar fonte de exibição."
+    ]
+  }
+}
